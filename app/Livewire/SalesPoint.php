@@ -85,13 +85,13 @@ class SalesPoint extends Component
         if ($this->radio == 'partial_paid') {
 
             if ($this->paidAmount < $this->invoiceAmount) {
-          
-
 
                 $this->activeInvoice->status = Status::DUE->value;
                 $this->activeInvoice->payment_status = PaymentStatus::PARTIAL->value;
                 $this->activeInvoice->paid_amount = $this->paidAmount;
+
                 $this->activeInvoice->save();
+
 
             } elseif ($this->paidAmount == $this->invoiceAmount) {
                 $this->activeInvoice->status = Status::COMPLETED->value;
@@ -136,7 +136,7 @@ class SalesPoint extends Component
                 if ($this->activeInvoice->customer_id) {
                     $this->customer = $this->activeInvoice->customer;
                 }
-                $this->invoiceAmount = $this->activeInvoice->total;
+                $this->invoiceAmount = $this->activeInvoice->due_amount;
             }
         } else {
 
@@ -145,7 +145,7 @@ class SalesPoint extends Component
                 if ($this->activeInvoice->customer_id) {
                     $this->customer = $this->activeInvoice->customer;
                 }
-                $this->invoiceAmount = $this->activeInvoice->total;
+                $this->invoiceAmount = $this->activeInvoice->due_amount;
 
                 $this->activeInvoiceId = $this->activeInvoice->id;
             }

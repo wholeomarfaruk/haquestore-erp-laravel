@@ -191,8 +191,8 @@
                             'sm:hidden' : ''">
                         Invoices</h1>
                 </a>
-                <!-- Invoices -->
-                <a href="{{ route('company.transection.list') }}" x-data="tooltip" x-on:mouseover="show = true"
+                <!-- transection -->
+                {{-- <a href="{{ route('company.transection.list') }}" x-data="tooltip" x-on:mouseover="show = true"
                     x-on:mouseleave="show = false"
                     class="relative flex items-center hover:text-gray-200 hover:bg-gray-800 space-x-2 rounded-md p-2 cursor-pointer justify-start text-gray-400
                     {{ Route::currentRouteName() == 'company.transection.list' ? 'text-gray-200 bg-gray-800' : '' }}
@@ -208,7 +208,7 @@
                         x-bind:class="!$store.sidebar.full && show ? visibleClass : '' || !$store.sidebar.full && !show ?
                             'sm:hidden' : ''">
                         Transections</h1>
-                </a>
+                </a> --}}
 
 
                 <!-- Settings -->
