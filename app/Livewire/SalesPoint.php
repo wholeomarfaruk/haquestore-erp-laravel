@@ -386,7 +386,7 @@ class SalesPoint extends Component
             $this->products = Product::orderByDesc('created_at')->get();
         }
 
-        return view('livewire.sales-point')->layout('Layouts.company');
+        return view('livewire.sales-point')->layout('layouts.company');
 
     }
 }
