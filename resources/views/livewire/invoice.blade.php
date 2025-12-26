@@ -134,7 +134,7 @@
                    </thead>
 
                    <tbody class="divide-y divide-gray-200">
-                      
+
 
                        @if ($invoices->count() >= 1)
 
@@ -249,25 +249,25 @@
                                                        </button>
                                                    </span>
 
-                                                   <div role="menu" x-show="MenuOpen"
+                                                   <div role="menu" x-show="MenuOpen" @click.away="MenuOpen = false"
                                                        class="absolute end-0 top-12 z-auto w-56 overflow-hidden rounded border border-gray-300 bg-white shadow-sm"
                                                        {{-- :class="{'block': MenuOpen, 'hidden': !MenuOpen}" --}}>
-                                                       @can('invoice.view')
+                                                       {{-- @can('invoice.view')
                                                            <button type="button"
                                                                class="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                                                                role="menuitem">
                                                                View
                                                            </button>
-                                                       @endcan
+                                                       @endcan --}}
                                                        @can('invoice.edit')
-                                                           <button
+                                                           <a href="{{ route('company.pos', ['activeInvoiceId'=>$invoiceItem->id]) }}"
                                                                class="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                                                                role="menuitem">
                                                                Edit
-                                                           </button>
+                                                           </a>
                                                        @endcan
 
-                                                       <a href="#"
+                                                       <a href="{{ route('company.invoice.download', $invoiceItem->id) }}"
                                                            class="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                                                            role="menuitem">
                                                            Print
@@ -280,24 +280,7 @@
                                                        @endcan
                                                    </div>
                                                </div>
-                                               {{-- @can('user.view')
-                                           <button wire:click="viewCustomer()"
-                                               class="rounded-l-sm border border-gray-200 px-3 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 cursor-pointer">
-                                               View
-                                           </button>
-                                       @endcan
-                                       @can('user.edit')
-                                           <button wire:click="updateCustomerModal()"
-                                               class="-ml-px border border-gray-200 px-3 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 curson-pointer">
-                                               Edit
-                                           </button>
-                                       @endcan
-                                       @can('user.delete')
-                                           <button wire:click="deleteUser()"
-                                               class="-ml-px rounded-r-sm border border-gray-200 px-3 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 cursor-pointer">
-                                               Delete
-                                           </button>
-                                       @endcan --}}
+
                                            </div>
                                        </div>
                                    </td>
