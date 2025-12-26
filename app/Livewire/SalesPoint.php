@@ -83,10 +83,9 @@ class SalesPoint extends Component
     {
         // validate & save
         if ($this->radio == 'partial_paid') {
-            $this->validate([
-                'paidAmount' => 'required|numeric|min:0|max:' . $this->invoiceAmount
-            ]);
-            if ($this->paidAmount > $this->invoiceAmount) {
+
+            if ($this->paidAmount < $this->invoiceAmount) {
+          
 
 
                 $this->activeInvoice->status = Status::DUE->value;
@@ -113,6 +112,7 @@ class SalesPoint extends Component
         }
         $this->settledinvoiceId = $this->activeInvoice->id;
         $this->calculateTotals();
+        $this->loadActiveInvoice();
 
         // $this->confirmModalOpen = false;
 

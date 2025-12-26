@@ -258,7 +258,7 @@
                                                                <label for="Quantity" class="sr-only"> Quantity
                                                                </label>
 
-                                                               <div
+                                                               <div x-data="qty"
                                                                    class="flex items-center rounded-lg border border-gray-200 px-2">
 
 
@@ -681,11 +681,11 @@
                                                {{ $activeInvoice->total }}</td>
                                        </tr>
 
-                                       <tr class="*:text-gray-900 *:first:font-medium">
+                                       {{-- <tr class="*:text-gray-900 *:first:font-medium">
                                            <th class="px-3 py-2 text-start whitespace-nowrap">Discount</th>
                                            <td class="px-3 py-2 text-end whitespace-nowrap">
                                                {{ $activeInvoice->discount_amount }}</td>
-                                       </tr>
+                                       </tr> --}}
                                        <tr class="*:text-gray-900 *:first:font-medium">
                                            <th class="px-3 py-2 text-start whitespace-nowrap">Paid</th>
                                            <td class="px-3 py-2 text-end whitespace-nowrap">
