@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@plugin 'tailwind-scrollbar';
+
+
+[x-cloak] {
+    display: none;
+}
+.swiper {
+  width: 100%;
+  height: 200px;
+
+}
