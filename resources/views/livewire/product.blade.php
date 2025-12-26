@@ -120,103 +120,101 @@
                <div class="min-w-full divide-y-2 divide-gray-200">
                    <div class="grid grid-cols-4 gap-2">
                        @if ($products->count() > 0)
-                       @foreach ($products as $product)
+                           @foreach ($products as $product)
+                               <div>
+                                   <div class="block relative rounded-lg p-4 shadow-lg border border-gray-200 ">
+                                       <img alt="" src="{{ asset('storage/' . $product->image) }}"
+                                           class="h-36 w-full rounded-md object-cover">
 
+                                       <div class="">
+                                           <dl>
+                                               <div>
+                                                   <dt class="sr-only">ID: </dt>
 
-                           <div>
-                               <div class="block relative rounded-lg p-4 shadow-lg border border-gray-200 ">
-                                   <img alt=""
-                                       src="{{ asset('storage/' . $product->image) }}"
-                                       class="h-36 w-full rounded-md object-cover">
-
-                                   <div class="">
-                                       <dl>
-                                           <div>
-                                               <dt class="sr-only">ID: </dt>
-
-                                               <dd class="text-sm text-gray-500"># {{ $product->id }}</dd>
-                                           </div>
-
-                                           <div>
-                                               <dt class="sr-only">Name:</dt>
-
-                                               <dd class="font-medium">{{ $product->name }}</dd>
-                                           </div>
-                                       </dl>
-
-                                       <div class="mt-6 flex items-center gap-8 text-xs">
-                                           <div class="sm:inline-flex sm:shrink-0 sm:items-center sm:gap-2">
-
-
-                                               <div class="mt-1.5 sm:mt-0">
-                                                   <p class="text-gray-500">Quantity</p>
-
-                                                   <p class="font-medium">
-                                                       {{ $product->unit_value . ' ' . $product->unit_name }}</p>
+                                                   <dd class="text-sm text-gray-500"># {{ $product->id }}</dd>
                                                </div>
-                                           </div>
 
-                                           <div class="sm:inline-flex sm:shrink-0 sm:items-center sm:gap-2">
+                                               <div>
+                                                   <dt class="sr-only">Name:</dt>
 
-
-                                               <div class="mt-1.5 sm:mt-0">
-                                                   <p class="text-gray-500">Regular Price</p>
-
-                                                   <p class="font-medium">{{ $product->price }} Tk</p>
+                                                   <dd class="font-medium">{{ $product->name }}</dd>
                                                </div>
-                                           </div>
+                                           </dl>
 
-                                           <div class="sm:inline-flex sm:shrink-0 sm:items-center sm:gap-2">
+                                           <div class="mt-6 flex items-center gap-8 text-xs">
+                                               <div class="sm:inline-flex sm:shrink-0 sm:items-center sm:gap-2">
 
 
-                                               <div class="mt-1.5 sm:mt-0">
-                                                   <p class="text-gray-500">Discount Price</p>
+                                                   <div class="mt-1.5 sm:mt-0">
+                                                       <p class="text-gray-500">Quantity</p>
 
-                                                   <p class="font-medium">{{ $product->discount_price }} Tk</p>
+                                                       <p class="font-medium">
+                                                           {{ $product->unit_value  }} Unit</p>
+                                                   </div>
+                                               </div>
+
+
+
+                                               <div class="sm:inline-flex sm:shrink-0 sm:items-center sm:gap-2">
+
+
+                                                   <div class="mt-1.5 sm:mt-0">
+                                                       <p class="text-gray-500">Per Unit</p>
+                                                       <p class="font-medium">{{ $product->value_per_unit . ' ' . $product->unit_name }}</p>
+                                                   </div>
+                                               </div>
+                                                <div class="sm:inline-flex sm:shrink-0 sm:items-center sm:gap-2">
+
+
+                                                   <div class="mt-1.5 sm:mt-0">
+                                                       <p class="text-gray-500">Price Per {{ $product->unit_name }}</p>
+
+                                                       <p class="font-medium">{{ $product->price }} Tk</p>
+                                                   </div>
                                                </div>
                                            </div>
                                        </div>
-                                   </div>
-                                   <div class="absolute top-5 right-5 left-0 flex items-center gap-2 justify-end">
+                                       <div class="absolute top-5 right-5 left-0 flex items-center gap-2 justify-end">
 
 
-                                       <span alt="View Product"
-                                           class="cursor-pointer rounded-md shadow-lg bg-sky-100 px-1 py-1 text-sky-700 dark:bg-sky-700 dark:text-sky-100">
+                                           <span alt="View Product"
+                                               class="cursor-pointer rounded-md shadow-lg bg-sky-100 px-1 py-1 text-sky-700 dark:bg-sky-700 dark:text-sky-100">
 
-                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                               stroke-width="1.5" stroke="currentColor" class="size-4">
-                                               <path stroke-linecap="round" stroke-linejoin="round"
-                                                   d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                                               <path stroke-linecap="round" stroke-linejoin="round"
-                                                   d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                           </svg>
-
-
-
-                                       </span>
-                                       <span wire:click="deleteProduct({{ $product->id }})" alt="Delete"
-                                           class="cursor-pointer rounded-md shadow-lg bg-red-100 px-1 py-1 text-red-700 dark:bg-red-700 dark:text-red-100">
-                                           <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none"
-                                               viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                               <path stroke-linecap="round" stroke-linejoin="round"
-                                                   d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                           </svg>
+                                               <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                   viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                   class="size-4">
+                                                   <path stroke-linecap="round" stroke-linejoin="round"
+                                                       d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                                   <path stroke-linecap="round" stroke-linejoin="round"
+                                                       d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                               </svg>
 
 
-                                       </span>
-                                       {{-- edit product icon  --}}
-                                       <span wire:click="editProduct({{ $product->id }})" alt="Edit"
-                                           class="cursor-pointer rounded-md shadow-lg bg-emerald-100 px-1 py-1 text-emerald-700 dark:bg-emerald-700 dark:text-emerald-100">
-                                           <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none"
-                                               viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                               <path stroke-linecap="round" stroke-linejoin="round"
-                                                   d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                           </svg>
 
-                                       </span>
+                                           </span>
+                                           <span wire:click="deleteProduct({{ $product->id }})" alt="Delete"
+                                               class="cursor-pointer rounded-md shadow-lg bg-red-100 px-1 py-1 text-red-700 dark:bg-red-700 dark:text-red-100">
+                                               <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none"
+                                                   viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                   <path stroke-linecap="round" stroke-linejoin="round"
+                                                       d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                               </svg>
+
+
+                                           </span>
+                                           {{-- edit product icon  --}}
+                                           <span wire:click="editProduct({{ $product->id }})" alt="Edit"
+                                               class="cursor-pointer rounded-md shadow-lg bg-emerald-100 px-1 py-1 text-emerald-700 dark:bg-emerald-700 dark:text-emerald-100">
+                                               <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none"
+                                                   viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                   <path stroke-linecap="round" stroke-linejoin="round"
+                                                       d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                               </svg>
+
+                                           </span>
+                                       </div>
                                    </div>
                                </div>
-                           </div>
                            @endforeach
                        @endif
 
@@ -361,7 +359,7 @@
                            @enderror
                        </div>
                        <div class="grid grid-cols-3 gap-1">
-                           <div class="grid grid-cols-1 gap-1">
+                           {{-- <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="purchase_price">Purchase
                                    Price</label>
                                <input wire:model="newPPurchasePrice" min="0"
@@ -371,7 +369,7 @@
                                @error('newPPurchasePrice')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
-                           </div>
+                           </div> --}}
                            <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="sale_price">Sale Price
                                    <span class="size-6 text-red-500 mr-1.5">*</span> </label>
@@ -382,7 +380,8 @@
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
-                           <div class="grid grid-cols-1 gap-1">
+
+                           {{-- <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="phone">Discount
                                    Price</label>
                                <input wire:model="newPDiscountPrice" min="0"
@@ -391,24 +390,37 @@
                                @error('newPDiscountPrice')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
-                           </div>
-                       </div>
-                       <div class="grid grid-cols-3 gap-1">
+                           </div> --}}
                            <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="phone">Quantity <span
+                               <label class="block text-sm font-medium text-gray-900" for="phone">Unit qty <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
                                <input wire:model="newPQuantity"
                                    class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                                   id="phone" type="number" placeholder="Enter Unit Value" />
+                                   id="phone" type="number" placeholder="Enter Unit qty" />
                                @error('newPQuantity')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
-                           <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="phone">Unit <span
+                                  <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="phone">Kg Per Unit <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
-                               <select wire:model="newPunit"
-                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2 sm:text-sm">
+                               <input wire:model="newKgPerUnit"
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
+                                   id="phone" type="number" placeholder="Kg per 1 unit. 1x50kg" />
+                               @error('newKgPerUnit')
+                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                               @enderror
+                           </div>
+
+
+                       </div>
+                       <div class="grid grid-cols-2 gap-1">
+
+                           <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="phone">Measeure By<span
+                                       class="size-6 text-red-500 mr-1.5">*</span> </label>
+                               <select wire:model="newPunit" disabled
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2 sm:text-sm disabled:bg-gray-100">
                                    <option value="">Select Unit</option>
                                    @foreach (\App\Enums\Product\Unit::cases() as $unit)
                                        <option value="{{ $unit->value }}">{{ $unit->name }}</option>
@@ -451,7 +463,7 @@
 
 
 
-                       <div class="flex flex-row gap-1">
+                       <div class="flex flex-row gap-1 mt-2" wire:key="new-product-image-container">
                            @if ($newPImage && $newPImage?->temporaryUrl())
                                <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
@@ -461,7 +473,7 @@
                                </div>
                            @endif
                            <div class="grid grid-cols-1 gap-1 flex-1 ">
-                               <label for="File"
+                               <label for="NewFile"
                                    class="flex flex-col items-center rounded-lg border border-gray-300 p-4 text-gray-900 shadow-sm sm:p-6">
                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                        stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -481,7 +493,7 @@
                                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                    @enderror
 
-                                   <input wire:model.live="newPImage" type="file" id="File" class="sr-only">
+                                   <input wire:key="new-product-image" wire:model.live="newPImage" type="file" id="NewFile" class="sr-only">
                                </label>
                            </div>
                        </div>
@@ -522,7 +534,7 @@
                <div class="mt-4">
 
                    <form action="#" class="space-y-4" wire:submit.prevent="updateNewProduct">
-                    <input type="hidden" name="product_id" wire:model="editProductId">
+                       <input type="hidden" name="product_id" wire:model="editProductId">
                        <div class="grid grid-cols-1 gap-1">
                            <label class="block text-sm font-medium text-gray-900" for="name">Name <span
                                    class="size-6 text-red-500 mr-1.5">*</span></label>
@@ -533,62 +545,76 @@
                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                            @enderror
                        </div>
-                       <div class="grid grid-cols-3 gap-1">
-                           <div class="grid grid-cols-1 gap-1">
+                        <div class="grid grid-cols-3 gap-1">
+                           {{-- <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="purchase_price">Purchase
                                    Price</label>
-                               <input wire:model="editProductPurchasePrice" min="0" step="0.01" pattern="^\d*(\.\d{1,2})?$"
+                               <input wire:model="newPPurchasePrice" min="0"
                                    class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                                   id="purchase_price" type="number"
+                                   id="purchase_price" type="number" pattern="[0-9]"
                                    placeholder="Enter Purchase Price" />
                                @error('newPPurchasePrice')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
-                           </div>
+                           </div> --}}
                            <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="sale_price">Sale Price
                                    <span class="size-6 text-red-500 mr-1.5">*</span> </label>
                                <input wire:model="editProductSalePrice" min="0"
                                    class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                    id="sale_price" type="text" placeholder="Enter Sale Price" />
-                               @error('newPSalePrice')
+                               @error('editPSalePrice')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
-                           <div class="grid grid-cols-1 gap-1">
+
+                           {{-- <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="phone">Discount
                                    Price</label>
-                               <input wire:model="editProductDiscountPrice" min="0"
+                               <input wire:model="editPDiscountPrice" min="0"
                                    class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                    id="phone" type="text" placeholder="Enter Discount Price" />
-                               @error('newPDiscountPrice')
+                               @error('editPDiscountPrice')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
-                           </div>
-                       </div>
-                       <div class="grid grid-cols-3 gap-1">
+                           </div> --}}
                            <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="phone">Quantity <span
+                               <label class="block text-sm font-medium text-gray-900" for="phone">Unit qty <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
                                <input wire:model="editProductQuantity"
                                    class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                                   id="phone" type="number" placeholder="Enter Unit Value" />
-                               @error('newPQuantity')
+                                   id="phone" type="number" placeholder="Enter Unit qty" />
+                               @error('editPQuantity')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
-                           <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="phone">Unit <span
+                                  <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="phone">Kg Per Unit <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
-                               <select wire:model="editProductUnit"
-                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2 sm:text-sm">
+                               <input wire:model="editKgPerUnit"
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
+                                   id="phone" type="text"  placeholder="Kg per 1 unit. 1x50kg" />
+                               @error('editKgPerUnit')
+                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                               @enderror
+                           </div>
+
+
+                       </div>
+                       <div class="grid grid-cols-2 gap-1">
+
+                           <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="phone">Measeure By<span
+                                       class="size-6 text-red-500 mr-1.5">*</span> </label>
+                               <select wire:model="editProductUnit" disabled
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2 sm:text-sm disabled:bg-gray-100">
                                    <option value="">Select Unit</option>
                                    @foreach (\App\Enums\Product\Unit::cases() as $unit)
                                        <option value="{{ $unit->value }}">{{ $unit->name }}</option>
                                    @endforeach
 
                                </select>
-                               @error('newPunit')
+                               @error('editPunit')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
@@ -602,7 +628,7 @@
                                    <option value="stock_out">Stock Out</option>
                                    <option value="low_stock">Low Stock</option>
                                </select>
-                               @error('newPStockStatus')
+                               @error('editPStockStatus')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
@@ -624,25 +650,24 @@
 
 
 
-                       <div class="flex flex-row gap-1">
-                           @if ($editProductImage && method_exists($editProductImage, 'temporaryUrl') )
+                       <div class="flex flex-row gap-1" wire:key="edit-product-image-container">
+                           @if ($editProductImage && method_exists($editProductImage, 'temporaryUrl'))
                                <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
-                                       <img src="{{ $editProductImage?->temporaryUrl() }}" alt="Product Image Preview"
-                                           class="w-full h-auto rounded-lg shadow-sm">
+                                       <img src="{{ $editProductImage?->temporaryUrl() }}"
+                                           alt="Product Image Preview" class="w-full h-auto rounded-lg shadow-sm">
                                    </div>
                                </div>
-                               @else
-                                <div class="grid grid-cols-1 gap-1 flex-1">
+                           @else
+                               <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
-                                       <img src="{{ asset('storage/'.$editViewProductImage) }}" alt="Product Image Preview"
-                                           class="w-full h-auto rounded-lg shadow-sm">
+                                       <img src="{{ asset('storage/' . $editViewProductImage) }}"
+                                           alt="Product Image Preview" class="w-full h-auto rounded-lg shadow-sm">
                                    </div>
                                </div>
-
                            @endif
                            <div class="grid grid-cols-1 gap-1 flex-1 ">
-                               <label for="File"
+                               <label for="EditFile"
                                    class="flex flex-col items-center rounded-lg border border-gray-300 p-4 text-gray-900 shadow-sm sm:p-6">
                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                        stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -661,8 +686,8 @@
                                    @error('editProductImage')
                                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                    @enderror
-
-                                   <input wire:model.live="editProductImage" type="file" id="File" class="sr-only">
+                                   <input wire:key="edit-product-image" wire:model.live="editProductImage" type="file" id="EditFile"
+                                       class="sr-only">
                                </label>
                            </div>
                        </div>

@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Product as ModelsProduct;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -10,22 +11,22 @@ use Livewire\WithFileUploads;
 class Product extends Component
 {
     public $products;
-    public $search='';
+    public $search = '';
     public $addProductModal = false;
     public $editProductModal = false;
     public $viewModal = false;
     public $viewProduct;
-    public $newPName,$newPPurchasePrice,$newPSalePrice,$newPDiscountPrice,$newPQuantity,$newPunit,$newPStockStatus='in_stock',$newPDescription;
-    public $editProductName,$editProductPurchasePrice,$editProductSalePrice,$editProductDiscountPrice,$editProductQuantity,$editProductUnit,$editProductStockStatus,$editProductDescription,$editProductImage,$editProductId,$editViewProductImage;
+    public $newPName, $newPPurchasePrice, $newPSalePrice, $newPDiscountPrice, $newPQuantity, $newKgPerUnit, $newPunit = 'kg', $newPStockStatus = 'in_stock', $newPDescription;
+    public $editProductName, $editProductPurchasePrice, $editProductSalePrice, $editProductDiscountPrice, $editKgPerUnit, $editProductQuantity, $editProductUnit, $editProductStockStatus, $editProductDescription, $editProductImage, $editProductId, $editViewProductImage;
     public $newPImage;
     use WithFileUploads;
     public function render()
     {
-         if (!empty($this->search)) {
+        if (!empty($this->search)) {
             // dd($this->search);
             $this->products = ModelsProduct::where('name', 'LIKE', '%' . $this->search . '%')
-            ->orderByDesc('id')
-            ->get();
+                ->orderByDesc('id')
+                ->get();
         } else {
 
             $this->products = ModelsProduct::orderByDesc('id')->get();
@@ -36,64 +37,76 @@ class Product extends Component
     public function addNewProduct()
     {
         // dd($this->newPunit);
+
+
         $this->validate([
             'newPName' => 'required|min:3',
-            'newPImage' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
-            'newPPurchasePrice' => 'required',
+
             'newPSalePrice' => 'required',
             'newPQuantity' => 'required|integer|min:1',
             'newPunit' => 'required',
+            'newKgPerUnit' => 'required|integer|min:1',
         ]);
+        if ($this->newPImage) {
+            $this->validate([
+                'newPImage' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            ]);
+        }
         try {
             //code...
 
-        $product = new ModelsProduct();
-        $product->name = $this->newPName;
-        if($this->newPPurchasePrice){
+            $product = new ModelsProduct();
+            $product->name = $this->newPName;
+            $product->price = $this->newPSalePrice;
+            // if ($this->newPPurchasePrice) {
 
-            $product->purchase_price = $this->newPPurchasePrice;
-        }
-        $product->price = $this->newPSalePrice;
-        if($this->newPDiscountPrice){
+            //     $product->purchase_price = $this->newPPurchasePrice;
+            // }
+            // if ($this->newPDiscountPrice) {
 
-            $product->discount_price = $this->newPDiscountPrice;
-        }
+            //     $product->discount_price = $this->newPDiscountPrice;
+            // }
 
-        $product->unit_value = $this->newPQuantity;
-        $product->unit_name = $this->newPunit;
-        // $product->stock_status = $this->newPStockStatus;
-        if($this->newPDescription){
+            $product->unit_value = $this->newPQuantity;
+            $product->value_per_unit = $this->newKgPerUnit;
+            $product->unit_name = $this->newPunit;
+            $product->stock_status = $this->newPStockStatus;
+            if ($this->newPDescription) {
 
-            $product->description = $this->newPDescription;
-        }
-          $path = public_path('storage/products');
-        if (!file_exists($path)) {
-            mkdir($path, 0777, true);
-        }
-        $filename=Str::uuid().'.'.$this->newPImage->getClientOriginalExtension();
-        copy($this->newPImage->getRealPath(), $path.'/'.$filename);
-        $product->image = "products/$filename";
-        $product->save();
-           } catch (\Throwable $th) {
+                $product->description = $this->newPDescription;
+            }
+            if ($this->newPImage) {
+
+                $path = public_path('storage/products');
+                if (!file_exists($path)) {
+                    mkdir($path, 0777, true);
+                }
+                $filename = Str::uuid() . '.' . $this->newPImage->getClientOriginalExtension();
+                copy($this->newPImage->getRealPath(), $path . '/' . $filename);
+                $product->image = "products/$filename";
+            }
+            $product->save();
+        } catch (\Throwable $th) {
             //throw $th;
             dd($th->getMessage());
         }
 
-        $this->reset('newPName', 'newPPurchasePrice', 'newPSalePrice', 'newPDiscountPrice', 'newPQuantity', 'newPunit', 'newPStockStatus', 'newPDescription', 'newPImage');
+        $this->reset('newPName', 'newPPurchasePrice', 'newPSalePrice', 'newPDiscountPrice', 'newPQuantity', 'newKgPerUnit', 'newPunit', 'newPStockStatus', 'newPDescription', 'newPImage');
         $this->addProductModal = false;
     }
     public function deleteProduct($id)
     {
-       $product = ModelsProduct::find($id);
-       if(!$product){
-           return abort(404);
-       }
-       if(file_exists('storage/'.$product->image)){
-           unlink('storage/'.$product->image);
-       }
-       $product->delete();
+        $product = ModelsProduct::find($id);
+        if (!$product) {
+            return abort(404);
+        }
+        if (file_exists('storage/' . $product->image)) {
+            unlink('storage/' . $product->image);
+        }
+        $product->delete();
     }
-    public function editProduct($id){
+    public function editProduct($id)
+    {
         // dd($id);
 
         $this->viewProduct = ModelsProduct::find($id);
@@ -106,51 +119,64 @@ class Product extends Component
         $this->editProductUnit = $this->viewProduct->unit_name;
         $this->editProductStockStatus = $this->viewProduct->stock_status;
         $this->editProductDescription = $this->viewProduct->description;
+        $this->editKgPerUnit = $this->viewProduct->value_per_unit;
         $this->editViewProductImage = $this->viewProduct->image;
 
         $this->editProductModal = true;
     }
 
-    public function updateNewProduct(){
+    public function updateNewProduct()
+    {
+        //  dd($this->editProductImage);
         try {
-        if(!$this->editProductId){
-            return abort(404);
-        }
-        $this->validate([
-            'editProductName' => 'required|min:3',
-            'editProductPurchasePrice' => 'required',
-            'editProductSalePrice' => 'required',
-            'editProductQuantity' => 'required',
-            'editProductUnit' => 'required',
-        ]);
-
-
-
-        if($this->editProductImage){
+            if (!$this->editProductId) {
+                return abort(404);
+            }
             $this->validate([
-                'editProductImage' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+                'editProductName' => 'required|min:3',
+                'editProductSalePrice' => 'required',
+                'editProductQuantity' => 'required',
+                'editProductUnit' => 'required',
+                'editKgPerUnit' => 'required',
             ]);
-        }
+
+
+
+            if ($this->editProductImage) {
+                $this->validate([
+                    'editProductImage' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+                ]);
+            }
 
             //code...
 
-        $product = ModelsProduct::find($this->editProductId);
-        $product->name = $this->editProductName;
-        $product->purchase_price = $this->editProductPurchasePrice;
-        $product->price = $this->editProductSalePrice;
-        $product->discount_price = $this->editProductDiscountPrice;
-        $product->unit_value = $this->editProductQuantity;
-        $product->unit_name = $this->editProductUnit;
-        $product->stock_status = $this->editProductStockStatus;
-        $product->description = $this->editProductDescription;
-        if($this->editProductImage){
-            if(file_exists('storage/'.$product->image)){
-                unlink('storage/'.$product->image);
+            $product = ModelsProduct::find($this->editProductId);
+            $product->name = $this->editProductName;
+            $product->purchase_price = $this->editProductPurchasePrice;
+            $product->price = $this->editProductSalePrice;
+            $product->discount_price = $this->editProductDiscountPrice;
+            $product->unit_value = $this->editProductQuantity;
+            $product->unit_name = $this->editProductUnit;
+            $product->stock_status = $this->editProductStockStatus;
+            $product->description = $this->editProductDescription;
+            $product->value_per_unit = $this->editKgPerUnit;
+            if ($this->editProductImage) {
+                // ১. পুরাতন ইমেজ ডিলিট করা (Storage Facade ব্যবহার করা ভালো)
+                if ($product->image && Storage::disk('public')->exists($product->image)) {
+                    Storage::disk('public')->delete($product->image);
+                }
+
+                // ২. নতুন ইমেজ স্টোর করা (এটি অটোমেটিক UUID টাইপ নাম জেনারেট করবে)
+                // এটি storage/app/public/products ফোল্ডারে সেভ হবে
+                $path = $this->editProductImage->store('products', 'public');
+
+                // ৩. ডাটাবেজে পাথ সেভ করা
+                $product->image = $path;
             }
-            $product->image = $this->editProductImage->storeAs('products', Str::uuid() . '.' . $this->editProductImage->extension(), 'public');
-        }
-        $product->save();
-         } catch (\Throwable $th) {
+
+
+            $product->save();
+        } catch (\Throwable $th) {
             //throw $th;
             dd($th->getMessage());
         }
