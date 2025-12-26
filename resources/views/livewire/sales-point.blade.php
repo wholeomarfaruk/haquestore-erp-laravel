@@ -931,12 +931,12 @@
                                    class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                    id="second_phone" type="text" placeholder="Enter secondary Phone Number" />
                            </div>
-                           <div class="grid grid-cols-1 gap-1">
+                           {{-- <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="email">Email</label>
                                <input wire:model="newCustomerEmail"
                                    class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                    id="email" type="email" placeholder="Enter Email" />
-                           </div>
+                           </div> --}}
                            <div>
                                <label class="block text-sm font-medium text-gray-900" for="address">Address</label>
 
