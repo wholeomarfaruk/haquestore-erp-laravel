@@ -678,8 +678,16 @@
                                    <tbody class="divide-y divide-gray-200 *:even:bg-gray-50">
                                        <tr class="*:text-gray-900 *:first:font-medium">
 
-                                           <th class="px-3 py-2 text-start whitespace-nowrap cursor-pointer hover:text-gray-900 hover:bg-emerald-200">Sub Total
-                                               <span class="ml-1">
+                                           <th class="px-3 py-2 text-start whitespace-nowrap ">Sub Total
+
+                                           </th>
+                                           <td class="px-3 py-2 text-end whitespace-nowrap">
+                                               {{ $activeInvoice->total }}</td>
+                                       </tr>
+
+                                       <tr class="*:text-gray-900 *:first:font-medium cursor-pointer hover:text-gray-900 hover:bg-emerald-200">
+                                           <th class="px-3 py-2 text-start whitespace-nowrap flex">Discount
+                                            <span class="ml-1">
                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                                        class="size-4">
@@ -688,12 +696,6 @@
                                                    </svg>
                                                </span>
                                            </th>
-                                           <td class="px-3 py-2 text-end whitespace-nowrap">
-                                               {{ $activeInvoice->total }}</td>
-                                       </tr>
-
-                                       <tr class="*:text-gray-900 *:first:font-medium">
-                                           <th class="px-3 py-2 text-start whitespace-nowrap">Discount</th>
                                            <td class="px-3 py-2 text-end whitespace-nowrap">
                                                {{ $activeInvoice->discount }}</td>
                                        </tr>
