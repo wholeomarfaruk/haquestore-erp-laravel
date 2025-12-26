@@ -69,7 +69,8 @@ class Product extends Component
         if (!file_exists(public_path('storage/products'))) {
             mkdir(public_path('storage/products'), 0777, true);
         }
-        $product->image = $this->newPImage->move('storage/products', Str::uuid() . '.' . $this->newPImage->extension());
+        $path = public_path('storage/products');
+        $product->image = $this->newPImage->move($path, Str::uuid() . '.' . $this->newPImage->extension());
         $product->save();
            } catch (\Throwable $th) {
             //throw $th;
