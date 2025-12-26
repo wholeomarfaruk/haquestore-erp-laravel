@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Product as ModelsProduct;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -16,8 +15,8 @@ class Product extends Component
     public $editProductModal = false;
     public $viewModal = false;
     public $viewProduct;
-    public $newPName, $newPPurchasePrice, $newPSalePrice, $newPDiscountPrice, $newPQuantity, $newKgPerUnit, $newPunit = 'kg', $newPStockStatus = 'in_stock', $newPDescription;
-    public $editProductName, $editProductPurchasePrice, $editProductSalePrice, $editProductDiscountPrice, $editKgPerUnit, $editProductQuantity, $editProductUnit, $editProductStockStatus, $editProductDescription, $editProductImage, $editProductId, $editViewProductImage;
+    public $newPName, $newPPurchasePrice, $newPSalePrice, $newPDiscountPrice, $newPQuantity,$newKgPerUnit, $newPunit='kg', $newPStockStatus = 'in_stock', $newPDescription;
+    public $editProductName, $editProductPurchasePrice, $editProductSalePrice, $editProductDiscountPrice,$editKgPerUnit, $editProductQuantity, $editProductUnit, $editProductStockStatus, $editProductDescription, $editProductImage, $editProductId, $editViewProductImage;
     public $newPImage;
     use WithFileUploads;
     public function render()
@@ -47,7 +46,7 @@ class Product extends Component
             'newPunit' => 'required',
             'newKgPerUnit' => 'required|integer|min:1',
         ]);
-        if ($this->newPImage) {
+        if($this->newPImage){
             $this->validate([
                 'newPImage' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             ]);
@@ -127,7 +126,7 @@ class Product extends Component
 
     public function updateNewProduct()
     {
-        //  dd($this->editProductImage);
+                //  dd($this->editProductImage);
         try {
             if (!$this->editProductId) {
                 return abort(404);
@@ -161,17 +160,18 @@ class Product extends Component
             $product->description = $this->editProductDescription;
             $product->value_per_unit = $this->editKgPerUnit;
             if ($this->editProductImage) {
-                // ১. পুরাতন ইমেজ ডিলিট করা (Storage Facade ব্যবহার করা ভালো)
-                if ($product->image && Storage::disk('public')->exists($product->image)) {
-                    Storage::disk('public')->delete($product->image);
+                if (is_file('storage/' . $product->image)) {
+
+                    unlink('storage/' . $product->image);
                 }
+                $path = public_path('storage/products');
+                if (!file_exists($path)) {
+                    mkdir($path, 0777, true);
+                }
+                $filename = Str::uuid() . '.' . $this->editProductImage->getClientOriginalExtension();
+                copy($this->editProductImage->getRealPath(), $path . '/' . $filename);
+                $product->image = "products/$filename";
 
-                // ২. নতুন ইমেজ স্টোর করা (এটি অটোমেটিক UUID টাইপ নাম জেনারেট করবে)
-                // এটি storage/app/public/products ফোল্ডারে সেভ হবে
-                $path = $this->editProductImage->store('products', 'public');
-
-                // ৩. ডাটাবেজে পাথ সেভ করা
-                $product->image = $path;
             }
 
 
