@@ -66,11 +66,11 @@ class Product extends Component
 
             $product->description = $this->newPDescription;
         }
-        if (!file_exists(public_path('storage/products'))) {
-            mkdir(public_path('storage/products'), 0777, true);
+          $path = public_path('storage/products');
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
         }
-        $path = public_path('storage/products');
-        $product->image = $this->newPImage->move($path, Str::uuid() . '.' . $this->newPImage->extension());
+        $product->image = $this->newPImage->storeAs('products', Str::uuid() . '.' . $this->newPImage->extension(), 'public');
         $product->save();
            } catch (\Throwable $th) {
             //throw $th;
