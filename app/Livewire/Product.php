@@ -126,7 +126,7 @@ class Product extends Component
 
     public function updateNewProduct()
     {
-                //  dd($this->editProductImage);
+                 dd($this->editProductImage);
         try {
             if (!$this->editProductId) {
                 return abort(404);
