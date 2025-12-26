@@ -1,0 +1,33 @@
+{
+  "node_modules/owl.carousel/dist/owl.carousel.js": {
+    "file": "assets/owl.carousel-B3ad9mzp.js",
+    "name": "owl.carousel",
+    "src": "node_modules/owl.carousel/dist/owl.carousel.js",
+    "isDynamicEntry": true
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-CA6lt_NB.css",
+    "src": "resources/css/app.css"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-C-WuCoR2.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "node_modules/owl.carousel/dist/owl.carousel.js"
+    ],
+    "css": [
+      "assets/app-BRKXMWAJ.css"
+    ]
+  },
+  "resources/scss/app.scss": {
+    "file": "assets/app-vnUlDkB0.css",
+    "src": "resources/scss/app.scss",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  }
+}
