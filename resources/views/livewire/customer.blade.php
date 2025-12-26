@@ -314,11 +314,11 @@
                                    <dd class="text-gray-700 sm:col-span-2">{{ $customer?->second_phone ?? '' }}</dd>
                                </div>
 
-                               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                               {{-- <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                                    <dt class="font-medium text-gray-900">Email</dt>
 
                                    <dd class="text-gray-700 sm:col-span-2">{{ $customer?->email ?? '' }}</dd>
-                               </div>
+                               </div> --}}
                                <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                                    <dt class="font-medium text-gray-900">Status</dt>
 
@@ -414,12 +414,12 @@
                                class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                id="second_phone" type="text" placeholder="Enter secondary Phone Number" />
                        </div>
-                       <div class="grid grid-cols-1 gap-1">
+                       {{-- <div class="grid grid-cols-1 gap-1">
                            <label class="block text-sm font-medium text-gray-900" for="email">Email</label>
                            <input wire:model="newCustomerEmail"
                                class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                id="email" type="email" placeholder="Enter Email" />
-                       </div>
+                       </div> --}}
                        <div>
                            <label class="block text-sm font-medium text-gray-900" for="address">Address</label>
 
@@ -491,12 +491,12 @@
                                class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                id="second_phone" type="text" placeholder="Enter secondary Phone Number" />
                        </div>
-                       <div class="grid grid-cols-1 gap-1">
+                       {{-- <div class="grid grid-cols-1 gap-1">
                            <label class="block text-sm font-medium text-gray-900" for="email">Email</label>
                            <input wire:model="editCustomerEmail"
                                class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                id="email" type="email" placeholder="Enter Email" />
-                       </div>
+                       </div> --}}
                        <div>
                            <label class="block text-sm font-medium text-gray-900" for="address">Address</label>
 
