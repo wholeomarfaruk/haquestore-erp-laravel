@@ -685,7 +685,7 @@
                                                {{ $activeInvoice->total }}</td>
                                        </tr>
 
-                                       <tr class="*:text-gray-900 *:first:font-medium cursor-pointer hover:text-gray-900 hover:bg-emerald-200">
+                                       <tr class="*:text-gray-900 *:first:font-medium cursor-pointer hover:text-gray-900 !important hover:bg-emerald-200!">
                                            <th class="px-3 py-2 text-start whitespace-nowrap flex">Discount
                                             <span class="ml-1">
                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
