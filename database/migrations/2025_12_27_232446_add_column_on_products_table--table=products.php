@@ -9,10 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+  public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->decimal('value_per_unit', 10, 2)->default(0.00);
+
+                        $table->decimal('stock', 10, 2)->default(0.00);
+
         });
     }
 
@@ -22,8 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('value_per_unit');
-          
+            $table->dropColumn('stock');
         });
     }
 };

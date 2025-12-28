@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->decimal('value_per_unit', 10, 2)->default(0.00);
+        Schema::table('invoices', function (Blueprint $table) {
+            $table->decimal('previous_due', 10, 2)->default(0.00);
         });
     }
 
@@ -21,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('value_per_unit');
-          
+        Schema::table('invoices', function (Blueprint $table) {
+            $table->dropColumn('previous_due');
         });
     }
 };

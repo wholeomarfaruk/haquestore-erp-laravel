@@ -11,6 +11,7 @@ use App\Livewire\RoleCreate;
 use App\Livewire\RoleEdit;
 use App\Livewire\RoleList;
 use App\Livewire\SalesPoint;
+use App\Livewire\StockList;
 use App\Livewire\UserList;
 use Illuminate\Support\Facades\Route;
 
@@ -50,6 +51,9 @@ Route::middleware(['auth', 'verified'])->prefix('company')->name('company.')->gr
 
         //products
         Route::get('/products', Product::class)->name('product.list');
+
+        //stocklist
+        Route::get('/stocks', StockList::class)->name('stocklist');
 
         //Invoices
         Route::get('/invoices', Invoice::class)->name('invoice.list');

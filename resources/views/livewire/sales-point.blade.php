@@ -207,10 +207,10 @@
                                                            <dt class="sr-only">Qty: </dt>
 
                                                            <span class="text-sm text-gray-500" title="Quantity">
-                                                               {{ $product->unit_value . ' ' . $product->unit_name }}</span>
+                                                               {{ $product->stock . ' ' . $product->unit_name }}</span>
                                                        </span>
                                                        <span class="divider size-6 text-gray-500">|</span>
-                                                       @if ($product->discount_price > 0)
+                                                       @if (false && $product->discount_price > 0)
                                                            <span>
                                                                <dt class="sr-only">Price: </dt>
 
@@ -496,7 +496,7 @@
                                            </svg>
 
                                            <p class="text-sm whitespace-nowrap">
-                                               {{ $activeInvoice?->customer && $activeInvoice->customer->balance }}
+                                               {{ $activeInvoice?->customer ? $activeInvoice->customer->balance : '0.00' }}
                                            </p>
                                            {{-- <button wire:click="getCustomerBal({{ $activeInvoice?->customer && $activeInvoice->customer_id }})"
                                                class="cursor-pointer">
@@ -518,10 +518,8 @@
                                                <path stroke-linecap="round" stroke-linejoin="round"
                                                    d="m8.25 7.5.415-.207a.75.75 0 0 1 1.085.67V10.5m0 0h6m-6 0h-1.5m1.5 0v5.438c0 .354.161.697.473.865a3.751 3.751 0 0 0 5.452-2.553c.083-.409-.263-.75-.68-.75h-.745M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                            </svg>
-
-
                                            <p class="text-sm whitespace-nowrap">
-                                               {{ $activeInvoice?->customer && $activeInvoice->customer->balance }}
+                                               {{ $activeInvoice?->customer ? $activeInvoice->customer->balance : 0.0 }}
                                            </p>
                                            {{-- <button wire:click="getCustomerBal({{ $activeInvoice?->customer && $activeInvoice?->customer_id }})"
                                                class="cursor-pointer">
@@ -685,9 +683,10 @@
                                                {{ $activeInvoice->total }}</td>
                                        </tr>
 
-                                       <tr class="*:text-gray-900 *:first:font-medium cursor-pointer hover:text-gray-900 !important hover:bg-emerald-200!">
+                                       <tr x-data="{ discountOpen: @entangle('discountOpen') }" wire:click="openDiscount('open')"
+                                           class="relative *:text-gray-900 *:first:font-medium cursor-pointer hover:text-gray-900 !important hover:bg-emerald-200!">
                                            <th class="px-3 py-2 text-start whitespace-nowrap flex">Discount
-                                            <span class="ml-1">
+                                               <span class="ml-1">
                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                                                        class="size-4">
@@ -696,9 +695,49 @@
                                                    </svg>
                                                </span>
                                            </th>
-                                           <td class="px-3 py-2 text-end whitespace-nowrap">
-                                               {{ $activeInvoice->discount }}</td>
+                                           <td class="px-3 py-2 text-end whitespace-nowrap relative">
+                                               {{ $activeInvoice->discount }}
+                                               <div x-show="discountOpen" x-cloak @click.stop
+                                                   class="absolute px-2 py-1 end-0 top-[10px] z-auto w-56 overflow-hidden rounded border border-gray-300 bg-white shadow-sm flex items-center gap-2">
+                                                   <input wire:model="discountAmount"
+                                                       class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
+                                                       id="discount" type="text" placeholder="0.00" />
+                                                   <span wire:click="openDiscount('close')">
+                                                       <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                           viewBox="0 0 24 24" stroke-width="1.5"
+                                                           stroke="currentColor"
+                                                           class="size-6 text-emerald-600 hover:text-emerald-500 cursor-pointer">
+                                                           <path stroke-linecap="round" stroke-linejoin="round"
+                                                               d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                       </svg>
+
+                                                   </span>
+                                               </div>
+                                           </td>
+
                                        </tr>
+
+
+                                       <tr class="*:text-gray-900 *:first:font-medium bg-gray-300! rounded-lg">
+
+                                           <th class="px-3 py-2 text-start whitespace-nowrap ">Grand Total
+
+                                           </th>
+                                           <td class="px-3 py-2 text-end whitespace-nowrap font-semibold">
+                                               {{ $activeInvoice->grand_total }}</td>
+                                       </tr>
+                                       <tr class="*:text-gray-900 *:first:font-medium ">
+
+                                           <th
+                                               class="px-3 py-2 text-start whitespace-nowrap text-red-500! font-semibold">
+                                               Previous Due
+                                           </th>
+                                           <td
+                                               class="px-3 py-2 text-end whitespace-nowrap text-red-500! font-semibold">
+                                               {{ $activeInvoice->previous_due }}</td>
+                                       </tr>
+
+
                                        <tr class="*:text-gray-900 *:first:font-medium">
                                            <th class="px-3 py-2 text-start whitespace-nowrap">Paid</th>
                                            <td class="px-3 py-2 text-end whitespace-nowrap">
@@ -717,6 +756,7 @@
                            <div>
                                <hr class="my-4">
                                <div class="flex items-center justify-between gap-2">
+
                                    <button type="button" wire:click="confirmModalOpenAction"
                                        class="flex-1 cursor-pointer bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Confirm
                                        Payment</button>
@@ -741,20 +781,20 @@
                                        <div role="menu" x-show="MenuOpen"
                                            class="absolute end-0 bottom-full z-auto w-56 overflow-hidden rounded border border-gray-300 bg-white shadow-sm"
                                            x-transition:enter="transition ease-out duration-200">
-                                           @can('invoice.view')
+                                           {{-- @can('invoice.view')
                                                <button type="button"
                                                    class="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                                                    role="menuitem">
                                                    View
                                                </button>
-                                           @endcan
-                                           @can('invoice.edit')
+                                           @endcan --}}
+                                           {{-- @can('invoice.edit')
                                                <button
                                                    class="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                                                    role="menuitem">
                                                    Edit
                                                </button>
-                                           @endcan
+                                           @endcan --}}
 
                                            <a href="{{ route('company.invoice.download', $activeInvoice->id) }}"
                                                class="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
@@ -845,20 +885,9 @@
                                                        </svg>
 
                                                        <p class="text-sm whitespace-nowrap">
-                                                           {{ $customeritem && $customeritem->balance }}
+                                                           {{ $customeritem->balance }}
                                                        </p>
-                                                       <button
-                                                           wire:click="getCustomerBal({{ $customeritem && $customeritem->id }})"
-                                                           class="cursor-pointer">
-                                                           <svg xmlns="http://www.w3.org/2000/svg"
-                                                               class="size-4 mr-1 ml-2" fill="none"
-                                                               viewBox="0 0 24 24" stroke-width="1.5"
-                                                               stroke="currentColor">
-                                                               <path stroke-linecap="round" stroke-linejoin="round"
-                                                                   d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                                           </svg>
 
-                                                       </button>
                                                    </span>
                                                @elseif($customeritem && $customeritem->balance < 0)
                                                    <span
@@ -873,20 +902,10 @@
 
 
                                                        <p class="text-sm whitespace-nowrap">
-                                                           {{ $customeritem && $customeritem->balance }}
-                                                       </p>
-                                                       <button
-                                                           wire:click="getCustomerBal({{ $customeritem && $customeritem->id }})"
-                                                           class="cursor-pointer">
-                                                           <svg xmlns="http://www.w3.org/2000/svg"
-                                                               class="size-4 mr-1 ml-2" fill="none"
-                                                               viewBox="0 0 24 24" stroke-width="1.5"
-                                                               stroke="currentColor">
-                                                               <path stroke-linecap="round" stroke-linejoin="round"
-                                                                   d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                                           </svg>
+                                                           {{ $customeritem->balance }}
 
-                                                       </button>
+                                                       </p>
+
                                                    </span>
                                                @endif
 
@@ -1042,6 +1061,62 @@
                                    @endif
                                </div>
                            </div>
+                       @elseif (is_null($activeInvoice?->customer))
+                           <div>
+                               <div role="alert"
+                                   class="rounded-md border border-red-500 bg-red-50 p-4 shadow-sm">
+                                   <div class="flex items-start gap-4">
+
+                                       <div class="flex-1 text-center">
+                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-mt-0.5 mx-auto  size-6 text-red-700">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"></path>
+    </svg>
+
+
+
+                                           <strong class="block leading-tight font-medium text-red-800"> Invoice
+                                               Customer No Selected
+                                           </strong>
+
+
+                                           <p class="mt-0.5 text-sm text-red-700">
+                                               Please select a customer for the invoice.
+                                           </p>
+
+                                       </div>
+
+                                   </div>
+                               </div>
+
+                           </div>
+
+                       @elseif ($isStockOut)
+                           <div>
+                               <div role="alert"
+                                   class="rounded-md border border-red-500 bg-red-50 p-4 shadow-sm">
+                                   <div class="flex items-start gap-4">
+
+                                       <div class="flex-1 text-center">
+                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-mt-0.5 mx-auto  size-6 text-red-700">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"></path>
+    </svg>
+
+
+
+                                           <strong class="block leading-tight font-medium text-red-800"> Stock Out Alert
+                                           </strong>
+
+
+                                           <p class="mt-0.5 text-sm text-red-700">
+                                               Please verify the product stock levels in your cart.
+                                           </p>
+
+                                       </div>
+
+                                   </div>
+                               </div>
+
+                           </div>
                        @else
                            <form x-data="{
                                radio: @entangle('radio'),
@@ -1103,44 +1178,3 @@
            </div>
        </div>
        {{-- =========================== Page Layout End Here ============================ --}}
-
-       @push('scripts')
-           <script>
-               document.addEventListener('livewire:init', function() {
-                   let splide;
-
-                   const initSplide = () => {
-                       // If already exists, destroy it first to prevent memory leaks
-                       if (splide) splide.destroy();
-
-                       const el = document.querySelector('#image-carousel');
-                       if (el) {
-                           splide = new Splide('#image-carousel', {
-                               perPage: 2,
-                               gap: '0.7rem',
-                               pagination: false,
-                               arrows: true,
-                               // Link custom arrows
-                               classes: {
-                                   arrows: 'splide__arrows your-class-arrows',
-                                   arrow: 'splide__arrow your-class-arrow',
-                                   prev: 'splide__arrow--prev !-left-5',
-                                   {{-- Tailwind: Move left --}}
-                                   next: 'splide__arrow--next !-right-5',
-                                   {{-- Tailwind: Move right --}}
-                               },
-                           }).mount();
-                       }
-                   };
-
-                   // Initial Load
-                   initSplide();
-
-                   // Re-init after EVERY Livewire update (Add to cart, qty change, etc.)
-                   addEventListener('livewire:refresh-sales-point', () => {
-                       console.log('refresh');
-                       initSplide();
-                   });
-               });
-           </script>
-       @endpush

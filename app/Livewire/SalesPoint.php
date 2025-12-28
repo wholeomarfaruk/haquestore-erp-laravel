@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Enums\Invoice\PaymentStatus;
 use App\Enums\Invoice\Status;
+use App\Enums\Product\StockStatus;
 use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
@@ -28,7 +29,7 @@ class SalesPoint extends Component
     public $radio = 'full_paid';
     public $paymentMethod = 'cash';
     public $settledinvoiceId;
-
+    public $isStockOut = false;
     // Add query string to preserve state
     protected $queryString = ['activeInvoiceId'];
 
@@ -38,7 +39,8 @@ class SalesPoint extends Component
 
     public float $paidAmount = 0;
     public float $invoiceAmount = 0; // example
-
+    public float $discountAmount = 0; // $discountAmount
+    public $discountOpen = false;
 
 
     public function mount()
@@ -82,6 +84,7 @@ class SalesPoint extends Component
     public function paymentAction()
     {
         // validate & save
+
         if ($this->radio == 'partial_paid') {
 
             if ($this->paidAmount < $this->invoiceAmount) {
@@ -89,6 +92,7 @@ class SalesPoint extends Component
                 $this->activeInvoice->status = Status::DUE->value;
                 $this->activeInvoice->payment_status = PaymentStatus::PARTIAL->value;
                 $this->activeInvoice->paid_amount = $this->paidAmount;
+                $this->activeInvoice->due_amount -= floatval($this->paidAmount);
 
                 $this->activeInvoice->save();
 
@@ -97,23 +101,53 @@ class SalesPoint extends Component
                 $this->activeInvoice->status = Status::COMPLETED->value;
                 $this->activeInvoice->payment_status = PaymentStatus::PAID->value;
                 $this->activeInvoice->paid_amount = $this->paidAmount;
+                $this->activeInvoice->due_amount -= floatval($this->paidAmount);
+
                 $this->activeInvoice->save();
             }
         } elseif ($this->radio == 'full_paid') {
             $this->activeInvoice->status = Status::COMPLETED->value;
             $this->activeInvoice->payment_status = PaymentStatus::PAID->value;
             $this->activeInvoice->paid_amount = $this->paidAmount;
+            $this->activeInvoice->due_amount -= floatval($this->paidAmount);
+
             $this->activeInvoice->save();
         } elseif ($this->radio == 'full_due') {
             $this->activeInvoice->status = Status::DUE->value;
             $this->activeInvoice->payment_status = PaymentStatus::UNPAID->value;
             $this->activeInvoice->paid_amount = $this->paidAmount;
+            $this->activeInvoice->due_amount -= floatval($this->paidAmount);
+
             $this->activeInvoice->save();
         }
-        $this->settledinvoiceId = $this->activeInvoice->id;
-        $this->calculateTotals();
-        $this->loadActiveInvoice();
+        if ($this->activeInvoice->customer_id) {
+            $this->activeInvoice->customer->balance += floatval($this->activeInvoice->paid_amount) - floatval($this->activeInvoice->grand_total);
+            $this->activeInvoice->customer->save();
+        }
+        if ($this->activeInvoice->items->count() > 0) {
+            foreach ($this->activeInvoice->items as $item) {
+                $product = Product::find($item->product_id);
+                $product->stock -= $item->unit_qty;
+                $product->save();
 
+                $usedUnits = (int) ceil($product->stock / $product->value_per_unit);
+                if($usedUnits < $product->unit_value){
+                    $product->unit_value = $usedUnits;
+                $product->save();
+
+                }
+
+
+            }
+        }
+        $this->settledinvoiceId = $this->activeInvoice->id;
+
+
+        $activeInvoice = null;
+        $activeInvoiceId = null;
+        $this->loadActiveInvoice();
+        $this->loadDrafts();
+        $this->activeInvoice->refresh();
         // $this->confirmModalOpen = false;
 
 
@@ -168,8 +202,21 @@ class SalesPoint extends Component
     }
     public function confirmModalOpenAction()
     {
+        foreach ($this->activeInvoice->items as $item) {
+            if (!$this->isStockAvailable($item->product_id)) {
+                $this->isStockOut = true;
+                break;
+            } else {
+                $this->isStockOut = false;
+            }
+
+
+        }
         $this->confirmModalOpen = true;
-        $this->settledinvoiceId=null;
+        $this->settledinvoiceId = null;
+
+        $this->calculateTotals();
+        $this->loadActiveInvoice();
         if ($this->radio == 'full_paid') {
 
             $this->paidAmount = $this->invoiceAmount;
@@ -183,6 +230,24 @@ class SalesPoint extends Component
         if ($this->radio == 'partial_paid') {
 
         }
+
+    }
+    public function openDiscount($action)
+    {
+        if ($action == 'open') {
+            $this->discountOpen = true;
+
+            $this->discountAmount = $this->activeInvoice->discount;
+        }
+        if ($action == 'close') {
+            $this->discountOpen = false;
+            $this->activeInvoice->discount = $this->discountAmount;
+            $this->activeInvoice->save();
+            $this->calculateTotals();
+            $this->activeInvoice->refresh();
+        }
+
+
 
     }
     public function addToCart($productId)
@@ -236,7 +301,8 @@ class SalesPoint extends Component
         // Reset quantity input to 1 after adding
         $this->qtyInput[$productId] = 1;
     }
-    public function newInvoice(){
+    public function newInvoice()
+    {
         $this->activeInvoice = null;
         $nextId = (Invoice::max('id') ?? 0) + 1;
 
@@ -261,13 +327,22 @@ class SalesPoint extends Component
         }
 
         $total = $this->activeInvoice->items()->sum('total');
+        $previous_due = 0;
+        if ($this->activeInvoice->customer_id) {
+
+            if ($this->activeInvoice->customer->balance < 0) {
+                $previous_due = abs($this->activeInvoice->customer->balance);
+            }
+        }
+        // dd($previous_due);
 
         $this->activeInvoice->update([
             'total' => $total,
-            'grand_total' => $total - ($this->activeInvoice->discount_amount ?? 0),
-            'due_amount' => ($total - ($this->activeInvoice->discount_amount ?? 0)) - ($this->activeInvoice->paid_amount ?? 0),
+            'previous_due' => $previous_due,
+            'grand_total' => $total - ($this->activeInvoice->discount ?? 0),
+            'due_amount' => ($total - ($this->activeInvoice->discount ?? 0)) - ($this->activeInvoice->paid_amount ?? 0) + $previous_due,
         ]);
-
+        // dd($this->activeInvoice->previous_due);
         // Refresh the active invoice data
         $this->activeInvoice->refresh();
     }
@@ -368,8 +443,29 @@ class SalesPoint extends Component
             $this->activeInvoice->customer_id = $id;
             $this->activeInvoice->save();
         }
+        $this->calculateTotals();
+        $this->loadActiveInvoice();
+
         $this->customer = Customer::find($id);
         $this->selectCustomerModal = false;
+    }
+    public function isStockAvailable($id)
+    {
+        $product = Product::where('id', $id)->where('stock_status', StockStatus::IN_STOCK->value)->first();
+        $item = $this->activeInvoice->items()->where('product_id', $id)->first();
+        if (!$product) {
+            return false;
+        }
+        if ($product->unit_value <= 0) {
+            return false;
+        }
+        if ($product->stock <= 0) {
+            return false;
+        }
+        if ($product->stock < $item->unit_qty) {
+            return false;
+        }
+        return true;
     }
 
     public function render()

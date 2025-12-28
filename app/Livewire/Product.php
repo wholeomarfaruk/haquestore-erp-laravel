@@ -70,6 +70,8 @@ class Product extends Component
             $product->value_per_unit = $this->newKgPerUnit;
             $product->unit_name = $this->newPunit;
             $product->stock_status = $this->newPStockStatus;
+            $product->stock=floatval($product->unit_value) * floatval($product->value_per_unit);
+            
             if ($this->newPDescription) {
 
                 $product->description = $this->newPDescription;
@@ -159,6 +161,7 @@ class Product extends Component
             $product->stock_status = $this->editProductStockStatus;
             $product->description = $this->editProductDescription;
             $product->value_per_unit = $this->editKgPerUnit;
+            $product->stock=floatval($product->unit_value) * floatval($product->value_per_unit);
             if ($this->editProductImage) {
                 if (is_file('storage/' . $product->image)) {
 

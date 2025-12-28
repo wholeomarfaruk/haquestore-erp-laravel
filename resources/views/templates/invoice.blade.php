@@ -164,6 +164,19 @@
             <td>Tk {{ number_format($invoice->total, 2) }}</td>
         </tr>
         <tr>
+            <td>Discount</td>
+            <td>Tk {{ number_format($invoice->discount, 2) }}</td>
+        </tr>
+        <tr style="background:#f5f5f5">
+            <td>Grand Total</td>
+            <td>Tk {{ number_format($invoice->grand_total, 2) }}</td>
+        </tr>
+        <tr>
+            <td>Previous Due</td>
+            <td>Tk {{ number_format($invoice->previous_due, 2) }}</td>
+        </tr>
+
+        <tr>
             <td>Paid Amount</td>
             <td>Tk {{ number_format($invoice->paid_amount, 2) }}</td>
         </tr>

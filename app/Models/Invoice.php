@@ -24,6 +24,7 @@ class Invoice extends Model
         'payment_status',
         'note',
         'json_data',
+        'previous_due',
     ];
 
     // Define relationship with InvoiceItem model
