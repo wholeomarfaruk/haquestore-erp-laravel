@@ -10,4 +10,5 @@ enum PaymentMethod:string
     case BKASH = 'bkash';
     case NAGAD = 'nagad';
     case ROCKET = 'rocket';
+    case BALANCE = 'balance';
 }

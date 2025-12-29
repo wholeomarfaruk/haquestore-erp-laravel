@@ -15,6 +15,9 @@ class Transection extends Model
         'customer_id',
         'before_balance',
         'after_balance',
+        'user_id',
+        'invoice_id',
+        'payment_method',
     ];
 
 

@@ -40,5 +40,9 @@ class Invoice extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function transections()
+    {
+        return $this->hasMany(Transection::class);
+    }
 
 }

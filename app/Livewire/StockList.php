@@ -37,9 +37,11 @@ class StockList extends Component
     {
         //  dd($this->editProductImage);
         try {
+
             if (!$this->editProductId) {
                 return abort(404);
             }
+            
             $this->validate([
                 // 'editProductName' => 'required|min:3',
                 'editProductSalePrice' => 'required',

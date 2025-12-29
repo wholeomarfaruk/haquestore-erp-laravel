@@ -41,6 +41,7 @@ class SalesPoint extends Component
     public float $invoiceAmount = 0; // example
     public float $discountAmount = 0; // $discountAmount
     public $discountOpen = false;
+    public $checkBalance = false;
 
 
     public function mount()
@@ -81,34 +82,45 @@ class SalesPoint extends Component
         }
     }
     public function updatedQtyInput($value, $key)
-{
-    $this->qtyInput[$key] = $value;
-     $this->syncCartQuantity($key);
+    {
+        $this->qtyInput[$key] = $value;
+        $this->syncCartQuantity($key);
 
-}
-protected function rules()
-{
-    return [
-        'paidAmount' => 'required|numeric|min:0|max:' . $this->invoiceAmount,
-    ];
-}
+    }
+    protected function rules()
+    {
+        return [
+            'paidAmount' => 'required|numeric|min:0|max:' . $this->invoiceAmount,
+        ];
+    }
 
-public function updatedPaidAmount()
-{
-    $this->validateOnly('paidAmount');
-}
+    public function updatedPaidAmount()
+    {
+        $this->validateOnly('paidAmount');
+    }
     public function paymentAction()
     {
+        $balance = $this->activeInvoice->customer->balance;
         // validate & save
+        if ($this->paymentMethod == 'balance') { {
 
+                if ($this->paidAmount > $balance) {
+                    $this->confirmModalOpen = true;
+                    $this->checkBalance = true;
+                    return;
+                }
+            }
+        }
         if ($this->radio == 'partial_paid') {
 
             if ($this->paidAmount < $this->invoiceAmount) {
+
 
                 $this->activeInvoice->status = Status::DUE->value;
                 $this->activeInvoice->payment_status = PaymentStatus::PARTIAL->value;
                 $this->activeInvoice->paid_amount = $this->paidAmount;
                 $this->activeInvoice->due_amount -= floatval($this->paidAmount);
+                $this->activeInvoice->payment_method = $this->paymentMethod;
 
                 $this->activeInvoice->save();
 
@@ -118,23 +130,70 @@ public function updatedPaidAmount()
                 $this->activeInvoice->payment_status = PaymentStatus::PAID->value;
                 $this->activeInvoice->paid_amount = $this->paidAmount;
                 $this->activeInvoice->due_amount -= floatval($this->paidAmount);
+                $this->activeInvoice->payment_method = $this->paymentMethod;
 
+                if ($this->paymentMethod == 'balance') {
+                    $this->activeInvoice->customer->balance -= floatval($this->paidAmount);
+                    $this->activeInvoice->customer->save();
+                }
                 $this->activeInvoice->save();
+                $this->activeInvoice->transections()->create([
+                    'amount' => $this->paidAmount,
+                    'before_balance' => $balance,
+                    'after_balance' => $this->activeInvoice->customer->balance,
+                    'payment_method' => $this->paymentMethod,
+                    'invoice_id' => $this->activeInvoice->id,
+                    'customer_id' => $this->activeInvoice->customer_id,
+                    'user_id' => auth()->user()->id,
+                    'status' => 'paid',
+                    'type' => 'credit',
+                ]);
             }
         } elseif ($this->radio == 'full_paid') {
             $this->activeInvoice->status = Status::COMPLETED->value;
             $this->activeInvoice->payment_status = PaymentStatus::PAID->value;
             $this->activeInvoice->paid_amount = $this->paidAmount;
             $this->activeInvoice->due_amount -= floatval($this->paidAmount);
-
+            if ($this->paymentMethod == 'balance') {
+                $this->activeInvoice->customer->balance -= floatval($this->paidAmount);
+                $this->activeInvoice->customer->save();
+            }
             $this->activeInvoice->save();
+            $this->activeInvoice->transections()->create([
+                'amount' => $this->paidAmount,
+                'before_balance' => $balance,
+                'after_balance' => $this->activeInvoice->customer->balance,
+                'payment_method' => $this->paymentMethod,
+                'invoice_id' => $this->activeInvoice->id,
+                'customer_id' => $this->activeInvoice->customer_id,
+                'user_id' => auth()->user()->id,
+                'status' => 'paid',
+                'type' => 'credit',
+            ]);
+
+
+
         } elseif ($this->radio == 'full_due') {
             $this->activeInvoice->status = Status::DUE->value;
             $this->activeInvoice->payment_status = PaymentStatus::UNPAID->value;
             $this->activeInvoice->paid_amount = $this->paidAmount;
             $this->activeInvoice->due_amount -= floatval($this->paidAmount);
-
+            if ($this->paymentMethod == 'balance') {
+                $this->activeInvoice->customer->balance -= floatval($this->paidAmount);
+                $this->activeInvoice->customer->save();
+            }
             $this->activeInvoice->save();
+            $this->activeInvoice->transections()->create([
+                'amount' => $this->paidAmount,
+                'before_balance' => $balance,
+                'after_balance' => $this->activeInvoice->customer->balance,
+                'payment_method' => $this->paymentMethod,
+                'invoice_id' => $this->activeInvoice->id,
+                'customer_id' => $this->activeInvoice->customer_id,
+                'user_id' => auth()->user()->id,
+                'status' => 'paid',
+                'type' => 'credit',
+            ]);
         }
         if ($this->activeInvoice->customer_id) {
             $this->activeInvoice->customer->balance += floatval($this->activeInvoice->paid_amount) - floatval($this->activeInvoice->grand_total);
@@ -147,9 +206,9 @@ public function updatedPaidAmount()
                 $product->save();
 
                 $usedUnits = (int) ceil($product->stock / $product->value_per_unit);
-                if($usedUnits < $product->unit_value){
+                if ($usedUnits < $product->unit_value) {
                     $product->unit_value = $usedUnits;
-                $product->save();
+                    $product->save();
 
                 }
 
@@ -228,8 +287,10 @@ public function updatedPaidAmount()
 
 
         }
+        $this->checkBalance = false;
         $this->confirmModalOpen = true;
         $this->settledinvoiceId = null;
+
 
         $this->calculateTotals();
         $this->loadActiveInvoice();
@@ -391,7 +452,6 @@ public function updatedPaidAmount()
         }
 
     }
-
 
     protected function syncCartQuantity($productId)
     {
