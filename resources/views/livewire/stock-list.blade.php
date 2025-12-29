@@ -122,7 +122,7 @@
 
 
                            <th class="px-3 py-2 whitespace-nowrap">Status</th>
-                           <th class="px-3 py-2 whitespace-nowrap">Sale Price</th>
+                          
                            <th class="px-3 py-2 whitespace-nowrap">Stock</th>
                            <th class="px-3 py-2 whitespace-nowrap text-center">Action</th>
                        </tr>
@@ -195,12 +195,7 @@
                                        @endif
 
                                    </td>
-                                   <td class="px-3 py-2 whitespace-nowrap">
-                                       Tk {{ $product->price }}
-                                       <span class="text-xs text-gray-400">
-                                           Per {{ $product->unit_name }}</span>
-
-                                   </td>
+                                   
                                    <td class="px-3 py-2 whitespace-nowrap">
                                        <span
                                            class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">

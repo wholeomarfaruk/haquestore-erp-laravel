@@ -80,7 +80,23 @@ class SalesPoint extends Component
             $this->paidAmount = 0; // reset, user will type
         }
     }
+    public function updatedQtyInput($value, $key)
+{
+    $this->qtyInput[$key] = $value;
+     $this->syncCartQuantity($key);
 
+}
+protected function rules()
+{
+    return [
+        'paidAmount' => 'required|numeric|min:0|max:' . $this->invoiceAmount,
+    ];
+}
+
+public function updatedPaidAmount()
+{
+    $this->validateOnly('paidAmount');
+}
     public function paymentAction()
     {
         // validate & save
@@ -376,24 +392,6 @@ class SalesPoint extends Component
 
     }
 
-    public function updateQty($productId, $action)
-    {
-        // Ensure the product exists in our input array
-        if (!isset($this->qtyInput[$productId])) {
-            $this->qtyInput[$productId] = 1;
-        }
-
-        if ($action === 'increase') {
-            $this->qtyInput[$productId]++;
-        } else {
-            if ($this->qtyInput[$productId] > 1) {
-                $this->qtyInput[$productId]--;
-            }
-        }
-
-        // If this product is ALREADY in the cart, update the DB immediately
-        $this->syncCartQuantity($productId);
-    }
 
     protected function syncCartQuantity($productId)
     {

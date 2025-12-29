@@ -16,11 +16,9 @@ use App\Livewire\UserList;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('company.pos');
 });
-Route::get('/company', function () {
-    return view('admin.pages.blank');
-});
+
 Route::get('/blank', BlankPage::class)->name('pages.blank');
 
 // Route::middleware([

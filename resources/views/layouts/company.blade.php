@@ -330,30 +330,40 @@
 
             <hr class="border-gray-700 mt-4">
             <!-- Schedules -->
-            <div @click="$store.sidebar.active = 'home' " x-data="tooltip" x-on:mouseover="show = true"
-                x-on:mouseleave="show = false"
-                class=" relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-gray-800 space-x-2 rounded-md p-2 cursor-pointer"
-                x-bind:class="{
-                    'justify-start': $store.sidebar.full,
-                    'sm:justify-center': !$store.sidebar
-                        .full,
-                    'text-gray-200 bg-gray-800': $store.sidebar.active == 'schedules',
-                    'text-gray-400 ': $store
-                        .sidebar.active != 'schedules'
-                }">
-                <div class="flex  items-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    <h1 x-cloak
-                        x-bind:class="!$store.sidebar.full && show ? visibleClass : '' || !$store.sidebar.full && !show ?
-                            'sm:hidden' : ''">
-                        Logout</h1>
-                </div>
+           <div
+    x-data
+    @click="$refs.logoutForm.submit()"
+    x-on:mouseover="show = true"
+    x-on:mouseleave="show = false"
+    class="relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-gray-800 space-x-2 rounded-md p-2 cursor-pointer"
+    x-bind:class="{
+        'justify-start': $store.sidebar.full,
+        'sm:justify-center': !$store.sidebar.full,
+        'text-gray-200 bg-gray-800': $store.sidebar.active == 'logout',
+        'text-gray-400': $store.sidebar.active != 'logout'
+    }"
+>
+    <div class="flex items-center space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
 
-            </div>
+        <span
+            x-cloak
+            x-bind:class="!$store.sidebar.full && show ? visibleClass : (!$store.sidebar.full && !show ? 'sm:hidden' : '')"
+        >
+            Logout
+        </span>
+    </div>
+
+    <!-- Hidden Logout Form -->
+    <form x-ref="logoutForm" action="{{ route('logout') }}" method="POST" class="hidden">
+        @csrf
+    </form>
+</div>
+
             {{-- <div class="text-gray-400 text-sm mt-4" x-bind:class="$store.sidebar.full ? 'text-left' : 'text-center'">
                 &copy; 2024 HexCode IT
             </div> --}}

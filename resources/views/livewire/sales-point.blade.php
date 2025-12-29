@@ -258,11 +258,13 @@
                                                                <label for="Quantity" class="sr-only"> Quantity
                                                                </label>
 
-                                                               <div x-data="qty"
+                                                               <div x-data="{
+                                                                   qty: @entangle('qtyInput.' . $product->id).live
+                                                               }"
                                                                    class="flex items-center rounded-lg border border-gray-200 px-2">
 
 
-                                                                   <button type="button"
+                                                                   <button type="button" @click="if(qty > 1) qty--"
                                                                        {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->unit_value == 0 ? 'disabled' : '' }}
                                                                        class=" text-gray-600  rounded-full text-center transition hover:text-white hover:bg-gray-600 cursor-pointer disabled:bg-gray-200 disabled:text-gray-50 disabled:cursor-not-allowed">
                                                                        <svg xmlns="http://www.w3.org/2000/svg"
@@ -277,12 +279,12 @@
                                                                    </button>
 
                                                                    <input type="number" id="Quantity"
-                                                                       wire:model.defer="qtyInput.{{ $product->id }}"
+                                                                       x-model="qty"
                                                                        {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->unit_value == 0 ? 'disabled' : '' }}
                                                                        value="1"
                                                                        class="h-10 w-8 border-transparent text-center [-moz-appearance:textfield] sm:text-sm [&amp;::-webkit-inner-spin-button]:m-0 [&amp;::-webkit-inner-spin-button]:appearance-none [&amp;::-webkit-outer-spin-button]:m-0 [&amp;::-webkit-outer-spin-button]:appearance-none  disabled:text-gray-50 disabled:cursor-not-allowed">
 
-                                                                   <button type="button"
+                                                                   <button type="button" @click="qty++"
                                                                        {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->unit_value == 0 ? 'disabled' : '' }}
                                                                        class=" text-gray-600  rounded-full text-center transition hover:text-white hover:bg-gray-600 cursor-pointer disabled:bg-gray-200 disabled:text-gray-50 disabled:cursor-not-allowed">
                                                                        <svg xmlns="http://www.w3.org/2000/svg"
@@ -620,40 +622,37 @@
                                                    <div>
                                                        <div class="flex-1">
                                                            {{-- Cart Quantity --}}
-                                                           <div
+                                                           <div x-data="{
+                                                               qty: @entangle('qtyInput.' . $item->product->id).live
+                                                           }"
                                                                class="flex items-center rounded-lg border border-gray-200 px-2">
-                                                               <button type="button"
-                                                                   wire:click="updateQty({{ $item->product->id }}, 'decrease')"
-                                                                   class="text-gray-600 rounded-full text-center transition hover:text-white hover:bg-gray-600 disabled:opacity-50">
+                                                               <!-- Minus -->
+                                                               <button type="button" @click="if(qty > 1) qty--"
+                                                                   class="text-gray-600 rounded-full hover:text-white hover:bg-gray-600">
                                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                                       fill="none" viewBox="0 0 24 24"
-                                                                       stroke-width="1.5" stroke="currentColor"
-                                                                       class="size-4">
+                                                                       class="size-4" fill="none"
+                                                                       viewBox="0 0 24 24" stroke="currentColor">
                                                                        <path stroke-linecap="round"
-                                                                           stroke-linejoin="round"
-                                                                           d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                                           stroke-linejoin="round" d="M15 12H9" />
                                                                    </svg>
                                                                </button>
 
-                                                               <input type="number"
-                                                                   wire:model.live.debounce.500ms="qtyInput.{{ $item->product->id }}"
-                                                                   value="{{ $item->unit_qty }}"
-                                                                   class="h-6 w-14 border-transparent text-center sm:text-sm appearance-none"
-                                                                   min="1">
+                                                               <!-- Input -->
+                                                               <input type="number" x-model="qty" min="1"
+                                                                   class="h-6 w-14 border-transparent text-center sm:text-sm appearance-none" />
 
-                                                               <button type="button"
-                                                                   wire:click="updateQty({{ $item->product->id }}, 'increase')"
-                                                                   class="text-gray-600 rounded-full text-center transition hover:text-white hover:bg-gray-600 disabled:opacity-50">
+                                                               <!-- Plus -->
+                                                               <button type="button" @click="qty++"
+                                                                   class="text-gray-600 rounded-full hover:text-white hover:bg-gray-600">
                                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                                       fill="none" viewBox="0 0 24 24"
-                                                                       stroke-width="1.5" stroke="currentColor"
-                                                                       class="size-4">
+                                                                       class="size-4" fill="none"
+                                                                       viewBox="0 0 24 24" stroke="currentColor">
                                                                        <path stroke-linecap="round"
-                                                                           stroke-linejoin="round"
-                                                                           d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                                           stroke-linejoin="round" d="M12 9v6m3-3H9" />
                                                                    </svg>
                                                                </button>
                                                            </div>
+
                                                        </div>
                                                    </div>
                                                </div>
@@ -731,15 +730,20 @@
                                            <th
                                                class="px-3 py-2 text-start whitespace-nowrap text-red-500! font-semibold">
                                                Previous Due
+                                               <p class="text-xs">
+                                                   {{ $activeInvoice?->customer?->invoices?->first()?->invoice_id }}
+                                               </p>
+
                                            </th>
                                            <td
                                                class="px-3 py-2 text-end whitespace-nowrap text-red-500! font-semibold">
-                                               {{ $activeInvoice->previous_due }}</td>
+                                               {{ $activeInvoice->previous_due }}
+                                           </td>
                                        </tr>
 
 
                                        <tr class="*:text-gray-900 *:first:font-medium">
-                                           <th class="px-3 py-2 text-start whitespace-nowrap">Paid</th>
+                                           <th class="px-3 py-2 text-start whitespace-nowrap">Deposit</th>
                                            <td class="px-3 py-2 text-end whitespace-nowrap">
                                                {{ $activeInvoice->paid_amount }}</td>
                                        </tr>
@@ -1063,14 +1067,17 @@
                            </div>
                        @elseif (is_null($activeInvoice?->customer))
                            <div>
-                               <div role="alert"
-                                   class="rounded-md border border-red-500 bg-red-50 p-4 shadow-sm">
+                               <div role="alert" class="rounded-md border border-red-500 bg-red-50 p-4 shadow-sm">
                                    <div class="flex items-start gap-4">
 
                                        <div class="flex-1 text-center">
-                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-mt-0.5 mx-auto  size-6 text-red-700">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"></path>
-    </svg>
+                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                               stroke-width="1.5" stroke="currentColor"
+                                               class="-mt-0.5 mx-auto  size-6 text-red-700">
+                                               <path stroke-linecap="round" stroke-linejoin="round"
+                                                   d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z">
+                                               </path>
+                                           </svg>
 
 
 
@@ -1089,21 +1096,24 @@
                                </div>
 
                            </div>
-
                        @elseif ($isStockOut)
                            <div>
-                               <div role="alert"
-                                   class="rounded-md border border-red-500 bg-red-50 p-4 shadow-sm">
+                               <div role="alert" class="rounded-md border border-red-500 bg-red-50 p-4 shadow-sm">
                                    <div class="flex items-start gap-4">
 
                                        <div class="flex-1 text-center">
-                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-mt-0.5 mx-auto  size-6 text-red-700">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"></path>
-    </svg>
+                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                               stroke-width="1.5" stroke="currentColor"
+                                               class="-mt-0.5 mx-auto  size-6 text-red-700">
+                                               <path stroke-linecap="round" stroke-linejoin="round"
+                                                   d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z">
+                                               </path>
+                                           </svg>
 
 
 
-                                           <strong class="block leading-tight font-medium text-red-800"> Stock Out Alert
+                                           <strong class="block leading-tight font-medium text-red-800"> Stock Out
+                                               Alert
                                            </strong>
 
 
@@ -1156,14 +1166,30 @@
                                </div>
 
                                <!-- Paid Amount -->
-                               <div class="grid gap-1">
+                               <div x-data="{
+                                   paid: @entangle('paidAmount'),
+                                   max: {{ $invoiceAmount }},
+                                   error: ''
+                               }" class="grid gap-1">
                                    <label class="text-sm font-medium">Paid Amount</label>
 
-                                   <input type="number" wire:model="paidAmount"
+                                   <input type="number" x-model="paid" min="0" :max="max"
+                                       @input="
+            if (paid > max) {
+                paid = max;
+                error = 'Paid amount cannot exceed invoice amount';
+            } else {
+                error = '';
+            }
+        "
                                        :disabled="radio === 'full_paid' || radio === 'full_due'"
-                                       class="w-full rounded-lg border border-gray-300 p-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                       placeholder="Enter paid amount" />
+                                       class="w-full rounded-lg border border-gray-300 p-2
+               disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                       placeholder="Enter paid amount">
+
+                                   <span x-show="error" x-text="error" class="text-sm text-red-600"></span>
                                </div>
+
 
                                <!-- Submit -->
                                <button type="submit"

@@ -94,6 +94,9 @@
             font-size: 11px;
             color: #777;
         }
+        .text-xs {
+            font-size: 10px;
+        }
     </style>
 </head>
 
@@ -172,12 +175,16 @@
             <td>Tk {{ number_format($invoice->grand_total, 2) }}</td>
         </tr>
         <tr>
-            <td>Previous Due</td>
+            <td>
+                Previous Due
+                <p class="text-xs">{{ $invoice?->customer?->invoices?->first()?->invoice_id }}</p>
+
+            </td>
             <td>Tk {{ number_format($invoice->previous_due, 2) }}</td>
         </tr>
 
         <tr>
-            <td>Paid Amount</td>
+            <td>Deposit Amount</td>
             <td>Tk {{ number_format($invoice->paid_amount, 2) }}</td>
         </tr>
         <tr>

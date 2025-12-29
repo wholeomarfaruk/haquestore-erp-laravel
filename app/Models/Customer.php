@@ -19,4 +19,9 @@ class Customer extends Model
         'note',
         'json_data',
     ];
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
 }
