@@ -120,9 +120,18 @@ class SalesPoint extends Component
                 $this->activeInvoice->payment_status = PaymentStatus::PARTIAL->value;
                 $this->activeInvoice->paid_amount = $this->paidAmount;
                 $this->activeInvoice->due_amount -= floatval($this->paidAmount);
-                $this->activeInvoice->payment_method = $this->paymentMethod;
-
                 $this->activeInvoice->save();
+                $this->activeInvoice->transections()->create([
+                    'amount' => $this->paidAmount,
+                    'before_balance' => $balance,
+                    'after_balance' => $this->activeInvoice->customer->balance,
+                    'payment_method' => $this->paymentMethod,
+                    'invoice_id' => $this->activeInvoice->id,
+                    'customer_id' => $this->activeInvoice->customer_id,
+                    'user_id' => auth()->user()->id,
+                    'status' => PaymentStatus::PARTIAL->value,
+                    'type' => 'credit',
+                ]);
 
 
             } elseif ($this->paidAmount == $this->invoiceAmount) {
@@ -183,17 +192,7 @@ class SalesPoint extends Component
                 $this->activeInvoice->customer->save();
             }
             $this->activeInvoice->save();
-            $this->activeInvoice->transections()->create([
-                'amount' => $this->paidAmount,
-                'before_balance' => $balance,
-                'after_balance' => $this->activeInvoice->customer->balance,
-                'payment_method' => $this->paymentMethod,
-                'invoice_id' => $this->activeInvoice->id,
-                'customer_id' => $this->activeInvoice->customer_id,
-                'user_id' => auth()->user()->id,
-                'status' => 'paid',
-                'type' => 'credit',
-            ]);
+           
         }
         if ($this->activeInvoice->customer_id) {
             $this->activeInvoice->customer->balance += floatval($this->activeInvoice->paid_amount) - floatval($this->activeInvoice->grand_total);
