@@ -386,7 +386,7 @@
                        <div class="flex justify-between items-end gap-2 my-2">
 
                            <div class="flex justify-start ">
-                               <button  type="button" @if ($activeInvoice && $activeInvoice['status'] == \App\Enums\Invoice\STATUS::COMPLETED->value) disabled @else wire:click="selectCustomerModal=true" @endif
+                               <button  type="button" @if ($activeInvoice && $activeInvoice['status'] == \App\Enums\Invoice\Status::COMPLETED->value) disabled @else wire:click="selectCustomerModal=true" @endif
                                    class="flex items-center gap-2  pb-1 text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 cursor-pointer rounded border border-gray-300 px-4 py-2 disabled:bg-gray-300 disabled:text-gray-400  disabled:cursor-not-allowed">
                                    <span class="text-sm font-medium"> Add Customer</span>
                                </button>
@@ -405,7 +405,7 @@
                        <hr>
                        {{-- customer info --}}
                        @if ($activeInvoice && $customer)
-                           <div @if ($activeInvoice && $activeInvoice['status'] == \App\Enums\Invoice\STATUS::COMPLETED->value) disabled @else wire:click="selectCustomerModal=true" @endif
+                           <div @if ($activeInvoice && $activeInvoice['status'] == \App\Enums\Invoice\Status::COMPLETED->value) disabled @else wire:click="selectCustomerModal=true" @endif
                                class="flex gap-2 my-2 rounded-lg border border-gray-200 p-2 cursor-pointer  disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
                                <div>
                                    <img class="w-12 h-12 rounded-full border border-gray-200"
