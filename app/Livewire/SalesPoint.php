@@ -390,7 +390,7 @@ class SalesPoint extends Component
             $items[$item->product_id]['unit_name'] = $item->unit_name;
             $items[$item->product_id]['quantity'] = $item->unit_qty;
             $items[$item->product_id]['total'] = $item->total;
-            $items[$item->product_id]['image'] = $item->product->product_image;
+            $items[$item->product_id]['image'] = $item?->product?->product_image;
 
         }
 
