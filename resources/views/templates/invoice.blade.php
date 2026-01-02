@@ -177,7 +177,7 @@
         <tr>
             <td>
                 Previous Due
-                <p class="text-xs">{{ $invoice?->customer?->invoices?->first()?->invoice_id }}</p>
+                <p class="text-xs">{{ $invoice?->previous_invoice_id }}</p>
 
             </td>
             <td>Tk {{ number_format($invoice->previous_due, 2) }}</td>

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\Invoice\DeliveryStatus;
 use App\Enums\Invoice\PaymentStatus;
 use App\Enums\Invoice\Status;
 use App\Enums\Product\StockStatus;
@@ -9,13 +10,15 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Product;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class SalesPoint extends Component
 {
     public $products;
     public $search = '';
-    public $activeInvoice;
+
     public $qtyInput = [];
     public $customerSearch = '';
     public $customers, $customer;
@@ -30,6 +33,8 @@ class SalesPoint extends Component
     public $paymentMethod = 'cash';
     public $settledinvoiceId;
     public $isStockOut = false;
+    public $activeInvoice = [];
+
     // Add query string to preserve state
     protected $queryString = ['activeInvoiceId'];
 
@@ -46,7 +51,12 @@ class SalesPoint extends Component
 
     public function mount()
     {
-        $this->loadActiveInvoice();
+        // $this->makeInvoice();
+        if ($this->activeInvoiceId) {
+            $this->synceInvoice($this->activeInvoiceId);
+        } else {
+            $this->makeInvoice();
+        }
 
         // 1. Start with EVERY product set to 1 by default
         $this->qtyInput = Product::pluck('id')
@@ -54,14 +64,17 @@ class SalesPoint extends Component
             ->toArray();
 
         // 2. If there's an active invoice, OVERRIDE only the quantities for products in the cart
-        if ($this->activeInvoice) {
-            foreach ($this->activeInvoice->items as $item) {
+        if ($this->activeInvoice && count($this->activeInvoice['items']) > 0) {
+            foreach ($this->activeInvoice['items'] as $item) {
                 // This ensures if Product #5 has 10 in the cart, the input shows 10
-                $this->qtyInput[$item->product_id] = $item->unit_qty;
+                $this->qtyInput[$item['id']] = $item['quantity'] ?? 1;
             }
         }
         $this->customers = Customer::orderBy('id', 'DESC')->get();
-        $this->loadDrafts();
+        if ($this->activeInvoiceId) {
+            $this->synceInvoice($this->activeInvoiceId);
+        }
+
     }
     public function updatedRadio($value)
     {
@@ -97,10 +110,24 @@ class SalesPoint extends Component
     public function updatedPaidAmount()
     {
         $this->validateOnly('paidAmount');
+        if ($this->paidAmount > $this->invoiceAmount) {
+            $this->paidAmount = $this->invoiceAmount;
+            $this->addError('paidAmount', 'Paid amount cannot be greater than invoice amount');
+        }
     }
     public function paymentAction()
     {
-        $balance = $this->activeInvoice->customer->balance;
+        $paidAmount = (float) $this->paidAmount;
+        $invoiceTotalDue = (float) $this->invoiceAmount;
+        $balance = (float) $this->customer->balance;
+        $paymentMethod = $this->paymentMethod;
+        $invoiceTotal = $this->activeInvoice['total'];
+        $invoiceDiscount = $this->activeInvoice['discount'];
+        $invoiceGrandTotal = $this->activeInvoice['grand_total'];
+        $draftDueAmount = 0;
+
+        // logger('paid amount '.$paidAmount."\n InvoiceTotal Due:".$invoiceTotalDue."\n balance: ". $balance."\n paymentMethod: ". $paymentMethod."\n invoiceTotal: ". $invoiceTotal."\n invoiceDiscount: ". $invoiceDiscount."\n invoiceGrandTotal: ". $invoiceGrandTotal);
+        // return ;
         // validate & save
         if ($this->paymentMethod == 'balance') { {
 
@@ -111,156 +138,359 @@ class SalesPoint extends Component
                 }
             }
         }
-        if ($this->radio == 'partial_paid') {
 
-            if ($this->paidAmount < $this->invoiceAmount) {
+        if ($this->radio == 'full_paid') {
+
+            $calculatedDue = $invoiceTotalDue - $paidAmount;
+            $balanceCalculated = $balance - $paidAmount + floatval($this->activeInvoice['paid_amount']);
+            $status = ($calculatedDue == 0) ? Status::COMPLETED : Status::DUE;
+            $paymentstatus = ($calculatedDue == 0) ? PaymentStatus::PAID : PaymentStatus::PARTIAL;
+            $this->activeInvoice['status'] = $status->value;
+            $this->activeInvoice['payment_status'] = $paymentstatus->value;
+            $this->activeInvoice['paid_amount'] = $paidAmount + floatval($this->activeInvoice['paid_amount']);
+            $this->activeInvoice['due_amount'] = $calculatedDue;
+            $this->activeInvoice['customer']['balance'] = $calculatedDue;
+            // dd($this->activeInvoice);
+            // return;
+
+        } elseif ($this->radio == 'full_due') {
+            if ($this->activeInvoice['paid_amount'] > 0) {
+                $this->activeInvoice['customer']['balance'] -= floatval($this->activeInvoice['paid_amount']);
+                $draftDueAmount = $invoiceTotalDue + floatval($this->activeInvoice['paid_amount']);
+            } else {
+                $draftDueAmount = $invoiceTotalDue;
+            }
+            $this->activeInvoice['status'] = Status::DUE->value;
+            $this->activeInvoice['payment_status'] = PaymentStatus::UNPAID->value;
+            $this->activeInvoice['paid_amount'] = 0;
+            $this->activeInvoice['due_amount'] = $draftDueAmount;
+            $this->activeInvoice['customer']['balance'] -= $invoiceGrandTotal;
 
 
-                $this->activeInvoice->status = Status::DUE->value;
-                $this->activeInvoice->payment_status = PaymentStatus::PARTIAL->value;
-                $this->activeInvoice->paid_amount = $this->paidAmount;
-                $this->activeInvoice->due_amount -= floatval($this->paidAmount);
-                $this->activeInvoice->save();
-                $this->activeInvoice->transections()->create([
-                    'amount' => $this->paidAmount,
-                    'before_balance' => $balance,
-                    'after_balance' => $this->activeInvoice->customer->balance,
-                    'payment_method' => $this->paymentMethod,
-                    'invoice_id' => $this->activeInvoice->id,
-                    'customer_id' => $this->activeInvoice->customer_id,
-                    'user_id' => auth()->user()->id,
-                    'status' => PaymentStatus::PARTIAL->value,
-                    'type' => 'credit',
+        } elseif ($this->radio == 'partial_paid') {
+
+            $calculatedDue = $invoiceTotalDue - $paidAmount;
+            $balanceCalculated = $balance - $paidAmount;
+            $status = ($calculatedDue == 0) ? Status::COMPLETED : Status::DUE;
+            $paymentstatus = ($calculatedDue == 0) ? PaymentStatus::PAID : PaymentStatus::PARTIAL;
+            $this->activeInvoice['status'] = $status->value;
+            $this->activeInvoice['payment_status'] = $paymentstatus->value;
+            $this->activeInvoice['paid_amount'] = $paidAmount + floatval($this->activeInvoice['paid_amount']);
+            $this->activeInvoice['due_amount'] = $calculatedDue;
+            $this->activeInvoice['customer']['balance'] = $balanceCalculated;
+            // dd($balanceCalculated);
+            // return;
+
+        }
+        // if ($this->radio == 'full_due') {
+
+        //     //full due
+        //     $this->activeInvoice['status'] = Status::DUE->value;
+        //     $this->activeInvoice['payment_status'] = PaymentStatus::UNPAID->value;
+        //     $this->activeInvoice['paid_amount'] = $this->paidAmount;
+        //     $this->activeInvoice['due_amount'] -= floatval($this->paidAmount);
+        //     $this->activeInvoice['customer']['balance'] -= floatval($this->paidAmount);
+
+
+        // } elseif ($this->radio == 'partial_paid') {
+
+        //     if ($this->paidAmount < $this->invoiceAmount) {
+
+
+        //         $this->activeInvoice['status'] = Status::DUE->value;
+        //         $this->activeInvoice['payment_status'] = PaymentStatus::PARTIAL->value;
+        //         $this->activeInvoice['paid_amount'] = $this->paidAmount;
+        //         $this->activeInvoice['due_amount'] -= floatval($this->paidAmount);
+        //         $this->activeInvoice['customer']['balance'] -= floatval($this->paidAmount);
+
+
+
+
+        //     } elseif ($this->paidAmount == $this->invoiceAmount) {
+        //         $this->activeInvoice['status'] = Status::COMPLETED->value;
+        //         $this->activeInvoice['payment_status'] = PaymentStatus::PAID->value;
+        //         $this->activeInvoice['paid_amount'] = $this->paidAmount;
+        //         $this->activeInvoice['due_amount'] -= floatval($this->paidAmount);
+        //         $this->activeInvoice['customer']['balance'] -= floatval($this->paidAmount);
+
+
+
+        //     }
+        // } elseif ($this->radio == 'full_paid') {
+        //     $this->activeInvoice['status'] = Status::COMPLETED->value;
+        //     $this->activeInvoice['payment_status'] = PaymentStatus::PAID->value;
+        //     $this->activeInvoice['paid_amount'] = $this->paidAmount;
+        //     $this->activeInvoice['due_amount'] -= floatval($this->paidAmount);
+        //     if ($this->paymentMethod == 'balance' && $this->activeInvoice['customer']['balance'] > 0) {
+
+        //         $this->activeInvoice['customer']['balance'] -= floatval($this->paidAmount);
+        //     } elseif ($balance > $this->paidAmount) {
+        //         $this->activeInvoice['customer']['balance'] += floatval($this->paidAmount);
+        //     }
+
+        // }
+
+
+        // if ($this->activeInvoice['customer_id']) {
+        //     $this->customer->balance = $this->activeInvoice['customer']['balance'];
+        //     $this->customer->save();
+        // }
+
+
+
+        $this->createInvoiceOrUpdate($this->activeInvoice);
+        $this->activeInvoiceId = $this->activeInvoice['id'];
+
+        // $this->confirmModalOpen = false;
+
+    }
+    public function createInvoiceOrUpdate($invoice)
+    {
+
+
+        if (!$invoice) {
+            return false;
+        }
+        //create invoice
+        $invoiceId = Invoice::max('id') + 1;
+        $invoice_id = 'INV-' . str_pad($invoiceId, 6, '0', STR_PAD_LEFT);
+        $oldInvoice = Invoice::find($invoice['id']);
+        if ($oldInvoice) {
+
+            $oldInvoice->update([
+                'user_id' => auth()->user()->id,
+                'status' => $invoice['status'] ?? Status::COMPLETED->value,
+                'payment_status' => $invoice['payment_status'] ?? PaymentStatus::UNPAID->value,
+                'delivery_status' => $invoice['delivery_status'] ?? DeliveryStatus::PENDING->value,
+                'total' => $invoice['total'] ?? 0.00,
+                'discount' => $invoice['discount'] ?? 0.00,
+                'due_amount' => $invoice['due_amount'] ?? 0.00,
+                'grand_total' => $invoice['grand_total'] ?? 0.00,
+                'paid_amount' => $invoice['paid_amount'] ?? 0.00,
+                'invoice_id' => $invoice_id,
+                'previous_due' => $invoice['previous_due'] ?? 0.00,
+                'previous_invoice_id' => $invoice['previous_invoice_id']
+            ]);
+
+        } else {
+
+            $newInvoice = Invoice::create([
+                'customer_id' => $invoice['customer_id'] ?? null,
+                'user_id' => auth()->user()->id,
+                'status' => $invoice['status'] ?? Status::COMPLETED->value,
+                'payment_status' => $invoice['payment_status'] ?? PaymentStatus::UNPAID->value,
+                'delivery_status' => $invoice['delivery_status'] ?? DeliveryStatus::PENDING->value,
+                'total' => $invoice['total'] ?? 0.00,
+                'discount' => $invoice['discount'] ?? 0.00,
+                'due_amount' => $invoice['due_amount'] ?? 0.00,
+                'grand_total' => $invoice['grand_total'] ?? 0.00,
+                'paid_amount' => $invoice['paid_amount'] ?? 0.00,
+                'invoice_id' => $invoice_id,
+                'previous_due' => $invoice['previous_due'] ?? 0.00,
+                'previous_invoice_id' => $invoice['previous_invoice_id']
+            ]);
+
+        }
+
+
+        if (isset($invoice['items']) && count($invoice['items']) > 0 && !$oldInvoice) {
+            foreach ($invoice['items'] as $item) {
+                $newInvoice->items()->create([
+                    'product_id' => $item['id'],
+                    'invoice_id' => $invoice_id,
+                    'product_name' => $item['name'],
+                    'unit_name' => $item['unit_name'],
+                    'unit_qty' => $item['quantity'],
+                    'regular_price' => $item['price'],
+                    'total' => $item['total'],
                 ]);
 
-
-            } elseif ($this->paidAmount == $this->invoiceAmount) {
-                $this->activeInvoice->status = Status::COMPLETED->value;
-                $this->activeInvoice->payment_status = PaymentStatus::PAID->value;
-                $this->activeInvoice->paid_amount = $this->paidAmount;
-                $this->activeInvoice->due_amount -= floatval($this->paidAmount);
-                $this->activeInvoice->payment_method = $this->paymentMethod;
-
-                if ($this->paymentMethod == 'balance') {
-                    $this->activeInvoice->customer->balance -= floatval($this->paidAmount);
-                    $this->activeInvoice->customer->save();
-                }
-                $this->activeInvoice->save();
-                $this->activeInvoice->transections()->create([
-                    'amount' => $this->paidAmount,
-                    'before_balance' => $balance,
-                    'after_balance' => $this->activeInvoice->customer->balance,
-                    'payment_method' => $this->paymentMethod,
-                    'invoice_id' => $this->activeInvoice->id,
-                    'customer_id' => $this->activeInvoice->customer_id,
-                    'user_id' => auth()->user()->id,
-                    'status' => 'paid',
-                    'type' => 'credit',
-                ]);
             }
-        } elseif ($this->radio == 'full_paid') {
-            $this->activeInvoice->status = Status::COMPLETED->value;
-            $this->activeInvoice->payment_status = PaymentStatus::PAID->value;
-            $this->activeInvoice->paid_amount = $this->paidAmount;
-            $this->activeInvoice->due_amount -= floatval($this->paidAmount);
-            if ($this->paymentMethod == 'balance') {
-                $this->activeInvoice->customer->balance -= floatval($this->paidAmount);
-                $this->activeInvoice->customer->save();
+            $this->stockUpdate($newInvoice->id, 'subtract');
+        } elseif (isset($invoice['items']) && count($invoice['items']) > 0 && $oldInvoice) {
+            $invoiceItems = [];
+            foreach ($invoice['items'] as $item) {
+                $invoiceItems[$item['id']] = [
+                    'product_id' => $item['id'],
+                    'invoice_id' => $invoice_id,
+                    'product_name' => $item['name'],
+                    'unit_name' => $item['unit_name'],
+                    'unit_qty' => $item['quantity'],
+                    'regular_price' => $item['price'],
+                    'total' => $item['total'],
+                ];
             }
-            $this->activeInvoice->save();
-            $this->activeInvoice->transections()->create([
+            $this->stockUpdate($oldInvoice->id, 'restore');
+            $oldInvoice->items()->delete();
+
+            $oldInvoice->items()->createMany($invoiceItems);
+            $this->stockUpdate($oldInvoice->id, 'subtract');
+        }
+
+        if (isset($invoice) && !$oldInvoice) {
+
+            $customer = Customer::find($invoice['customer_id']);
+            $balance = $customer->balance;
+            if ($customer) {
+                $customer->balance = $invoice['customer']['balance'];
+                $customer->save();
+            }
+
+
+            $newInvoice->transections()->create([
                 'amount' => $this->paidAmount,
                 'before_balance' => $balance,
-                'after_balance' => $this->activeInvoice->customer->balance,
-                'payment_method' => $this->paymentMethod,
-                'invoice_id' => $this->activeInvoice->id,
-                'customer_id' => $this->activeInvoice->customer_id,
+                'after_balance' => $invoice['customer']['balance'],
+                'payment_method' => $invoice['payment_method'] ?? 'cash',
+                'invoice_id' => $invoice['id'],
+                'customer_id' => $invoice['customer_id'] ?? null,
                 'user_id' => auth()->user()->id,
                 'status' => 'paid',
                 'type' => 'credit',
             ]);
 
-
-
-        } elseif ($this->radio == 'full_due') {
-            $this->activeInvoice->status = Status::DUE->value;
-            $this->activeInvoice->payment_status = PaymentStatus::UNPAID->value;
-            $this->activeInvoice->paid_amount = $this->paidAmount;
-            $this->activeInvoice->due_amount -= floatval($this->paidAmount);
-            if ($this->paymentMethod == 'balance') {
-                $this->activeInvoice->customer->balance -= floatval($this->paidAmount);
-                $this->activeInvoice->customer->save();
-            }
-            $this->activeInvoice->save();
-           
-        }
-        if ($this->activeInvoice->customer_id) {
-            $this->activeInvoice->customer->balance += floatval($this->activeInvoice->paid_amount) - floatval($this->activeInvoice->grand_total);
-            $this->activeInvoice->customer->save();
-        }
-        if ($this->activeInvoice->items->count() > 0) {
-            foreach ($this->activeInvoice->items as $item) {
-                $product = Product::find($item->product_id);
-                $product->stock -= $item->unit_qty;
-                $product->save();
-
-                $usedUnits = (int) ceil($product->stock / $product->value_per_unit);
-                if ($usedUnits < $product->unit_value) {
-                    $product->unit_value = $usedUnits;
-                    $product->save();
-
-                }
-
-
-            }
-        }
-        $this->settledinvoiceId = $this->activeInvoice->id;
-
-
-        $activeInvoice = null;
-        $activeInvoiceId = null;
-        $this->loadActiveInvoice();
-        $this->loadDrafts();
-        $this->activeInvoice->refresh();
-        // $this->confirmModalOpen = false;
-
-
-    }
-
-    public function loadDrafts()
-    {
-        $this->drafts = Invoice::where('status', 'draft')
-            ->orderBy('id', 'DESC')
-            ->get();
-
-
-    }
-
-    public function loadActiveInvoice()
-    {
-        if (!empty($this->activeInvoiceId)) {
-            $this->activeInvoice = Invoice::with('items.product')->find($this->activeInvoiceId);
-            if ($this->activeInvoice) {
-                if ($this->activeInvoice->customer_id) {
-                    $this->customer = $this->activeInvoice->customer;
-                }
-                $this->invoiceAmount = $this->activeInvoice->due_amount;
-            }
         } else {
 
-            $this->activeInvoice = Invoice::where('status', 'draft')->first();
-            if ($this->activeInvoice) {
-                if ($this->activeInvoice->customer_id) {
-                    $this->customer = $this->activeInvoice->customer;
-                }
-                $this->invoiceAmount = $this->activeInvoice->due_amount;
+            $customer = Customer::find($invoice['customer_id']);
 
-                $this->activeInvoiceId = $this->activeInvoice->id;
+            if ($customer) {
+                $customer->balance = $invoice['customer']['balance'];
+                $customer->save();
             }
+
+            $oldInvoice->transections()->create([
+                'amount' => $this->paidAmount,
+                'before_balance' => $invoice['customer']['balance'],
+                'after_balance' => $invoice['customer']['balance'],
+                'payment_method' => $invoice['payment_method'] ?? 'cash',
+                'invoice_id' => $invoice['id'],
+                'customer_id' => $invoice['customer_id'] ?? null,
+                'user_id' => auth()->user()->id,
+                'status' => 'paid',
+                'type' => floatval($invoice['paid_amount']) > 0 ? 'credit' : 'debit',
+            ]);
         }
 
 
+        $generatedInvoiceId = $oldInvoice->id ?? $newInvoice->id;
+        $this->settledinvoiceId = $generatedInvoiceId;
+        $this->synceInvoice($generatedInvoiceId);
+
+
+
     }
+    public function synceInvoice($activeInvoiceId)
+    {
+        $invoice = Invoice::find($activeInvoiceId);
+        if (!$invoice) {
+            return false;
+        }
+        $items = [];
+        foreach ($invoice->items as $item) {
+            $items[$item->product_id]['id'] = $item->product_id;
+            $items[$item->product_id]['name'] = $item->product_name;
+            $items[$item->product_id]['price'] = $item->regular_price;
+            $items[$item->product_id]['unit_name'] = $item->unit_name;
+            $items[$item->product_id]['quantity'] = $item->unit_qty;
+            $items[$item->product_id]['total'] = $item->total;
+            $items[$item->product_id]['image'] = $item->product->product_image;
+
+        }
+
+        $this->activeInvoice = [
+            'id' => $invoice->id,
+            'user_id' => $invoice->user_id,
+            'invoice_id' => $invoice->invoice_id,
+            'customer_id' => $invoice->customer_id,
+            'customer' => $invoice->customer,
+            'items' => $items,   // all products
+            'total' => $invoice->total,
+            'discount' => $invoice->discount,
+            'grand_total' => $invoice->grand_total,
+            'previous_due' => $invoice->previous_due,
+            'due_amount' => $invoice->due_amount,
+            'paid_amount' => $invoice->paid_amount,
+            'payment_status' => $invoice->payment_status,
+            'status' => $invoice->status,
+            'delivery_status' => $invoice->delivery_status,
+            'previous_invoice_id' => $invoice->previous_invoice_id,
+
+        ];
+        //for new invoice
+        $this->customer = $invoice->customer;
+    }
+    public function updateInvoice($invoice)
+    {
+
+    }
+    public function makeInvoice()
+    {
+        $this->activeInvoice = [
+            'id' => 'temporary_id',
+            'user_id' => auth()->user()->id,
+            'invoice_id' => 'new-invoice',
+            'customer_id' => null,
+            'customer' => [],
+            'items' => [],   // all products
+            'total' => 0,
+            'discount' => 0,
+            'grand_total' => 0,
+            'previous_due' => 0,
+            'due_amount' => 0,
+            'paid_amount' => 0,
+            'payment_status' => 'unpaid',
+            'status' => 'draft',
+            'delivery_status' => 'pending',
+            'previous_invoice_id' => null,
+        ];
+        //for new invoice
+
+        $this->customer = null;
+        $this->activeInvoiceId = null;
+    }
+    public function stockUpdate($invoiceId, string $action = 'subtract')
+    {   //invoice number
+        $invoice_number = $invoiceId;
+        //check passed invoice
+        if (!$invoice_number) {
+            return false;
+        }
+        //check invoice
+        $invoice = Invoice::find($invoice_number);
+        if (!$invoice) {
+            return false;
+        }
+        if ($action == 'subtract') {
+            if ($invoice->items->count() > 0) {
+                foreach ($invoice->items as $item) {
+                    $product = Product::find($item->product_id);
+                    $product->stock -= $item->unit_qty;
+                    $product->save();
+                    $usedUnits = (float) ($product->stock / $product->value_per_unit);
+                    if ($usedUnits < $product->unit_value) {
+                        $product->unit_value = $usedUnits;
+                        $product->save();
+                    }
+                }
+            }
+        } elseif ($action == 'restore') {
+            if ($invoice->items->count() > 0) {
+                foreach ($invoice->items as $item) {
+                    $product = Product::find($item->product_id);
+                    $product->stock += $item->unit_qty;
+                    $product->save();
+                    $usedUnits = (float) ($product->stock / $product->value_per_unit);
+                    if ($usedUnits > $product->unit_value) {
+                        $product->unit_value = $usedUnits;
+                        $product->save();
+                    }
+                }
+            }
+        }
+
+    }
+
+
     public function updatedSearchCustomer($value)
     {
         if ($this->searchCustomer) {
@@ -276,8 +506,8 @@ class SalesPoint extends Component
     }
     public function confirmModalOpenAction()
     {
-        foreach ($this->activeInvoice->items as $item) {
-            if (!$this->isStockAvailable($item->product_id)) {
+        foreach ($this->activeInvoice['items'] as $item) {
+            if (!$this->isStockAvailable($item['id'])) {
                 $this->isStockOut = true;
                 break;
             } else {
@@ -292,7 +522,7 @@ class SalesPoint extends Component
 
 
         $this->calculateTotals();
-        $this->loadActiveInvoice();
+
         if ($this->radio == 'full_paid') {
 
             $this->paidAmount = $this->invoiceAmount;
@@ -313,69 +543,64 @@ class SalesPoint extends Component
         if ($action == 'open') {
             $this->discountOpen = true;
 
-            $this->discountAmount = $this->activeInvoice->discount;
+            $this->discountAmount = $this->activeInvoice['discount'];
         }
         if ($action == 'close') {
             $this->discountOpen = false;
-            $this->activeInvoice->discount = $this->discountAmount;
-            $this->activeInvoice->save();
+            $this->activeInvoice['discount'] = $this->discountAmount ?? 0;
             $this->calculateTotals();
-            $this->activeInvoice->refresh();
         }
 
 
 
     }
+    public function updatedDiscountAmount($value)
+    {
+        $total = $this->activeInvoice['total'];
+        logger($value);
+        if ($value < 0) {
+            $this->discountAmount = 0;
+            $this->addError('discountAmount', 'Discount amount cannot be negative.');
+            return;
+        }
+
+        if ($value > $total) {
+            $this->discountAmount = $total;
+            $this->addError('discountAmount', 'Discount cannot exceed invoice total.');
+            return;
+        }
+
+        $this->resetErrorBag('discountAmount');
+    }
+
     public function addToCart($productId)
     {
+        // find product
         $product = Product::findOrFail($productId);
 
         $quantityToAdd = $this->qtyInput[$productId] ?? 1;
-        $nextId = (Invoice::max('id') ?? 0) + 1;
 
-        $invoiceId = 'INV-' . str_pad($nextId, 6, '0', STR_PAD_LEFT);
-        // 1. Ensure an Active Invoice exists
-        if (!$this->activeInvoice) {
-            $this->activeInvoice = Invoice::create([
-                'user_id' => auth()->user()->id,
-                'invoice_date' => now(),
-                'status' => 'draft',
-                'invoice_id' => $invoiceId,
-            ]);
-            $this->activeInvoiceId = $this->activeInvoice->id;
-        }
+        $items = $this->activeInvoice['items'];
 
-        // 2. Check if product already in invoice_items
-        $item = InvoiceItem::where('invoice_id', $this->activeInvoice->id)
-            ->where('product_id', $productId)
-            ->first();
-
-        if ($item) {
-            // Update Quantity
-            $item->unit_qty += $quantityToAdd;
-            $item->total = $item->unit_qty * $item->price_after_adjustment;
-            $item->save();
+        if (isset($items[$productId])) {
+            $item = $items[$productId];
+            $item['quantity'] = $quantityToAdd;
         } else {
-            // Create New Item
-            InvoiceItem::create([
-                'invoice_id' => $this->activeInvoice->id,
-                'product_id' => $product->id,
-                'product_name' => $product->name,
-                'unit_qty' => $quantityToAdd,
-                'unit_name' => $product->unit_name,
-                'regular_price' => $product->price,
-                'price_after_adjustment' => $product->discount_price > 0 ? $product->discount_price : $product->price,
-                'total' => ($product->discount_price > 0 ? $product->discount_price : $product->price) * $quantityToAdd,
-            ]);
+            $item = [
+                'id' => $productId,
+                'name' => $product->name,
+                'price' => $product->price,
+                'quantity' => $quantityToAdd,
+                'total' => $product->price * $quantityToAdd,
+                'image' => $product->product_image,
+                'unit_name' => $product->unit_name
+            ];
         }
-
-        // 3. Refresh Totals
+        $this->activeInvoice['items'][$productId] = $item;
         $this->calculateTotals();
-        $this->loadActiveInvoice(); // Refresh the relationship
-        $this->loadDrafts(); // Refresh drafts list
 
-        // Reset quantity input to 1 after adding
-        $this->qtyInput[$productId] = 1;
+
+
     }
     public function newInvoice()
     {
@@ -391,7 +616,7 @@ class SalesPoint extends Component
                 'status' => 'draft',
                 'invoice_id' => $invoiceId,
             ]);
-            $this->activeInvoiceId = $this->activeInvoice->id;
+            $this->activeInvoiceId = $this->activeInvoice['id'];
         }
 
     }
@@ -402,51 +627,60 @@ class SalesPoint extends Component
             return;
         }
 
-        $total = $this->activeInvoice->items()->sum('total');
+        $total = collect($this->activeInvoice['items'])->sum('total');
         $previous_due = 0;
-        if ($this->activeInvoice->customer_id) {
+        // if ($this->activeInvoice['customer_id']) {
 
-            if ($this->activeInvoice->customer->balance < 0) {
-                $previous_due = abs($this->activeInvoice->customer->balance);
-            }
+        //     if ($this->customer->balance < 0) {
+        //         $previous_due = abs($this->customer->balance);
+
+        //     }
+        // }
+        if (!isset($this->activeInvoice['previous_invoice_id']) && $this->activeInvoice['previous_invoice_id'] == null && $this->activeInvoice['customer_id']) {
+            $customer = Customer::find($this->activeInvoice['customer_id']);
+            $invoice = $customer->invoices()->latest()->first();
+
+
+            $this->activeInvoice['previous_invoice_id'] = $invoice?->invoice_id;
+            $previous_due = abs($invoice->due_amount);
+
+        } elseif ($this->activeInvoice['previous_invoice_id']) {
+            // $onlyid = intval(explode('-', $this->activeInvoice['previous_invoice_id'])[1]);
+            $invoice = Invoice::where('invoice_id', '=', $this->activeInvoice['previous_invoice_id'])->first();
+
+            $this->activeInvoice['previous_invoice_id'] = $invoice?->invoice_id;
+            $previous_due = abs($invoice->due_amount);
         }
-        // dd($previous_due);
 
-        $this->activeInvoice->update([
-            'total' => $total,
-            'previous_due' => $previous_due,
-            'grand_total' => $total - ($this->activeInvoice->discount ?? 0),
-            'due_amount' => ($total - ($this->activeInvoice->discount ?? 0)) - ($this->activeInvoice->paid_amount ?? 0) + $previous_due,
-        ]);
-        // dd($this->activeInvoice->previous_due);
-        // Refresh the active invoice data
-        $this->activeInvoice->refresh();
+
+
+        $this->activeInvoice['total'] = $total;
+        $this->activeInvoice['previous_due'] = $previous_due;
+        $this->activeInvoice['grand_total'] = $total - ($this->activeInvoice['discount'] ?? 0);
+        $this->activeInvoice['due_amount'] = ($total - ($this->activeInvoice['discount'] ?? 0)) - ($this->activeInvoice['paid_amount'] ?? 0) + $previous_due;
+        $this->invoiceAmount = $this->activeInvoice['due_amount'];
     }
 
     public function removeFromCart($itemId)
     {
-        $item = InvoiceItem::findOrFail($itemId);
-        $productId = $item->product_id;
-        $item->delete();
+        $item = $this->activeInvoice['items'][$itemId];
+        unset($this->activeInvoice['items'][$itemId]);
 
         // Reset quantity input to 1
-        $this->qtyInput[$productId] = 1;
+        $this->qtyInput[$itemId] = 1;
 
         $this->calculateTotals();
-        $this->loadActiveInvoice();
-        $this->loadDrafts();
+
     }
 
     public function setActiveInvoice($invoiceId)
     {
         $this->activeInvoiceId = $invoiceId;
-        $this->loadDrafts();
-        $this->loadActiveInvoice();
 
         // Update qtyInput for products in the new active invoice
         if ($this->activeInvoice) {
-            foreach ($this->activeInvoice->items as $item) {
-                $this->qtyInput[$item->product_id] = $item->unit_qty;
+            foreach ($this->activeInvoice['items'] as $item) {
+                $this->qtyInput[$item->product_id] = $item['quantity'];
             }
         }
 
@@ -454,16 +688,26 @@ class SalesPoint extends Component
 
     protected function syncCartQuantity($productId)
     {
-        if ($this->activeInvoice) {
-            $item = $this->activeInvoice->items()->where('product_id', $productId)->first();
-            if ($item) {
-                $item->unit_qty = $this->qtyInput[$productId];
-                $item->total = $item->unit_qty * $item->price_after_adjustment;
-                $item->save();
+        $product=Product::find($productId);
+        if(!$product){
+            return false;
+        }
+        if (isset($this->qtyInput[$productId]) && $this->qtyInput[$productId] > $product->stock) {
+            $this->qtyInput[$productId] = $product->stock;
+        }
 
+        if (isset($this->activeInvoice['items'][$productId])) {
+            $item = $this->activeInvoice['items'][$productId];
+
+            if ($item) {
+                $this->activeInvoice['items'][$productId]['quantity'] = $this->qtyInput[$productId];
+
+                $this->activeInvoice['items'][$productId]['total'] = floatval($item['price']) * floatval($this->activeInvoice['items'][$productId]['quantity']);
+                // dd($this->activeInvoice['items'][$productId]['total']);
                 $this->calculateTotals(); // Refresh the grand total
             }
         }
+
     }
     public function registerCustomer()
     {
@@ -497,19 +741,19 @@ class SalesPoint extends Component
     public function addCustomerInvoice($id)
     {
         if ($this->activeInvoice) {
-            $this->activeInvoice->customer_id = $id;
-            $this->activeInvoice->save();
+            $this->activeInvoice['customer_id'] = $id;
+            $this->activeInvoice['customer'] = Customer::find($id)->toArray();
         }
-        $this->calculateTotals();
-        $this->loadActiveInvoice();
 
         $this->customer = Customer::find($id);
+
+        $this->calculateTotals();
         $this->selectCustomerModal = false;
     }
     public function isStockAvailable($id)
     {
         $product = Product::where('id', $id)->where('stock_status', StockStatus::IN_STOCK->value)->first();
-        $item = $this->activeInvoice->items()->where('product_id', $id)->first();
+        $item = $this->activeInvoice['items'][$id];
         if (!$product) {
             return false;
         }
@@ -519,7 +763,7 @@ class SalesPoint extends Component
         if ($product->stock <= 0) {
             return false;
         }
-        if ($product->stock < $item->unit_qty) {
+        if ($product->stock < $item['quantity']) {
             return false;
         }
         return true;
@@ -527,18 +771,21 @@ class SalesPoint extends Component
 
     public function render()
     {
-        // Load products based on search
-        if (!empty($this->search)) {
-            $this->products = Product::where('name', 'LIKE', '%' . $this->search . '%')
-                ->orWhere('id', 'LIKE', '%' . $this->search . '%')
-                ->orWhere('price', 'LIKE', '%' . $this->search . '%')
-                ->orWhere('discount_price', 'LIKE', '%' . $this->search . '%')
-                ->orderByDesc('created_at')
-                ->get();
-        } else {
-            $this->products = Product::orderByDesc('created_at')->get();
-        }
+        $this->products = Product::orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END') // stock >0 first
+            ->orderByDesc('created_at') // then newest first
+            ->get();
 
+
+        if (!empty($this->search)) {
+            $search = $this->search;
+
+            $this->products = Product::where('name', 'like', "%$search%")
+                ->orWhere('id', 'like', "%$search%")
+                ->orWhere('price', 'like', "%$search%")
+                ->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END') // stock >0 first
+                ->orderByDesc('created_at') // then newest first
+                ->get();
+        }
         return view('livewire.sales-point')->layout('layouts.company');
 
     }

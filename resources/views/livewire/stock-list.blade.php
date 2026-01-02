@@ -122,7 +122,7 @@
 
 
                            <th class="px-3 py-2 whitespace-nowrap">Status</th>
-                          
+
                            <th class="px-3 py-2 whitespace-nowrap">Stock</th>
                            <th class="px-3 py-2 whitespace-nowrap text-center">Action</th>
                        </tr>
@@ -195,11 +195,12 @@
                                        @endif
 
                                    </td>
-                                   
+
                                    <td class="px-3 py-2 whitespace-nowrap">
                                        <span
                                            class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">
-                                           <p class="text-sm whitespace-nowrap">{{ $product->unit_value }} Unit & {{$product->stock." " .$product->unit_name }}</p>
+                                           <p class="text-sm whitespace-nowrap">{{ $product->unit_value }} Unit &
+                                               {{ $product->stock . ' ' . $product->unit_name }}</p>
 
                                        </span>
                                        <p class="text-xs text-gray-400">Per Unit
@@ -238,13 +239,14 @@
            {{-- =========================== Content End Here ============================ --}}
        </div>
 
-       <div x-cloak x-data="{ editProductModalOpen: @entangle('editProductModal') }" x-show="editProductModalOpen"  x-transition
+       <div x-cloak x-data="{ editProductModalOpen: @entangle('editProductModal') }" x-show="editProductModalOpen" x-transition
            class="fixed inset-0 z-50 grid place-content-center bg-black/50 p-4" role="dialog" aria-modal="true"
            aria-labelledby="modalTitle">
            <div wire:click.outside="editProductModal=false"
                class="w-md md:w-3xl rounded-lg bg-white p-6 shadow-lg overflow-auto scrollbar scrollbar-thin scrollbar-transparent scrollbar-track-gray-100 scrollbar-thumb-gray-300 scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
                <div class="flex items-start justify-between">
-                   <h2 id="modalTitle" class="text-xl font-bold text-gray-900 sm:text-2xl">Update Stock - #{{ $editProductId }}</h2>
+                   <h2 id="modalTitle" class="text-xl font-bold text-gray-900 sm:text-2xl">Update Stock -
+                       #{{ $editProductId }}</h2>
 
                    <button wire:click="editProductModal=false" type="button"
                        class="cursor-pointer -me-4 -mt-4 rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600 focus:outline-none"
@@ -259,7 +261,8 @@
 
                <div class="mt-4">
 
-                   <form action="#" class="space-y-4" wire:submit.prevent="updateNewProduct">
+                   <form
+                    action="#" class="space-y-4" wire:submit.prevent="updateNewProduct">
                        <input type="hidden" name="product_id" wire:model="editProductId">
                        <div class="grid grid-cols-1 gap-1">
                            <label class="block text-sm font-medium text-gray-900" for="name">Name <span
@@ -271,80 +274,45 @@
                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                            @enderror
                        </div>
-                        <div class="grid grid-cols-3 gap-1">
-                           {{-- <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="purchase_price">Purchase
-                                   Price</label>
-                               <input wire:model="newPPurchasePrice" min="0"
-                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                                   id="purchase_price" type="number" pattern="[0-9]"
-                                   placeholder="Enter Purchase Price" />
-                               @error('newPPurchasePrice')
-                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                               @enderror
-                           </div> --}}
-                           <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="sale_price">Sale Price
-                                   <span class="size-6 text-red-500 mr-1.5">*</span> </label>
-                               <input wire:model="editProductSalePrice" min="0"
-                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                                   id="sale_price" type="text" placeholder="Enter Sale Price" />
-                               @error('editPSalePrice')
-                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                               @enderror
-                           </div>
+                       <div class="grid grid-cols-3 gap-1">
 
-                           {{-- <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="phone">Discount
-                                   Price</label>
-                               <input wire:model="editPDiscountPrice" min="0"
-                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                                   id="phone" type="text" placeholder="Enter Discount Price" />
-                               @error('editPDiscountPrice')
-                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                               @enderror
-                           </div> --}}
                            <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="phone">Unit qty <span
+                               <label class="block text-sm font-medium text-gray-900" for="phone">Update Unit <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
-                               <input wire:model="editProductQuantity"
+                               <input wire:model="updateUnit" name="unit" step="0.01"
                                    class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                                   id="phone" type="number" placeholder="Enter Unit qty" />
-                               @error('editPQuantity')
-                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                               @enderror
-                           </div>
-                                  <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="phone">Kg Per Unit <span
-                                       class="size-6 text-red-500 mr-1.5">*</span> </label>
-                               <input wire:model="editKgPerUnit"
-                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                                   id="phone" type="text"  placeholder="Kg per 1 unit. 1x50kg" />
-                               @error('editKgPerUnit')
-                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                               @enderror
-                           </div>
+                                   id="phone" type="number" placeholder="Enter Unit qty (decimal 0.00)" />
 
-
-                       </div>
-                       <div class="grid grid-cols-2 gap-1">
-
-                           <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="phone">Measeure By<span
-                                       class="size-6 text-red-500 mr-1.5">*</span> </label>
-                               <select wire:model="editProductUnit" disabled
-                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2 sm:text-sm disabled:bg-gray-100">
-                                   <option value="">Select Unit</option>
-                                   @foreach (\App\Enums\Product\Unit::cases() as $unit)
-                                       <option value="{{ $unit->value }}">{{ $unit->name }}</option>
-                                   @endforeach
-
-                               </select>
-                               @error('editPunit')
-                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                               @enderror
                            </div>
                            <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="phone">Stock Input<span
+                                       class="size-6 text-red-500 mr-1.5">*</span> </label>
+
+
+                               <fieldset class="mt-1 flex flex-row gap-2 justify-around items-center">
+                                   <legend class="sr-only">stock add/substract</legend>
+
+                                   <div class="flex-1">
+                                       <label for="DeliveryStandard"
+                                           class="flex items-center justify-between gap-4 rounded border border-gray-300 bg-white p-2 text-sm font-medium shadow-sm transition-colors hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600">
+                                           <p class="text-gray-700">Stock In</p>
+                                           <input type="radio"  name="stock_input" wire:model="stock_input" value="in"
+                                               id="DeliveryStandard" class="sr-only">
+                                       </label>
+                                   </div>
+
+                                   <div class="flex-1">
+                                       <label for="DeliveryPriority"
+                                           class="flex items-center justify-between gap-4 rounded border border-gray-300 bg-white p-2 text-sm font-medium shadow-sm transition-colors hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600">
+                                           <p class="text-gray-700">Stock Out</p>
+                                           <input type="radio" name="stock_input" wire:model="stock_input" value="out"
+                                               id="DeliveryPriority" class="sr-only">
+                                       </label>
+                                   </div>
+                               </fieldset>
+
+                            </div>
+                             <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="stock_status">Stock
                                    Status <span class="size-6 text-red-500 mr-1.5">*</span> </label>
                                <select wire:model="editProductStockStatus" id="stock_status"
@@ -352,31 +320,20 @@
                                    <option value="">Select Stock Status</option>
                                    <option value="in_stock">In Stock</option>
                                    <option value="stock_out">Stock Out</option>
-                                   <option value="low_stock">Low Stock</option>
+                                   {{-- <option value="low_stock">Low Stock</option> --}}
                                </select>
                                @error('editPStockStatus')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
+                            @error('updateUnit')
+                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                               @enderror
 
+                           <div class="grid grid-cols-1 gap-1">
+                               <p class="mt-2 text-sm text-gray-600">{{ $viewProduct?->unit_value ." Unit & ". $viewProduct?->stock." ".$viewProduct?->unit_name }}</p>
+                           </div>
                        </div>
-
-
-                       <div>
-                           <label class="block text-sm font-medium text-gray-900"
-                               for="discription">Discription</label>
-
-                           <textarea wire:model="editProductDescription"
-                               class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                               id="discription" rows="4" placeholder="Enter Discription"></textarea>
-                           @error('newPDescription')
-                               <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                           @enderror
-                       </div>
-
-
-
-
                        <button type="submit"
                            class="block w-full rounded-lg border border-indigo-600 bg-white px-12 py-3 text-sm font-medium text-indigo-600 transition-colors hover:bg-indigo-500 hover:text-white cursor-pointer">
                            Submit

@@ -13,6 +13,8 @@ class StockList extends Component
     public $editProductName, $editProductSalePrice, $editKgPerUnit, $editProductQuantity, $editProductUnit, $editProductStockStatus, $editProductDescription, $editProductId, $editViewProductImage;
     public $viewProduct;
     public $editProductModal = false;
+    public float $updateUnit;
+    public $stock_input='in';
     public function editProduct($id)
     {
         // dd($id);
@@ -30,18 +32,21 @@ class StockList extends Component
         $this->editKgPerUnit = $this->viewProduct->value_per_unit;
         $this->editViewProductImage = $this->viewProduct->image;
 
+        $this->updateUnit=0;
         $this->editProductModal = true;
+
     }
 
     public function updateNewProduct()
     {
         //  dd($this->editProductImage);
+
         try {
 
             if (!$this->editProductId) {
                 return abort(404);
             }
-            
+
             $this->validate([
                 // 'editProductName' => 'required|min:3',
                 'editProductSalePrice' => 'required',
@@ -57,13 +62,20 @@ class StockList extends Component
             $product = Product::find($this->editProductId);
             // $product->name = $this->editProductName;
             // $product->purchase_price = $this->editProductPurchasePrice;
-            $product->price = $this->editProductSalePrice;
-            $product->unit_value = $this->editProductQuantity;
-            $product->unit_name = $this->editProductUnit;
-            $product->stock_status = $this->editProductStockStatus;
-            $product->description = $this->editProductDescription;
-            $product->value_per_unit = $this->editKgPerUnit;
-            $product->stock=floatval($product->unit_value) * floatval($product->value_per_unit);
+            // $product->price = $this->editProductSalePrice;
+            // $product->unit_name = $this->editProductUnit;
+            // $product->stock_status = $this->editProductStockStatus;
+            // $product->description = $this->editProductDescription;
+            // $product->value_per_unit = $this->editKgPerUnit;
+            if ($this->updateUnit && $this->stock_input == 'in' && $this->updateUnit > 0) {
+
+                $product->unit_value += $this->updateUnit;
+                $product->stock += ($this->updateUnit * $product->value_per_unit);
+
+            }elseif($this->updateUnit && $this->stock_input == 'out' && $this->updateUnit <= $this->viewProduct->unit_value){
+                $product->unit_value -= $this->updateUnit;
+                $product->stock -= ($this->updateUnit * $product->value_per_unit);
+            }
 
 
             $product->save();

@@ -29,10 +29,10 @@
 
        <div class="flex-1 w-full bg-white rounded-lg min-h-[80vh]">
            {{-- ======================== Content Start From Here ======================== --}}
-           <div class="grid grid-cols-4 gap-2">
-               <div class="col-span-3 p-2">
+           <div class="grid grid-cols-1 lg:grid-cols-6 gap-2">
+               <div class="col-span-1 lg:col-span-4 p-2">
                    {{-- start search and filter --}}
-                   <div x-data="{ filter: false }" class="flex items-center justify-between gap-2 relative my-3 mx-4 px-2">
+                   <div x-data="{ filter: false }" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 relative my-3 mx-2 sm:mx-4 px-2">
                        <div>
                            <button @click="filter = !filter" class="cursor-pointer px-4 py-2 rounded-lg bg-gray-100">
                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -48,7 +48,7 @@
                                <div class="relative">
                                    <input wire:model.live.debounce="search" type="text" id="Search"
                                        placeholder="Search Product..."
-                                       class="mt-0.5 h-10 w-full rounded border-gray-300 pr-10 pl-2 shadow-sm sm:text-sm focus-within:outline-0.5 focus-within:outline-blue-400">
+                                       class="mt-0.5 h-10 w-full sm:w-auto rounded border-gray-300 pr-10 pl-2 shadow-sm sm:text-sm focus-within:outline-0.5 focus-within:outline-blue-400">
 
                                    <span class="absolute inset-y-0 right-2 grid w-8 place-content-center ">
                                        <button type="button" aria-label="Submit"
@@ -192,14 +192,14 @@
                    {{-- start product --}}
                    <div class="overflow-x-auto rounded mx-4 px-2">
                        <div class="min-w-full divide-y-2 divide-gray-200">
-                           <div class="grid grid-cols-4 gap-2">
+                           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                @if ($products->count() > 0)
                                    @foreach ($products as $product)
                                        <div title="{{ $product->name }}" comment="Product Card">
                                            <div
                                                class="block relative rounded-lg p-4 shadow-lg border border-gray-200 ">
-                                               <img alt="" src="{{ asset('storage/' . $product->image) }}"
-                                                   class="h-36 w-full rounded-md object-cover {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->unit_value == 0 ? 'sepia' : '' }}">
+                                               <img alt="" src="{{ $product->product_image }}"
+                                                   class="h-30 sm:h-26 w-full object-cover {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->stock <= 0 ? 'sepia' : '' }}">
 
                                                <div class="">
                                                    <dl>
@@ -241,7 +241,7 @@
                                                            <dt class="sr-only">Name:</dt>
 
                                                            <dd
-                                                               class="font-medium {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->unit_value == 0 ? 'text-gray-400' : '' }}">
+                                                               class="font-medium {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->stock == 0 ? 'text-gray-400' : '' }}">
                                                                {{ $product->name }}</dd>
                                                        </div>
                                                    </dl>
@@ -265,7 +265,7 @@
 
 
                                                                    <button type="button" @click="if(qty > 1) qty--"
-                                                                       {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->unit_value == 0 ? 'disabled' : '' }}
+                                                                       {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->stock <= 0 ? 'disabled' : '' }}
                                                                        class=" text-gray-600  rounded-full text-center transition hover:text-white hover:bg-gray-600 cursor-pointer disabled:bg-gray-200 disabled:text-gray-50 disabled:cursor-not-allowed">
                                                                        <svg xmlns="http://www.w3.org/2000/svg"
                                                                            fill="none" viewBox="0 0 24 24"
@@ -280,12 +280,12 @@
 
                                                                    <input type="number" id="Quantity"
                                                                        x-model="qty"
-                                                                       {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->unit_value == 0 ? 'disabled' : '' }}
+                                                                       {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->stock <= 0 ? 'disabled' : '' }}
                                                                        value="1"
-                                                                       class="h-10 w-8 border-transparent text-center [-moz-appearance:textfield] sm:text-sm [&amp;::-webkit-inner-spin-button]:m-0 [&amp;::-webkit-inner-spin-button]:appearance-none [&amp;::-webkit-outer-spin-button]:m-0 [&amp;::-webkit-outer-spin-button]:appearance-none  disabled:text-gray-50 disabled:cursor-not-allowed">
+                                                                       class="h-10 w-auto border-transparent text-center [-moz-appearance:textfield] sm:text-sm [&amp;::-webkit-inner-spin-button]:m-0 [&amp;::-webkit-inner-spin-button]:appearance-none [&amp;::-webkit-outer-spin-button]:m-0 [&amp;::-webkit-outer-spin-button]:appearance-none  disabled:text-gray-50 disabled:cursor-not-allowed  focus-visible:ring-2  focus-visible:outline-none">
 
                                                                    <button type="button" @click="qty++"
-                                                                       {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->unit_value == 0 ? 'disabled' : '' }}
+                                                                       {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->stock <= 0 ? 'disabled' : '' }}
                                                                        class=" text-gray-600  rounded-full text-center transition hover:text-white hover:bg-gray-600 cursor-pointer disabled:bg-gray-200 disabled:text-gray-50 disabled:cursor-not-allowed">
                                                                        <svg xmlns="http://www.w3.org/2000/svg"
                                                                            fill="none" viewBox="0 0 24 24"
@@ -306,7 +306,7 @@
 
                                                            <button type="button"
                                                                wire:click="addToCart({{ $product->id }})"
-                                                               {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->unit_value == 0 ? 'disabled' : '' }}
+                                                               {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->stock <= 0 ? 'disabled' : '' }}
                                                                class="h-10 w-8 text-gray-z600 rounded-lg border border-gray-200 text-center transition hover:text-white hover:bg-gray-600 cursor-pointer disabled:bg-gray-200 disabled:text-gray-50 disabled:cursor-not-allowed">
                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                                    viewBox="0 0 24 24" stroke-width="1.5"
@@ -333,7 +333,7 @@
                                                        </span>
                                                    </div>
                                                    <div>
-                                                       @if ($product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->unit_value == 0)
+                                                       @if ($product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->unit_value <= 0)
                                                            <span
                                                                class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">
 
@@ -378,191 +378,64 @@
                    {{-- end product --}}
 
                </div>
-               <div class="col-span-1 border-l border-gray-300 min-h-screen p-2">
+               <div class="col-span-1 lg:col-span-2 border-l lg:border-l border-gray-300 min-h-screen p-2">
                    {{-- add to cart  --}}
                    <div>
-                       <p class="font-semibold text-lg">{{ $activeInvoice?->invoice_id ?? 'No Active Invoice' }}</p>
+                       <p class="font-semibold text-lg">{{ $activeInvoice['invoice_id'] ?? 'New Invoice' }}</p>
                        <!-- Slider main container -->
-                       <div class="w-full max-w-xs" x-data="{
-                           open: false,
-                           selectedId: '{{ $activeInvoice?->id ?? null }}',
-                           selectedName: '{{ $activeInvoice?->customer->name ?? '-' }}',
-                           selectedInvoice: '{{ $activeInvoice?->invoice_id ?? '-' }}',
-                           selectedImg: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-                           selectUser(name, img) {
-                               this.selectedId = id;
-                               this.selectedName = name;
-                               this.selectedInvoice = invoice_id;
-                               this.selectedImg = img;
-                               this.open = false;
-                           }
-                       }">
-                           <div class="flex justify-between items-end gap-2 my-2">
+                       <div class="flex justify-between items-end gap-2 my-2">
 
-                               <label class="block text-sm font-medium text-gray-900">Select invoice</label>
-                               <button wire:click="newInvoice" type="button"
-                                   class="flex items-center gap-2  pb-1 text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 cursor-pointer rounded border border-gray-300 px-4 py-2">
-                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                       stroke-width="1.5" stroke="currentColor" class="size-4">
-                                       <path stroke-linecap="round" stroke-linejoin="round"
-                                           d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                                   </svg>
-
-                                   <span class="text-sm font-medium">New Invoice</span>
+                           <div class="flex justify-start ">
+                               <button  type="button" @if ($activeInvoice && $activeInvoice['status'] == \App\Enums\Invoice\STATUS::COMPLETED->value) disabled @else wire:click="selectCustomerModal=true" @endif
+                                   class="flex items-center gap-2  pb-1 text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 cursor-pointer rounded border border-gray-300 px-4 py-2 disabled:bg-gray-300 disabled:text-gray-400  disabled:cursor-not-allowed">
+                                   <span class="text-sm font-medium"> Add Customer</span>
                                </button>
                            </div>
+                           <button wire:click="makeInvoice" type="button"
+                               class="flex items-center gap-2  pb-1 text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 cursor-pointer rounded border border-gray-300 px-4 py-2">
+                               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                   stroke-width="1.5" stroke="currentColor" class="size-4">
+                                   <path stroke-linecap="round" stroke-linejoin="round"
+                                       d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                               </svg>
 
-
-                           <div class="relative mt-2">
-                               <button type="button" @click="open = !open" @click.away="open = false"
-                                   class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
-
-                                   <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
-                                       <img :src="selectedImg" alt=""
-                                           class="size-5 shrink-0 rounded-full bg-gray-100">
-                                       <span class="block truncate" x-text="selectedName"></span>
-                                       <span class="block truncate" x-text="selectedInvoice"></span>
-                                   </span>
-
-                                   <svg class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                                       viewBox="0 0 16 16" fill="currentColor">
-                                       <path
-                                           d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                                           clip-rule="evenodd" fill-rule="evenodd" />
-                                   </svg>
-                               </button>
-
-                               <ul x-show="open" x-cloak x-transition:leave="transition ease-in duration-100"
-                                   x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                                   class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-
-                                   @foreach ($drafts as $draftitem)
-                                       <li wire:click="setActiveInvoice('{{ $draftitem->id }}')"
-                                           @click="selectUser('{{ $draftitem->id }}','{{ $draftitem->invoice_Id }}','{{ $draftitem->customer?->name ?? ' - ' }}', 'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80')"
-                                           class="group relative cursor-default py-2 pr-9 pl-3 text-gray-900 select-none hover:bg-indigo-600 hover:text-white">
-                                           <div class="flex items-center">
-                                               <span>
-                                                   <img src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                                       class="size-10 shrink-0 rounded-full">
-                                               </span>
-                                               <span>
-
-                                                   <span class="ml-3 block truncate"
-                                                       :class="selectedId === '{{ $draftitem->id }}' ? 'font-semibold' :
-                                                           'font-normal'">{{ $draftitem->invoice_id }}</span>
-                                                   <span
-                                                       class="ml-3 block truncate">{{ $draftitem->customer?->name ?? ' - ' }}</span>
-
-                                                   <span
-                                                       class="ml-3 block truncate">{{ $draftitem->customer?->phone ?? ' - ' }}</span>
-                                               </span>
-                                           </div>
-                                           <span x-show="selectedId === '{{ $draftitem->id }}'"
-                                               class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600 group-hover:text-white">
-                                               <svg class="size-5" viewBox="0 0 20 20" fill="currentColor">
-                                                   <path
-                                                       d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" />
-                                               </svg>
-                                           </span>
-                                       </li>
-                                   @endforeach
-
-                               </ul>
-                           </div>
+                               <span class="text-sm font-medium">New Invoice</span>
+                           </button>
                        </div>
-
                        <hr>
                        {{-- customer info --}}
-                       @if ($activeInvoice && $activeInvoice?->customer)
-                           <div wire:click="selectCustomerModal=true"
-                               class="flex gap-2 my-2 rounded-lg border border-gray-200 p-2 cursor-pointer">
+                       @if ($activeInvoice && $customer)
+                           <div @if ($activeInvoice && $activeInvoice['status'] == \App\Enums\Invoice\STATUS::COMPLETED->value) disabled @else wire:click="selectCustomerModal=true" @endif
+                               class="flex gap-2 my-2 rounded-lg border border-gray-200 p-2 cursor-pointer  disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
                                <div>
                                    <img class="w-12 h-12 rounded-full border border-gray-200"
                                        src="{{ asset('storage/products/5945e0d0-6125-48d6-bbe4-62c2327b29f7.jpg') }}"
                                        alt="">
                                </div>
                                <div class="flex-1">
-                                   <p class="font-semibold">{{ $activeInvoice->customer->name }}</p>
-                                   <p class="text-sm text-gray-500">{{ $activeInvoice->customer->phone }}</p>
+                                   <p class="font-semibold">{{ $customer->name }}</p>
+                                   <p class="text-sm text-gray-500">{{ $customer->phone }}</p>
                                </div>
-                               <div>
-                                   @if ($activeInvoice?->customer && $activeInvoice->customer->balance >= 0)
-                                       <span
-                                           class="inline-flex items-center justify-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-emerald-700 dark:bg-emerald-700 dark:text-emerald-100">
 
-                                           <svg xmlns="http://www.w3.org/2000/svg" class="size-6 -ms-1 me-1.5"
-                                               fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                               stroke="currentColor" class="size-6">
-                                               <path stroke-linecap="round" stroke-linejoin="round"
-                                                   d="m8.25 7.5.415-.207a.75.75 0 0 1 1.085.67V10.5m0 0h6m-6 0h-1.5m1.5 0v5.438c0 .354.161.697.473.865a3.751 3.751 0 0 0 5.452-2.553c.083-.409-.263-.75-.68-.75h-.745M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                           </svg>
-
-                                           <p class="text-sm whitespace-nowrap">
-                                               {{ $activeInvoice?->customer ? $activeInvoice->customer->balance : '0.00' }}
-                                           </p>
-                                           {{-- <button wire:click="getCustomerBal({{ $activeInvoice?->customer && $activeInvoice->customer_id }})"
-                                               class="cursor-pointer">
-                                               <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-1 ml-2"
-                                                   fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                   stroke="currentColor">
-                                                   <path stroke-linecap="round" stroke-linejoin="round"
-                                                       d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                               </svg>
-
-                                           </button> --}}
-                                       </span>
-                                   @elseif($customer && $customer->balance < 0)
-                                       <span
-                                           class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">
-                                           <svg xmlns="http://www.w3.org/2000/svg" class="size-4 ml-1 mr-1.5"
-                                               fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                               stroke="currentColor">
-                                               <path stroke-linecap="round" stroke-linejoin="round"
-                                                   d="m8.25 7.5.415-.207a.75.75 0 0 1 1.085.67V10.5m0 0h6m-6 0h-1.5m1.5 0v5.438c0 .354.161.697.473.865a3.751 3.751 0 0 0 5.452-2.553c.083-.409-.263-.75-.68-.75h-.745M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                           </svg>
-                                           <p class="text-sm whitespace-nowrap">
-                                               {{ $activeInvoice?->customer ? $activeInvoice->customer->balance : 0.0 }}
-                                           </p>
-                                           {{-- <button wire:click="getCustomerBal({{ $activeInvoice?->customer && $activeInvoice?->customer_id }})"
-                                               class="cursor-pointer">
-                                               <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-1 ml-2"
-                                                   fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                                   stroke="currentColor">
-                                                   <path stroke-linecap="round" stroke-linejoin="round"
-                                                       d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                               </svg>
-
-                                           </button> --}}
-                                       </span>
-                                   @endif
-
-                               </div>
                            </div>
-                       @else
-                           <div class="flex justify-end my-2">
-                               <button wire:click="selectCustomerModal=true" type="button"
-                                   class="flex items-center gap-2  pb-1 text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 cursor-pointer rounded border border-gray-300 px-4 py-2">
-                                   <span class="text-sm font-medium"> Add Customer</span>
-                               </button>
-                           </div>
+
 
                        @endif
                        {{-- end customer info --}}
                        {{-- start invoice items --}}
                        <ul>
 
-                           @if ($activeInvoice && $activeInvoice->items->count() > 0)
+                           @if ($activeInvoice && count($activeInvoice['items']) > 0)
 
-                               @foreach ($activeInvoice->items as $item)
-                                   <li wire:key="invoice-item-{{ $item->id }}">
+                               @foreach ($activeInvoice['items'] as $item)
+                                   <li wire:key="invoice-item-{{ $item['id'] }}">
                                        <div class="flex items-center gap-2 p-2 rounded-lg border border-gray-200 mb-3">
                                            <div class="">
                                                <img class="h-20 w-18 rounded-lg"
-                                                   src="{{ asset('storage/' . $item->product->image) }}"
-                                                   alt="">
+                                                   src="{{ $item['image'] }}" alt="">
                                            </div>
                                            <div class="flex-1">
-                                               <p class="font-semibold">{{ $item->product->name }}</p>
+                                               <p class="font-semibold">{{ $item['name'] }}</p>
 
                                                <div class="text-gray-500 flex justify-between items-center gap-2">
                                                    <div class="flex justify-start items-center gap-1">
@@ -575,11 +448,11 @@
                                                            </svg>
 
 
-                                                           {{ $item->regular_price }}
+                                                           {{ $item['price'] }}
                                                        </span>
                                                        <span class="text-gray-500">x</span>
 
-                                                       <span class="text-gray-500">{{ $item->unit_qty }} =</span>
+                                                       <span class="text-gray-500">{{ $item['quantity'] }} =</span>
                                                    </div>
                                                    <div>
                                                        <span title="sub total"
@@ -587,7 +460,7 @@
                                                            <span class=" flex items-center">
 
 
-                                                               {{ $item->total }}
+                                                               Tk {{ number_format($item['total'], 2) }}
                                                            </span>
                                                        </span>
                                                    </div>
@@ -607,7 +480,7 @@
 
                                                        </button>
                                                        <button title="Remove" class="cursor-pointer"
-                                                           wire:click="removeFromCart({{ $item->id }})">
+                                                           wire:click="removeFromCart({{ $item['id'] }})">
                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                                viewBox="0 0 24 24" stroke-width="1.5"
                                                                stroke="currentColor" class="size-4 text-red-400">
@@ -623,7 +496,7 @@
                                                        <div class="flex-1">
                                                            {{-- Cart Quantity --}}
                                                            <div x-data="{
-                                                               qty: @entangle('qtyInput.' . $item->product->id).live
+                                                               qty: @entangle('qtyInput.' . $item['id']).live
                                                            }"
                                                                class="flex items-center rounded-lg border border-gray-200 px-2">
                                                                <!-- Minus -->
@@ -639,7 +512,7 @@
 
                                                                <!-- Input -->
                                                                <input type="number" x-model="qty" min="1"
-                                                                   class="h-6 w-14 border-transparent text-center sm:text-sm appearance-none" />
+                                                                   class="h-6 w-30 border-transparent text-center sm:text-sm appearance-none focus-visible:outline-none" />
 
                                                                <!-- Plus -->
                                                                <button type="button" @click="qty++"
@@ -667,19 +540,19 @@
                        </ul>
                        {{-- end invoice items --}}
                        {{-- invoice summery --}}
-                       @if ($activeInvoice && $activeInvoice->items->count() > 0)
+                       @if ($activeInvoice && count($activeInvoice['items']) > 0)
                            <div class="overflow-x-auto">
                                <hr class="my-4">
-                               <table class="min-w-full divide-y-2 divide-gray-200">
+                               <table class="w-full table-fixed divide-y-2 divide-gray-200">
 
                                    <tbody class="divide-y divide-gray-200 *:even:bg-gray-50">
-                                       <tr class="*:text-gray-900 *:first:font-medium">
+                                       <tr class="*:text-gray-900 *:first:font-medium *:first:w-fit *:first:min-w-fit">
 
                                            <th class="px-3 py-2 text-start whitespace-nowrap ">Sub Total
 
                                            </th>
-                                           <td class="px-3 py-2 text-end whitespace-nowrap">
-                                               {{ $activeInvoice->total }}</td>
+                                           <td class="px-3 py-2 text-end whitespace-nowrap w-full">
+                                               Tk {{ number_format($activeInvoice['total'], 2) }} </td>
                                        </tr>
 
                                        <tr x-data="{ discountOpen: @entangle('discountOpen') }" wire:click="openDiscount('open')"
@@ -694,26 +567,37 @@
                                                    </svg>
                                                </span>
                                            </th>
-                                           <td class="px-3 py-2 text-end whitespace-nowrap relative">
-                                               {{ $activeInvoice->discount }}
-                                               <div x-show="discountOpen" x-cloak @click.stop
-                                                   class="absolute px-2 py-1 end-0 top-[10px] z-auto w-56 overflow-hidden rounded border border-gray-300 bg-white shadow-sm flex items-center gap-2">
-                                                   <input wire:model="discountAmount"
-                                                       class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                                                       id="discount" type="text" placeholder="0.00" />
-                                                   <span wire:click="openDiscount('close')">
+                                           <td class="px-3 py-2 text-end whitespace-nowrap relative w-full">
+                                              Tk {{ number_format($activeInvoice['discount'], 2) }}
+                                               <div x-show="discountOpen" x-transition x-cloak @click.stop
+                                                   class="absolute px-2 py-1 end-0 text-sm top-[10px] z-auto w-60 overflow-hidden rounded border border-gray-300 bg-white shadow-sm flex items-center flex-wrap gap-2">
+                                                   <input type="number" step="0.01" min="0"
+                                                       wire:model.live.debounce.500ms="discountAmount"
+                                                       class="mt-1 w-[70%] rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
+                                                       placeholder="0.00" />
+
+
+                                                   <span wire:click="openDiscount('close')" class="w-[20%]">
+
                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                            viewBox="0 0 24 24" stroke-width="1.5"
                                                            stroke="currentColor"
-                                                           class="size-6 text-emerald-600 hover:text-emerald-500 cursor-pointer">
+                                                           class="size-5 text-emerald-600 hover:text-emerald-500 cursor-pointer">
                                                            <path stroke-linecap="round" stroke-linejoin="round"
                                                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                                        </svg>
 
                                                    </span>
-                                               </div>
-                                           </td>
+                                                   @error('discountAmount')
+                                                       <span class="text-sm text-left text-red-600 w-full">
+                                                           {{ $message }}
+                                                       </span>
+                                                   @enderror
 
+
+                                               </div>
+
+                                           </td>
                                        </tr>
 
 
@@ -722,42 +606,43 @@
                                            <th class="px-3 py-2 text-start whitespace-nowrap ">Grand Total
 
                                            </th>
-                                           <td class="px-3 py-2 text-end whitespace-nowrap font-semibold">
-                                               {{ $activeInvoice->grand_total }}</td>
+                                           <td class="px-3 py-2 text-end whitespace-nowrap font-semibold w-full">
+                                                Tk {{ number_format($activeInvoice['grand_total'], 2) }}</td>
                                        </tr>
                                        <tr class="*:text-gray-900 *:first:font-medium ">
 
                                            <th
-                                               class="px-3 py-2 text-start whitespace-nowrap text-red-500! font-semibold">
+                                               class="px-3 py-2 text-start whitespace-nowrap text-red-500! font-semibold ">
                                                Previous Due
                                                <p class="text-xs">
-                                                   {{ $activeInvoice?->customer?->invoices?->first()?->invoice_id }}
+                                                   {{ $activeInvoice['previous_invoice_id'] ?? null }}
                                                </p>
 
                                            </th>
                                            <td
-                                               class="px-3 py-2 text-end whitespace-nowrap text-red-500! font-semibold">
-                                               {{ $activeInvoice->previous_due }}
+                                               class="px-3 py-2 text-end whitespace-nowrap text-red-500! font-semibold w-full">
+                                               Tk {{ number_format($activeInvoice['previous_due'], 2) }}
                                            </td>
                                        </tr>
 
 
                                        <tr class="*:text-gray-900 *:first:font-medium">
                                            <th class="px-3 py-2 text-start whitespace-nowrap">Deposit</th>
-                                           <td class="px-3 py-2 text-end whitespace-nowrap">
-                                               {{ $activeInvoice->paid_amount }}</td>
+                                           <td class="px-3 py-2 text-end whitespace-nowrap w-full">
+                                             Tk {{ number_format($activeInvoice['paid_amount'], 2) }} </td>
                                        </tr>
 
                                        <tr class="*:text-gray-900 *:first:font-medium">
                                            <th class="px-3 py-2 text-start whitespace-nowrap">Due</th>
-                                           <td class="px-3 py-2 text-end whitespace-nowrap">
-                                               {{ $activeInvoice->due_amount }}</td>
+                                           <td class="px-3 py-2 text-end whitespace-nowra w-fullp">
+                                                Tk {{ number_format($activeInvoice['due_amount'], 2) }} </td>
                                        </tr>
 
                                    </tbody>
                                </table>
                            </div>
                            <div>
+                               {{-- buttons  --}}
                                <hr class="my-4">
                                <div class="flex items-center justify-between gap-2">
 
@@ -800,7 +685,7 @@
                                                </button>
                                            @endcan --}}
 
-                                           <a href="{{ route('company.invoice.download', $activeInvoice->id) }}"
+                                           <a href="{{ route('company.invoice.download', $activeInvoice['id']) }}"
                                                class="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                                                role="menuitem">
                                                Print
@@ -1065,7 +950,7 @@
                                    @endif
                                </div>
                            </div>
-                       @elseif (is_null($activeInvoice?->customer))
+                       @elseif (is_null($customer))
                            <div>
                                <div role="alert" class="rounded-md border border-red-500 bg-red-50 p-4 shadow-sm">
                                    <div class="flex items-start gap-4">
@@ -1127,7 +1012,7 @@
                                </div>
 
                            </div>
-                       @elseif ($activeInvoice->due_amount == 0)
+                       @elseif ($activeInvoice['due_amount'] == 0)
                            <div>
                                <div role="alert" class="rounded-md border border-red-500 bg-red-50 p-4 shadow-sm">
                                    <div class="flex items-start gap-4">
@@ -1148,7 +1033,8 @@
 
 
                                            <p class="mt-0.5 text-sm text-red-700">
-                                               There is currently no payment due for this invoice. Please review your invoice for any outstanding payments.
+                                               There is currently no payment due for this invoice. Please review your
+                                               invoice for any outstanding payments.
                                            </p>
 
                                        </div>
@@ -1157,7 +1043,6 @@
                                </div>
 
                            </div>
-
                        @elseif ($checkBalance)
                            <div>
                                <div role="alert" class="rounded-md border border-red-500 bg-red-50 p-4 shadow-sm">
@@ -1174,7 +1059,8 @@
 
 
 
-                                           <strong class="block leading-tight font-medium text-red-800"> Inifuciante Balance
+                                           <strong class="block leading-tight font-medium text-red-800"> Inifuciante
+                                               Balance
                                            </strong>
 
 
@@ -1227,28 +1113,20 @@
                                </div>
 
                                <!-- Paid Amount -->
-                               <div x-data="{
-                                   paid: @entangle('paidAmount'),
-                                   max: {{ $invoiceAmount }},
-                                   error: ''
-                               }" class="grid gap-1">
+                               <div class="grid gap-1">
                                    <label class="text-sm font-medium">Paid Amount</label>
 
-                                   <input type="number" x-model="paid" min="0" :max="max"
-                                       @input="
-            if (paid > max) {
-                paid = max;
-                error = 'Paid amount cannot exceed invoice amount';
-            } else {
-                error = '';
-            }
-        "
-                                       :disabled="radio === 'full_paid' || radio === 'full_due'"
+                                   <input type="number" step="0.01" min="0" max="{{ $invoiceAmount }}"
+
+                                      wire:model.live.debounce.500ms="paidAmount" x-bind:disabled="radio !== 'partial_paid'"
                                        class="w-full rounded-lg border border-gray-300 p-2
                disabled:bg-gray-100 disabled:cursor-not-allowed"
                                        placeholder="Enter paid amount">
 
-                                   <span x-show="error" x-text="error" class="text-sm text-red-600"></span>
+                                       @error('paidAmount')
+
+                                       <span  class="text-sm text-red-600">{{ $message }}</span>
+                                       @enderror
                                </div>
 
 

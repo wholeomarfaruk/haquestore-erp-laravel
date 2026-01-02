@@ -9,5 +9,6 @@ enum PaymentStatus:string
     case UNPAID = 'unpaid';
     case CANCELLED = 'cancelled';
     case REFUNDED = 'refunded';
+    case DUE = 'due';
 }
 
