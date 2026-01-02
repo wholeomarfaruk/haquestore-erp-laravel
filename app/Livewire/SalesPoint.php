@@ -270,7 +270,7 @@ class SalesPoint extends Component
                 'due_amount' => $invoice['due_amount'] ?? 0.00,
                 'grand_total' => $invoice['grand_total'] ?? 0.00,
                 'paid_amount' => $invoice['paid_amount'] ?? 0.00,
-                'invoice_id' => $invoice_id,
+                'invoice_id' => $invoice['invoice_id'],
                 'previous_due' => $invoice['previous_due'] ?? 0.00,
                 'previous_invoice_id' => $invoice['previous_invoice_id']
             ]);
