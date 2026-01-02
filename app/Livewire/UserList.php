@@ -54,6 +54,13 @@ class UserList extends Component
         if (!$user) {
             return abort(404);
         }
+        if($user->hasRole('superadmin')) {
+              $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'Superadmin cannot be deleted'
+            ]);
+            return;
+        }
         if (file_exists($user->profile_photo_path)) {
             unlink($user->profile_photo_path);
         }

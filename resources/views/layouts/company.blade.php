@@ -73,11 +73,10 @@
                     <h2 class="text-gray-500 text-md font-semibold" :class="{ 'hidden': !$store.sidebar.full }"
                         x-transition>Quick Action</h2>
                 </div>
-                <a href="{{ route('company.pos') }}" x-data="tooltip" x-on:mouseover="show = true" x-on:mouseleave="show = false"
-                    @click="$store.sidebar.active = 'pos' "
+                <a href="{{ route('company.pos') }}" x-data="tooltip" x-on:mouseover="show = true"
+                    x-on:mouseleave="show = false" @click="$store.sidebar.active = 'pos' "
                     class="relative flex items-center hover:text-gray-200 hover:bg-gray-800 space-x-2 rounded-md p-2 cursor-pointer justify-start text-gray-400 mb-6
-                    {{ Route::currentRouteName() == 'company.pos' ? 'text-gray-200 bg-gray-800' : '' }}"
-                    >
+                    {{ Route::currentRouteName() == 'company.pos' ? 'text-gray-200 bg-gray-800' : '' }}">
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -330,39 +329,33 @@
 
             <hr class="border-gray-700 mt-4">
             <!-- Schedules -->
-           <div
-    x-data
-    @click="$refs.logoutForm.submit()"
-    x-on:mouseover="show = true"
-    x-on:mouseleave="show = false"
-    class="relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-gray-800 space-x-2 rounded-md p-2 cursor-pointer"
-    x-bind:class="{
-        'justify-start': $store.sidebar.full,
-        'sm:justify-center': !$store.sidebar.full,
-        'text-gray-200 bg-gray-800': $store.sidebar.active == 'logout',
-        'text-gray-400': $store.sidebar.active != 'logout'
-    }"
->
-    <div class="flex items-center space-x-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-        </svg>
+            <div x-data @click="$refs.logoutForm.submit()" x-on:mouseover="show = true"
+                x-on:mouseleave="show = false"
+                class="relative flex justify-between items-center text-gray-400 hover:text-gray-200 hover:bg-gray-800 space-x-2 rounded-md p-2 cursor-pointer"
+                x-bind:class="{
+                    'justify-start': $store.sidebar.full,
+                    'sm:justify-center': !$store.sidebar.full,
+                    'text-gray-200 bg-gray-800': $store.sidebar.active == 'logout',
+                    'text-gray-400': $store.sidebar.active != 'logout'
+                }">
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
 
-        <span
-            x-cloak
-            x-bind:class="!$store.sidebar.full && show ? visibleClass : (!$store.sidebar.full && !show ? 'sm:hidden' : '')"
-        >
-            Logout
-        </span>
-    </div>
+                    <span x-cloak
+                        x-bind:class="!$store.sidebar.full && show ? visibleClass : (!$store.sidebar.full && !show ? 'sm:hidden' : '')">
+                        Logout
+                    </span>
+                </div>
 
-    <!-- Hidden Logout Form -->
-    <form x-ref="logoutForm" action="{{ route('logout') }}" method="POST" class="hidden">
-        @csrf
-    </form>
-</div>
+                <!-- Hidden Logout Form -->
+                <form x-ref="logoutForm" action="{{ route('logout') }}" method="POST" class="hidden">
+                    @csrf
+                </form>
+            </div>
 
             {{-- <div class="text-gray-400 text-sm mt-4" x-bind:class="$store.sidebar.full ? 'text-left' : 'text-center'">
                 &copy; 2024 HexCode IT
@@ -374,6 +367,28 @@
         {{ $slot }}
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('livewire:init', () => {
+            // php code
+            //      $this->dispatch('toast', [
+            //     'type' => 'success',
+            //     'message' => 'Item deleted successfully!'
+            // ]);
+            Livewire.on('toast', data => {
+                // console.log(data);
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: data[0].type,
+                    title: data[0].message,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                })
+            })
+        })
+    </script>
 
     <script>
         document.addEventListener('alpine:init', () => {
@@ -416,8 +431,8 @@
             console.log(Alpine.store('sidebar').active);
         })
     </script>
-     @livewireScripts
-@stack('scripts')
+    @livewireScripts
+    @stack('scripts')
 </body>
 
 </html>

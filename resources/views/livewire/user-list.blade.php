@@ -167,7 +167,23 @@
                                                </a>
                                            @endcan --}}
                                            @can('user.delete')
-                                               <button wire:click="deleteUser({{ $userItem->id }})"
+                                               <button
+                                               x-data
+    @click="
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This record will be permanently deleted!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete user!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $wire.deleteUser({{ $userItem->id }})
+            }
+        })
+    "
+                                       
                                                    class="-ml-px rounded-r-sm border border-gray-200 px-3 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 cursor-pointer">
                                                    Delete
                                                </button>

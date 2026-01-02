@@ -65,5 +65,6 @@ Route::middleware(['auth', 'verified'])->prefix('company')->name('company.')->gr
 
         //invoice
         Route::get('/invoice/download/{id}', [ControllersInvoice::class, 'download'])->name('invoice.download');
+        Route::get('/invoice/view/{id}', [ControllersInvoice::class, 'view'])->name('invoice.view');
 
 });

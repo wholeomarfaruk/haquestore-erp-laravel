@@ -252,8 +252,11 @@ class SalesPoint extends Component
             return false;
         }
         //create invoice
-        $invoiceId = Invoice::max('id') + 1;
+        $lastInvoice = Invoice::latest()->first();
+        $lastinvoiceId = $lastInvoice ? $lastInvoice->invoice_id : null;
+        $invoiceId = intval(explode('-', $lastinvoiceId)[1]) + 1;
         $invoice_id = 'INV-' . str_pad($invoiceId, 6, '0', STR_PAD_LEFT);
+
         $oldInvoice = Invoice::find($invoice['id']);
         if ($oldInvoice) {
 
@@ -351,12 +354,6 @@ class SalesPoint extends Component
 
         } else {
 
-            $customer = Customer::find($invoice['customer_id']);
-
-            if ($customer) {
-                $customer->balance = $invoice['customer']['balance'];
-                $customer->save();
-            }
 
             $oldInvoice->transections()->create([
                 'amount' => $this->paidAmount,

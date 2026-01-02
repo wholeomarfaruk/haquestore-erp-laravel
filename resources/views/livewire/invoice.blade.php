@@ -159,7 +159,8 @@
                                        </div>
                                        <div>
                                            <p class="font-bold mb-0 text-sm/2">{{ $invoiceItem->invoice_id }}</p>
-                                           <span class="text-xs text-gray-400">{{ $invoiceItem->updated_at->format('d-m-Y h:i') }}</span>
+                                           <span
+                                               class="text-xs text-gray-400">{{ $invoiceItem->updated_at->format('d-m-Y h:i') }}</span>
                                        </div>
                                    </td>
 
@@ -171,9 +172,12 @@
                                                    class="size-12 rounded-full object-cover sm:size-[52px]">
                                            </div>
                                            <div>
-                                               <p class="font-bold mb-0 text-sm/2">{{ $invoiceItem?->customer?->name ?? '' }}</p>
-                                               <span class="text-xs text-gray-400">{{ $invoiceItem?->customer?->phone ?? '' }}</span><br>
-                                               <span class="text-xs text-gray-400">{{ $invoiceItem?->customer?->second_phone ?? '' }}</span>
+                                               <p class="font-bold mb-0 text-sm/2">
+                                                   {{ $invoiceItem?->customer?->name ?? '' }}</p>
+                                               <span
+                                                   class="text-xs text-gray-400">{{ $invoiceItem?->customer?->phone ?? '' }}</span><br>
+                                               <span
+                                                   class="text-xs text-gray-400">{{ $invoiceItem?->customer?->second_phone ?? '' }}</span>
                                            </div>
                                        </div>
 
@@ -181,39 +185,39 @@
 
 
                                    <td class="px-3 py-2 whitespace-nowrap">
-                                    @if ($invoiceItem->payment_status==\App\Enums\Invoice\PaymentStatus::PAID->value)
-
-
-                                       <span
-                                           class="inline-flex items-center justify-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-emerald-700 dark:bg-emerald-700 dark:text-emerald-100">
-                                           <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-1" fill="none"
-                                               viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                               <path stroke-linecap="round" stroke-linejoin="round"
-                                                   d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                           </svg>
-                                           <p class="text-sm whitespace-nowrap">{{ $invoiceItem->payment_status }}</p>
-                                       </span>
-
+                                       @if ($invoiceItem->payment_status == \App\Enums\Invoice\PaymentStatus::PAID->value)
+                                           <span
+                                               class="inline-flex items-center justify-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-emerald-700 dark:bg-emerald-700 dark:text-emerald-100">
+                                               <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-1"
+                                                   fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                   stroke="currentColor">
+                                                   <path stroke-linecap="round" stroke-linejoin="round"
+                                                       d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                                               </svg>
+                                               <p class="text-sm whitespace-nowrap">{{ $invoiceItem->payment_status }}
+                                               </p>
+                                           </span>
                                        @else
+                                           <span
+                                               class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">
+                                               <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                   viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                   class="size-4 mr-1">
+                                                   <path stroke-linecap="round" stroke-linejoin="round"
+                                                       d="m8.25 7.5.415-.207a.75.75 0 0 1 1.085.67V10.5m0 0h6m-6 0h-1.5m1.5 0v5.438c0 .354.161.697.473.865a3.751 3.751 0 0 0 5.452-2.553c.083-.409-.263-.75-.68-.75h-.745M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                               </svg>
 
-                                       <span
-                                           class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">
-                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                               stroke-width="1.5" stroke="currentColor" class="size-4 mr-1">
-                                               <path stroke-linecap="round" stroke-linejoin="round"
-                                                   d="m8.25 7.5.415-.207a.75.75 0 0 1 1.085.67V10.5m0 0h6m-6 0h-1.5m1.5 0v5.438c0 .354.161.697.473.865a3.751 3.751 0 0 0 5.452-2.553c.083-.409-.263-.75-.68-.75h-.745M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                           </svg>
 
 
-
-                                           <p class="text-sm whitespace-nowrap">{{ $invoiceItem->payment_status }}</p>
-                                       </span>
-@endif
+                                               <p class="text-sm whitespace-nowrap">{{ $invoiceItem->payment_status }}
+                                               </p>
+                                           </span>
+                                       @endif
 
                                        {{-- {{ $invoiceItem->status ?? 'No Status' }} --}}
                                    </td>
                                    <td class="px-3 py-2 whitespace-nowrap">
-                                       {{ $invoiceItem->paid_amount}}
+                                       {{ $invoiceItem->paid_amount }}
                                    </td>
                                    <td class="px-3 py-2 whitespace-nowrap">
                                        <span
@@ -243,18 +247,21 @@
                                                        </button>
                                                    </span>
 
-                                                   <div role="menu" x-show="MenuOpen" @click.away="MenuOpen = false"
-                                                       class="absolute end-0 top-12 z-auto w-56 overflow-hidden rounded border border-gray-300 bg-white shadow-sm"
+                                                   <div x-cloak role="menu" x-show="MenuOpen"
+                                                       @click.away="MenuOpen = false"
+                                                       class="absolute end-0 top-12 z-50 w-56 overflow-hidden rounded border border-gray-300 bg-white shadow-sm"
                                                        {{-- :class="{'block': MenuOpen, 'hidden': !MenuOpen}" --}}>
-                                                       {{-- @can('invoice.view')
-                                                           <button type="button"
+                                                       @can('invoice.view')
+                                                           <a target="_blank"
+                                                               href="{{ route('company.invoice.view', $invoiceItem->id) }}"
+                                                               type="button"
                                                                class="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                                                                role="menuitem">
                                                                View
-                                                           </button>
-                                                       @endcan --}}
+                                                           </a>
+                                                       @endcan
                                                        @can('invoice.edit')
-                                                           <a href="{{ route('company.pos', ['activeInvoiceId'=>$invoiceItem->id]) }}"
+                                                           <a href="{{ route('company.pos', ['activeInvoiceId' => $invoiceItem->id]) }}"
                                                                class="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
                                                                role="menuitem">
                                                                Edit
@@ -285,18 +292,21 @@
                    </tbody>
                </table>
            </div>
+           <div class="my-4 mx-auto p-2">
+               {{ $invoices->links() }}
+           </div>
 
 
            {{-- =========================== Content End Here ============================ --}}
        </div>
-       <div x-cloak x-data="{ modalOpen: @entangle('viewModal') }" x-show="modalOpen" x-transition
+       <div x-cloak x-data="{ modalOpen: @entangle('viewInvoiceModal') }" x-show="modalOpen" x-transition
            class="fixed inset-0 z-50 grid place-content-center bg-black/50 p-4" role="dialog" aria-modal="true"
            aria-labelledby="modalTitle">
            <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
                <div class="flex items-start justify-between">
                    <h2 id="modalTitle" class="text-xl font-bold text-gray-900 sm:text-2xl">Customer Details</h2>
 
-                   <button @click="modalOpen = false" type="button"
+                   <button wire:click="viewInvoiceModal = false" type="button"
                        class="cursor-pointer -me-4 -mt-4 rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600 focus:outline-none"
                        aria-label="Close">
                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24"
@@ -309,82 +319,7 @@
 
                <div class="mt-4">
                    @if ($invoice)
-                       <div class="flow-root">
-                           <dl class="-my-3 divide-y divide-gray-200 text-sm">
-
-
-                               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                                   <dt class="font-medium text-gray-900">Name</dt>
-
-                                   <dd class="text-gray-700 sm:col-span-2">{{ $customer?->name ?? '' }}</dd>
-                               </div>
-
-                               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                                   <dt class="font-medium text-gray-900">Phone</dt>
-
-                                   <dd class="text-gray-700 sm:col-span-2">{{ $customer?->phone ?? '' }}</dd>
-                               </div>
-
-                               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                                   <dt class="font-medium text-gray-900">Secondary Phone</dt>
-
-                                   <dd class="text-gray-700 sm:col-span-2">{{ $customer?->second_phone ?? '' }}</dd>
-                               </div>
-
-                               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                                   <dt class="font-medium text-gray-900">Email</dt>
-
-                                   <dd class="text-gray-700 sm:col-span-2">{{ $customer?->email ?? '' }}</dd>
-                               </div>
-                               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                                   <dt class="font-medium text-gray-900">Status</dt>
-
-                                   <dd class="text-gray-700 sm:col-span-2">
-                                       <label for="status">
-                                           <select wire:model.live="status" name="status" id="status"
-                                               class="mt-0.5 w-full rounded border-gray-300 shadow-sm sm:text-sm">
-                                               <option value="">Please select</option>
-
-                                               <option value="active">Active</option>
-                                               <option value="inactive">Inactive</option>
-                                           </select>
-                                       </label>
-                                   </dd>
-                               </div>
-                               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                                   <dt class="font-medium text-gray-900">Address</dt>
-
-                                   <dd class="text-gray-700 sm:col-span-2">
-                                       {{ $customer?->address ? $customer?->address : '' }}
-                                   </dd>
-                               </div>
-                               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                                   <dt class="font-medium text-gray-900">Note</dt>
-
-                                   <dd class="text-gray-700 sm:col-span-2">
-                                       {{ $customer?->note ? $customer->note : '' }}
-                                   </dd>
-                               </div>
-                               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                                   <dt class="font-medium text-gray-900">Last Updated at</dt>
-
-                                   <dd class="text-gray-700 sm:col-span-2">
-                                       {{ $customer?->updated_at ? $customer?->updated_at?->format('Y-m-d') : '' }}
-                                   </dd>
-                               </div>
-                               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                                   <dt class="font-medium text-gray-900">Created at</dt>
-
-                                   <dd class="text-gray-700 sm:col-span-2">
-                                       {{ $customer?->created_at ? $customer?->created_at?->format('Y-m-d') : '' }}
-                                   </dd>
-                               </div>
-
-
-
-
-                           </dl>
-                       </div>
+                       @include('templates.invoice', ['invoice' => $invoice])
                    @endif
                </div>
            </div>

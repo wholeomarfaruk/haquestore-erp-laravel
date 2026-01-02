@@ -17,4 +17,9 @@ class Invoice extends Controller
 
         return $pdf->download($name);
     }
+    public function view($id)
+    {
+        $invoice = ModelsInvoice::findOrFail($id);
+        return view('templates.invoice-view', compact('invoice'));
+    }
 }

@@ -1,12 +1,13 @@
    {{-- ======================== Page Layout Start From Here ======================== --}}
-@push('styles')
-<style>
-    .swiper-button-prev, .swiper-button-next {
-        width: 20px;
-        height: 20px;
-    }
-</style>
-@endpush
+   @push('styles')
+       <style>
+           .swiper-button-prev,
+           .swiper-button-next {
+               width: 20px;
+               height: 20px;
+           }
+       </style>
+   @endpush
    <div x-data x-init="$store.pageName = { name: 'Manage Customers', slug: 'customers' }">
        {{-- ======================== Page Header Start From Here ======================== --}}
        <div class="flex flex-wrap justify-between gap-6 ">
@@ -159,7 +160,7 @@
 
                                    <td class="px-3 py-2 whitespace-nowrap">
 
-                                       @if ($customerItem->balance >= 0)
+                                       @if ($customerItem?->invoices?->last()?->due_amount <= 0)
                                            <span
                                                class="inline-flex items-center justify-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-emerald-700 dark:bg-emerald-700 dark:text-emerald-100">
 
@@ -170,8 +171,9 @@
                                                        d="m8.25 7.5.415-.207a.75.75 0 0 1 1.085.67V10.5m0 0h6m-6 0h-1.5m1.5 0v5.438c0 .354.161.697.473.865a3.751 3.751 0 0 0 5.452-2.553c.083-.409-.263-.75-.68-.75h-.745M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                                </svg>
 
-                                               <p class="text-sm whitespace-nowrap">{{ $customerItem->balance }}</p>
-                                               <button wire:click="getCustomerBal({{ $customerItem->id }})"
+                                               <p class="text-sm whitespace-nowrap">
+                                                   {{ $customerItem?->invoices?->last()?->due_amount ?? '0.00' }}</p>
+                                               {{-- <button wire:click="getCustomerBal({{ $customerItem->id }})"
                                                    class="cursor-pointer">
                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-1 ml-2"
                                                        fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -180,9 +182,9 @@
                                                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                                                    </svg>
 
-                                               </button>
+                                               </button> --}}
                                            </span>
-                                       @elseif($customerItem->balance < 0)
+                                       @elseif($customerItem?->invoices?->last()?->due_amount > 0)
                                            <span
                                                class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">
                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4 ml-1 mr-1.5"
@@ -193,8 +195,9 @@
                                                </svg>
 
 
-                                               <p class="text-sm whitespace-nowrap">{{ $customerItem->balance }} </p>
-                                               <button wire:click="getCustomerBal({{ $customerItem->id }})"
+                                               <p class="text-sm whitespace-nowrap">
+                                                   {{ $customerItem?->invoices?->last()?->due_amount ?? '0.00' }} </p>
+                                               {{-- <button wire:click="getCustomerBal({{ $customerItem->id }})"
                                                    class="cursor-pointer">
                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-1 ml-2"
                                                        fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -203,7 +206,7 @@
                                                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                                                    </svg>
 
-                                               </button>
+                                               </button> --}}
                                            </span>
                                        @endif
 
@@ -248,7 +251,21 @@
                                                    </button>
                                                @endcan
                                                @can('user.delete')
-                                                   <button wire:click="deleteUser({{ $customerItem->id }})"
+                                                   <button x-data
+                                                       @click="
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This record will be permanently deleted!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete customer!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $wire.deleteCustomer({{ $customerItem->id }})
+            }
+        })
+    "
                                                        class="-ml-px rounded-r-sm border border-gray-200 px-3 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:pointer-events-auto disabled:opacity-50 cursor-pointer">
                                                        Delete
                                                    </button>
@@ -319,7 +336,7 @@
 
                                    <dd class="text-gray-700 sm:col-span-2">{{ $customer?->email ?? '' }}</dd>
                                </div> --}}
-                               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                               {{-- <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                                    <dt class="font-medium text-gray-900">Status</dt>
 
                                    <dd class="text-gray-700 sm:col-span-2">
@@ -333,7 +350,7 @@
                                            </select>
                                        </label>
                                    </dd>
-                               </div>
+                               </div> --}}
                                <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                                    <dt class="font-medium text-gray-900">Address</dt>
 
@@ -393,12 +410,15 @@
 
                <div class="mt-4">
 
-                   <form action="#" class="space-y-4" wire:submit.prevent="registerCustomer">
+                   <form class="space-y-4" wire:submit.prevent="registerCustomer">
                        <div class="grid grid-cols-1 gap-1">
                            <label class="block text-sm font-medium text-gray-900" for="name">Name</label>
                            <input wire:model="newCustomerName"
                                class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                id="name" type="text" placeholder="Enter Name" />
+                           @error('newCustomerName')
+                               <span class="text-red-500">{{ $message }}</span>
+                           @enderror
                        </div>
 
                        <div class="grid grid-cols-1 gap-1">
@@ -406,6 +426,9 @@
                            <input wire:model="newCustomerPhone"
                                class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                id="phone" type="text" placeholder="Enter Phone Number" />
+                           @error('newCustomerPhone')
+                               <span class="text-red-500">{{ $message }}</span>
+                           @enderror
                        </div>
                        <div class="grid grid-cols-1 gap-1">
                            <label class="block text-sm font-medium text-gray-900" for="second_phone">Secondary
@@ -413,6 +436,9 @@
                            <input wire:model="newCustomerSecondPhone"
                                class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                id="second_phone" type="text" placeholder="Enter secondary Phone Number" />
+                           @error('newCustomerSecondPhone')
+                               <span class="text-red-500">{{ $message }}</span>
+                           @enderror
                        </div>
                        {{-- <div class="grid grid-cols-1 gap-1">
                            <label class="block text-sm font-medium text-gray-900" for="email">Email</label>
@@ -423,9 +449,13 @@
                        <div>
                            <label class="block text-sm font-medium text-gray-900" for="address">Address</label>
 
+
                            <textarea wire:model="newCustomerAddress"
                                class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                id="address" rows="4" placeholder="Enter Address"></textarea>
+                           @error('newCustomerAddress')
+                               <span class="text-red-500">{{ $message }}</span>
+                           @enderror
                        </div>
                        <div>
                            <label class="block text-sm font-medium text-gray-900" for="note">Note</label>
@@ -433,6 +463,9 @@
                            <textarea wire:model="newCustomerNote"
                                class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                id="note" rows="4" placeholder="Enter Note"></textarea>
+                           @error('newCustomerNote')
+                               <span class="text-red-500">{{ $message }}</span>
+                           @enderror
                        </div>
 
                        <button type="submit"
@@ -465,7 +498,7 @@
 
                <div class="mt-4">
 
-                   <form action="#" class="space-y-4" wire:submit.prevent="updateCustomer">
+                   <form class="space-y-4" wire:submit.prevent="updateCustomer">
                        <input type="hidden" name="id" wire:model="editCustomerId">
                        <div class="grid grid-cols-1 gap-1">
                            <label class="block text-sm font-medium text-gray-900" for="name">Name</label>
@@ -492,6 +525,31 @@
                            <input wire:model="editCustomerEmail"
                                class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                id="email" type="email" placeholder="Enter Email" />
+                       </div> --}}
+                       <div class="grid grid-cols-1 gap-1">
+                           <label class="block text-sm font-medium text-gray-900" for="customer_status">Status</label>
+                           <select wire:model="editCustomerStatus" name="status" id="customer_status"
+                               class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2">
+                               <option value="">Please select</option>
+
+                               <option value="active">Active</option>
+                               <option value="inactive">Inactive</option>
+                           </select>
+                       </div>
+                       {{-- <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                           <dt class="font-medium text-gray-900">Status</dt>
+
+                           <dd class="text-gray-700 sm:col-span-2">
+                               <label for="status">
+                                   <select wire:model.live="status" name="status" id="status"
+                                       class="mt-0.5 w-full rounded border-gray-300 shadow-sm sm:text-sm">
+                                       <option value="">Please select</option>
+
+                                       <option value="active">Active</option>
+                                       <option value="inactive">Inactive</option>
+                                   </select>
+                               </label>
+                           </dd>
                        </div> --}}
                        <div>
                            <label class="block text-sm font-medium text-gray-900" for="address">Address</label>
@@ -539,7 +597,7 @@
 
                <div class="mt-4">
 
-                   <form action="#" class="space-y-4" wire:submit.prevent="updateBalance">
+                   <form class="space-y-4" wire:submit.prevent="updateBalance">
                        <input type="hidden" name="id" wire:model="editCustomerId">
                        <label for="">Your Current Balance is: <strong>{{ $currentBalance }}</strong></label>
                        <div class="grid grid-cols-2 gap-1">
@@ -600,6 +658,124 @@
                        </button>
                    </form>
 
+               </div>
+           </div>
+       </div>
+       <div x-cloak x-data="{ DeletUserModalOpen: @entangle('DeletUserModal') }" x-show="DeletUserModalOpen" x-transition
+           class="fixed inset-0 z-50 grid place-content-center bg-black/50 p-4" role="dialog" aria-modal="true"
+           aria-labelledby="modalTitle">
+           <div
+               class="w-full md:w-md rounded-lg border border-red-500 bg-red-50 p-6 shadow-lg overflow-auto scrollbar scrollbar-thin scrollbar-transparent scrollbar-track-gray-100 scrollbar-thumb-gray-300 scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
+               <div class="flex items-start justify-between">
+                   <h2 id="modalTitle" class="text-xl font-bold text-gray-900 sm:text-2xl">Delete Customer
+                   </h2>
+
+                   <button wire:click="DeletUserModal=false" type="button"
+                       class="cursor-pointer -me-4 -mt-4 rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600 focus:outline-none"
+                       aria-label="Close">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24"
+                           stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                               d="M6 18L18 6M6 6l12 12"></path>
+                       </svg>
+                   </button>
+               </div>
+
+               <div class="mt-4">
+
+                   @if ($customer)
+                       <div class="flex gap-2 my-2 rounded-lg border border-gray-200 p-2">
+                           <div>
+                               <img class="w-12 h-12 rounded-full border border-gray-200"
+                                   src="{{ asset('storage/products/5945e0d0-6125-48d6-bbe4-62c2327b29f7.jpg') }}"
+                                   alt="">
+                           </div>
+                           <div class="flex-1">
+                               <p class="font-semibold">{{ $customer->name }}</p>
+                               <p class="text-sm text-gray-500">{{ $customer->phone }}</p>
+                           </div>
+                           <div class="flex items-center gap-1">
+                               @if ($customer->status == \App\Enums\Customer\Status::ACTIVE->value)
+                                   <span
+                                       class="inline-flex items-center justify-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-emerald-700 dark:bg-emerald-700 dark:text-emerald-100">
+                                       <p class="text-sm whitespace-nowrap">Active</p>
+                                   </span>
+                               @elseif($customer->status == \App\Enums\Customer\Status::INACTIVE->value)
+                                   <span
+                                       class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">
+
+
+                                       <p class="text-sm whitespace-nowrap">Inactive</p>
+                                   </span>
+                               @endif
+
+                               @if ($customer && $customer?->invoices?->last()?->due_amount <= 0)
+                                   <span
+                                       class="inline-flex items-center justify-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-emerald-700 dark:bg-emerald-700 dark:text-emerald-100">
+
+                                       <svg xmlns="http://www.w3.org/2000/svg" class="size-6 -ms-1 me-1.5"
+                                           fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                           stroke="currentColor" class="size-6">
+                                           <path stroke-linecap="round" stroke-linejoin="round"
+                                               d="m8.25 7.5.415-.207a.75.75 0 0 1 1.085.67V10.5m0 0h6m-6 0h-1.5m1.5 0v5.438c0 .354.161.697.473.865a3.751 3.751 0 0 0 5.452-2.553c.083-.409-.263-.75-.68-.75h-.745M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                       </svg>
+
+                                       <p class="text-sm whitespace-nowrap">
+                                           {{ $customer?->invoices?->last()?->due_amount ?? '0.00' }}
+                                       </p>
+
+                                   </span>
+                               @elseif($customer && $customer?->invoices?->last()?->due_amount > 0)
+                                   <span
+                                       class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">
+                                       <svg xmlns="http://www.w3.org/2000/svg" class="size-4 ml-1 mr-1.5"
+                                           fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                           stroke="currentColor">
+                                           <path stroke-linecap="round" stroke-linejoin="round"
+                                               d="m8.25 7.5.415-.207a.75.75 0 0 1 1.085.67V10.5m0 0h6m-6 0h-1.5m1.5 0v5.438c0 .354.161.697.473.865a3.751 3.751 0 0 0 5.452-2.553c.083-.409-.263-.75-.68-.75h-.745M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                       </svg>
+
+
+                                       <p class="text-sm whitespace-nowrap">
+                                           {{ $customer?->invoices?->last()?->due_amount ?? '0.00' }}
+
+                                       </p>
+
+                                   </span>
+                               @endif
+
+
+                           </div>
+                       </div>
+                   @endif
+                   <div role="alert" class="rounded-md  p-4 shadow-sm mb-2">
+                       <div class="flex items-center justify-center gap-4">
+                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                               stroke-width="1.5" stroke="currentColor" class="-mt-0.5 size-6 text-red-700">
+                               <path stroke-linecap="round" stroke-linejoin="round"
+                                   d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z">
+                               </path>
+                           </svg>
+
+                           <div class="flex-1">
+                               <strong class="block leading-tight font-medium text-red-800"> Delete Alert </strong>
+
+                               <p class="mt-0.5 text-sm text-red-700">
+                                   Are you sure you want to delete this customer?
+                               </p>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="flex justify-around items-center gap-2">
+                       @if ($customer)
+                           <button wire:click="deleteCustomer({{ $customer->id }})"
+                               class="border border-gray-400 p-2 cursor-pointer rounded-lg bg-red-200 w-full font-bold hover:shadow-lg">Yes,
+                               Delete</button>
+                       @endif
+                       <button wire:click="DeletUserModal=false"
+                           class="border border-gray-400 p-2 rounded-lg w-full cursor-pointer hover:shadow-lg">No,
+                           Cancell</button>
+                   </div>
                </div>
            </div>
        </div>

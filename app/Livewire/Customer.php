@@ -18,10 +18,11 @@ class Customer extends Component
     public $newCustomerName, $newCustomerPhone, $newCustomerSecondPhone, $newCustomerEmail, $newCustomerAddress, $newCustomerStatus, $newCustomerNote;
     public $editCustomerName, $editCustomerPhone, $editCustomerSecondPhone, $editCustomerEmail, $editCustomerAddress, $editCustomerStatus, $editCustomerNote, $editCustomerId;
     public $search = '';
-    public $currentBalance=0.00;
+    public $currentBalance = 0.00;
     public $amount;
     public $balupdateNote;
     public $balupdateAction;
+    public $DeletUserModal = false;
 
     use WithPagination;
 
@@ -59,7 +60,7 @@ class Customer extends Component
         } else {
 
             $this->customers = ModelsCustomer::all();
-            
+
         }
         return view('livewire.customer')->layout('layouts.company');
     }
@@ -73,7 +74,16 @@ class Customer extends Component
             unlink($customer->image);
         }
         $customer->delete();
-
+        $this->DeletUserModal = false;
+        $this->dispatch('toast', [
+            'type' => 'success',
+            'message' => 'Customer deleted successfully!'
+        ]);
+    }
+    public function deleteCustomerConfirm($id)
+    {
+        $this->customer = ModelsCustomer::find($id);
+        $this->DeletUserModal = true;
     }
     public function viewCustomer($id)
     {
@@ -89,30 +99,41 @@ class Customer extends Component
     {
         $this->validate([
             'newCustomerName' => 'required|min:3',
-            'newCustomerPhone' => 'min:11',
+            'newCustomerPhone' => 'min:11|max:11|unique:customers,phone',
         ]);
+        try {
+            //code...
 
-        $customer = new ModelsCustomer();
-        $customer->name = $this->newCustomerName;
-        $customer->phone = $this->newCustomerPhone;
-        if ($this->newCustomerSecondPhone) {
-            $customer->second_phone = $this->newCustomerSecondPhone;
+
+            $customer = new ModelsCustomer();
+            $customer->name = $this->newCustomerName;
+            $customer->phone = $this->newCustomerPhone;
+            if ($this->newCustomerSecondPhone) {
+                $customer->second_phone = $this->newCustomerSecondPhone;
+            }
+            if ($this->newCustomerEmail) {
+                $customer->email = $this->newCustomerEmail;
+            }
+            if ($this->newCustomerAddress) {
+                $customer->address = $this->newCustomerAddress;
+            }
+            if ($this->newCustomerStatus) {
+                $customer->status = $this->newCustomerStatus;
+            }
+            if ($this->newCustomerNote) {
+                $customer->note = $this->newCustomerNote;
+            }
+            $customer->save();
+            $this->customers = ModelsCustomer::all();
+            $this->registerModal = false;
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'Customer created successfully!'
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+        dd($th->getMessage());
         }
-        if ($this->newCustomerEmail) {
-            $customer->email = $this->newCustomerEmail;
-        }
-        if ($this->newCustomerAddress) {
-            $customer->address = $this->newCustomerAddress;
-        }
-        if ($this->newCustomerStatus) {
-            $customer->status = $this->newCustomerStatus;
-        }
-        if ($this->newCustomerNote) {
-            $customer->note = $this->newCustomerNote;
-        }
-        $customer->save();
-        $this->customers = ModelsCustomer::all();
-        $this->registerModal = false;
     }
     public function updateCustomerModal($id)
     {
@@ -156,16 +177,16 @@ class Customer extends Component
         if (!$id) {
             return;
         }
-         $customer = ModelsCustomer::find($id);
+        $customer = ModelsCustomer::find($id);
         if (!$customer) {
             return abort(404);
         }
         $this->customer = $customer;
 
-        if($this->balupdateAction == 'credit' && $this->amount){
+        if ($this->balupdateAction == 'credit' && $this->amount) {
             $customer->balance = $customer->balance + $this->amount;
         }
-        if($this->balupdateAction == 'debit' && $this->amount){
+        if ($this->balupdateAction == 'debit' && $this->amount) {
             $customer->balance = $customer->balance - $this->amount;
         }
         $customer->save();
@@ -201,6 +222,10 @@ class Customer extends Component
         $customer->save();
         $this->customers = ModelsCustomer::all();
         $this->editModal = false;
+        $this->dispatch('toast', [
+            'type' => 'success',
+            'message' => 'Customer updated successfully!'
+        ]);
     }
 }
 

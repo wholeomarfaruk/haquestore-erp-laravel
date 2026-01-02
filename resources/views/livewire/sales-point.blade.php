@@ -376,7 +376,6 @@
                        </div>
                    </div>
                    {{-- end product --}}
-
                </div>
                <div class="col-span-1 lg:col-span-2 border-l lg:border-l border-gray-300 min-h-screen p-2">
                    {{-- add to cart  --}}
@@ -749,8 +748,8 @@
                            <ul>
                                @foreach ($customers as $customeritem)
                                    <li>
-                                       <div wire:click="addCustomerInvoice({{ $customeritem->id }})"
-                                           class="flex gap-2 my-2 rounded-lg border border-gray-200 p-2">
+                                       <div @if($customeritem->status == \App\Enums\Customer\Status::ACTIVE->value) wire:click="addCustomerInvoice({{ $customeritem->id }})" @endif
+                                           class="flex gap-2 my-2 rounded-lg border border-gray-200 p-2 bg-gray-300">
                                            <div>
                                                <img class="w-12 h-12 rounded-full border border-gray-200"
                                                    src="{{ asset('storage/products/5945e0d0-6125-48d6-bbe4-62c2327b29f7.jpg') }}"
@@ -761,7 +760,21 @@
                                                <p class="text-sm text-gray-500">{{ $customeritem->phone }}</p>
                                            </div>
                                            <div>
-                                               @if ($customeritem && $customeritem->balance >= 0)
+                                               @if ($customeritem->status == \App\Enums\Customer\Status::ACTIVE->value)
+                                           <span
+                                               class="inline-flex items-center justify-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-emerald-700 dark:bg-emerald-700 dark:text-emerald-100">
+                                               <p class="text-sm whitespace-nowrap">Active</p>
+                                           </span>
+                                       @elseif($customeritem->status == \App\Enums\Customer\Status::INACTIVE->value)
+                                           <span
+                                               class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">
+
+
+                                               <p class="text-sm whitespace-nowrap">Inactive</p>
+                                           </span>
+                                       @endif
+
+                                               @if ($customeritem && $customeritem?->invoices?->last()?->due_amount <= 0)
                                                    <span
                                                        class="inline-flex items-center justify-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-emerald-700 dark:bg-emerald-700 dark:text-emerald-100">
 
@@ -774,11 +787,11 @@
                                                        </svg>
 
                                                        <p class="text-sm whitespace-nowrap">
-                                                           {{ $customeritem->balance }}
+                                                           {{ $customeritem?->invoices?->last()?->due_amount ?? "0.00" }}
                                                        </p>
 
                                                    </span>
-                                               @elseif($customeritem && $customeritem->balance < 0)
+                                               @elseif($customeritem && $customeritem?->invoices?->last()?->due_amount > 0)
                                                    <span
                                                        class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">
                                                        <svg xmlns="http://www.w3.org/2000/svg"
@@ -791,7 +804,7 @@
 
 
                                                        <p class="text-sm whitespace-nowrap">
-                                                           {{ $customeritem->balance }}
+                                                           {{ $customeritem?->invoices?->last()?->due_amount ?? "0.00" }}
 
                                                        </p>
 
