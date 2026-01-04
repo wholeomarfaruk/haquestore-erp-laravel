@@ -13,8 +13,12 @@ class StockList extends Component
     public $editProductName, $editProductSalePrice, $editKgPerUnit, $editProductQuantity, $editProductUnit, $editProductStockStatus, $editProductDescription, $editProductId, $editViewProductImage;
     public $viewProduct;
     public $editProductModal = false;
-    public float $updateUnit;
+    public int $updateUnit=0;
+    public int $updateKg=0;
+    public int $updateGram=0;
+
     public $stock_input='in';
+
     public function editProduct($id)
     {
         // dd($id);
@@ -34,6 +38,7 @@ class StockList extends Component
 
         $this->updateUnit=0;
         $this->editProductModal = true;
+
 
     }
 
@@ -67,23 +72,47 @@ class StockList extends Component
             // $product->stock_status = $this->editProductStockStatus;
             // $product->description = $this->editProductDescription;
             // $product->value_per_unit = $this->editKgPerUnit;
-            if ($this->updateUnit && $this->stock_input == 'in' && $this->updateUnit > 0) {
+            if (($this->updateUnit > 0 || $this->updateKg >0 || $this->updateGram>0) && $this->stock_input == 'in') {
 
-                $product->unit_value += $this->updateUnit;
-                $product->stock += ($this->updateUnit * $product->value_per_unit);
+                $unitinkg = $this->updateUnit * $product->value_per_unit;
+                $kg=$this->updateKg;
+                $graminkg= $this->updateGram>0 ? ($this->updateGram/1000) : 0;
+                $totalkg=$kg+$graminkg+$unitinkg;
+                $newUnit=$totalkg/$product->value_per_unit;
 
-            }elseif($this->updateUnit && $this->stock_input == 'out' && $this->updateUnit <= $this->viewProduct->unit_value){
-                $product->unit_value -= $this->updateUnit;
-                $product->stock -= ($this->updateUnit * $product->value_per_unit);
+
+                $product->unit_value += $newUnit;
+                $product->stock += $totalkg;
+
+            }elseif(($this->updateUnit > 0 || $this->updateKg >0 || $this->updateGram>0) && $this->stock_input == 'out' ){
+                $unitinkg = $this->updateUnit * $product->value_per_unit;
+                $kg=$this->updateKg;
+                $graminkg= $this->updateGram>0 ? ($this->updateGram/1000) : 0;
+                $totalkg=$kg+$graminkg+$unitinkg;
+                $newUnit=$totalkg/$product->value_per_unit;
+
+
+                if($this->viewProduct->stock<$totalkg){
+                    $this->dispatch('toast', [
+                        'type' => 'error',
+                        'message' => 'Stock not enough'
+                    ]);
+                    return false;
+                }
+
+                $product->unit_value -= $newUnit;
+                $product->stock -= $totalkg;
             }
 
 
             $product->save();
+            $this->reset(['updateUnit','updateKg','updateGram']);
         } catch (\Throwable $th) {
             //throw $th;
             dd($th->getMessage());
         }
         $this->editProductModal = false;
+
     }
     public function render()
     {

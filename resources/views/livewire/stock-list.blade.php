@@ -277,15 +277,38 @@
                        <div class="grid grid-cols-3 gap-1">
 
                            <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="phone">Update Unit <span
-                                       class="size-6 text-red-500 mr-1.5">*</span> </label>
-                               <input wire:model="updateUnit" name="unit" step="0.01"
+                               <label class="block text-sm font-medium text-gray-900" for="phone">Unit </label>
+                               <input wire:model="updateUnit" name="unit" min="0"
                                    class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                                    id="phone" type="number" placeholder="Enter Unit qty (decimal 0.00)" />
-
                            </div>
+
                            <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="phone">Stock Input<span
+                               <label class="block text-sm font-medium text-gray-900" for="phone">Unit in kg </label>
+                               <input wire:model="updateKg" name="unit" min="0"
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
+                                   id="phone" type="number" placeholder="Enter Unit qty (decimal 0.00)" />
+                           </div>
+
+                           <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="phone">Unit in gram </label>
+                               <input wire:model="updateGram" name="unit" min="0"
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
+                                   id="phone" type="number" placeholder="Enter Unit qty (decimal 0.00)" />
+                           </div>
+
+                            @error('updateUnit')
+                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                               @enderror
+
+                           <div class="col-span-2">
+                               <p class="mt-2 text-sm text-gray-600">{{ $viewProduct?->unit_value ." Unit & ". $viewProduct?->stock." ".$viewProduct?->unit_name }} (Kg Per Unit 1x{{ $viewProduct?->value_per_unit }}={{ $viewProduct?->value_per_unit }}kg) </p>
+                           </div>
+                       </div>
+                       <div class="grid grid-cols-2 gap-1">
+
+                           <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="phone">Stock Input Type<span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
 
 
@@ -326,13 +349,7 @@
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
-                            @error('updateUnit')
-                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                               @enderror
 
-                           <div class="grid grid-cols-1 gap-1">
-                               <p class="mt-2 text-sm text-gray-600">{{ $viewProduct?->unit_value ." Unit & ". $viewProduct?->stock." ".$viewProduct?->unit_name }}</p>
-                           </div>
                        </div>
                        <button type="submit"
                            class="block w-full rounded-lg border border-indigo-600 bg-white px-12 py-3 text-sm font-medium text-indigo-600 transition-colors hover:bg-indigo-500 hover:text-white cursor-pointer">

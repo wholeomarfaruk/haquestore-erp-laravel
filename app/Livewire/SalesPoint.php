@@ -382,6 +382,22 @@ class SalesPoint extends Component
         if (!$invoice) {
             return false;
         }
+        if(!$invoice->customer){
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'Customer not found.'
+            ]);
+            return false;
+        }
+        // dd($invoice->customer->invoices()->latest('id')->value('id'));
+        // return;
+        if ($invoice->customer->invoices()->latest('id')->value('id') != $invoice->id) {
+             $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'You can edit only last invoice of the customer.'
+            ]);
+            return false;
+        }
         $items = [];
         foreach ($invoice->items as $item) {
             $items[$item->product_id]['id'] = $item->product_id;

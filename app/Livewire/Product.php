@@ -71,7 +71,7 @@ class Product extends Component
             $product->unit_name = $this->newPunit;
             $product->stock_status = $this->newPStockStatus;
             $product->stock=floatval($product->unit_value) * floatval($product->value_per_unit);
-            
+
             if ($this->newPDescription) {
 
                 $product->description = $this->newPDescription;
@@ -116,13 +116,12 @@ class Product extends Component
         $this->editProductPurchasePrice = $this->viewProduct->purchase_price;
         $this->editProductSalePrice = $this->viewProduct->price;
         $this->editProductDiscountPrice = $this->viewProduct->discount_price;
-        $this->editProductQuantity = $this->viewProduct->unit_value;
         $this->editProductUnit = $this->viewProduct->unit_name;
         $this->editProductStockStatus = $this->viewProduct->stock_status;
         $this->editProductDescription = $this->viewProduct->description;
         $this->editKgPerUnit = $this->viewProduct->value_per_unit;
         $this->editViewProductImage = $this->viewProduct->image;
-
+        $this->editProductQuantity = $this->viewProduct->unit_value;
         $this->editProductModal = true;
     }
 
@@ -156,12 +155,11 @@ class Product extends Component
             $product->purchase_price = $this->editProductPurchasePrice;
             $product->price = $this->editProductSalePrice;
             $product->discount_price = $this->editProductDiscountPrice;
-            $product->unit_value = $this->editProductQuantity;
+
             $product->unit_name = $this->editProductUnit;
             $product->stock_status = $this->editProductStockStatus;
             $product->description = $this->editProductDescription;
             $product->value_per_unit = $this->editKgPerUnit;
-            $product->stock=floatval($product->unit_value) * floatval($product->value_per_unit);
             if ($this->editProductImage) {
                 if (is_file('storage/' . $product->image)) {
 

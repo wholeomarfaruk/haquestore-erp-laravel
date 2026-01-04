@@ -109,9 +109,10 @@
                            </div>
                        </details>
                        <div class="group">
-                           <button wire:click="registerModal=true" type="button"
+                           <a href="{{ route('company.pos') }}" type="button"
                                class="flex items-center gap-2  pb-1 text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 cursor-pointer rounded border border-gray-300 px-4 py-2">
-                               <span class="text-sm font-medium"> Add Customer</span>
+                               <span class="text-sm font-medium">Create New Invoice</span>
+                           </a>
                        </div>
                    </div>
                </div>

@@ -21,11 +21,7 @@ class Invoice extends Component
 
     protected string $paginationTheme = 'tailwind';
 
-    protected $queryString = [
-        'page' => ['except' => 1],
-        'search' => ['except' => ''],
-    ];
-
+  
 
 
     // 🔴 VERY IMPORTANT

@@ -149,7 +149,7 @@
                                                        <p class="text-gray-500">Quantity</p>
 
                                                        <p class="font-medium">
-                                                           {{ $product->unit_value  }} Unit</p>
+                                                           {{ $product?->stock." ".$product?->unit_name }} </p>
                                                    </div>
                                                </div>
 
@@ -394,8 +394,8 @@
                            <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="phone">Unit qty <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
-                               <input wire:model="newPQuantity"
-                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
+                               <input wire:model="newPQuantity" disabled
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2 disabled:bg-gray-100"
                                    id="phone" type="number" placeholder="Enter Unit qty" />
                                @error('newPQuantity')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -581,8 +581,8 @@
                            <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="phone">Unit qty <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
-                               <input wire:model="editProductQuantity"
-                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
+                               <input wire:model="editProductQuantity" disabled
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2 disabled:bg-gray-100"
                                    id="phone" type="number" placeholder="Enter Unit qty" />
                                @error('editPQuantity')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
