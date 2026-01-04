@@ -30,7 +30,7 @@
        <div class="flex-1 w-full bg-white rounded-lg min-h-[80vh]">
            {{-- ======================== Content Start From Here ======================== --}}
            <div class="grid grid-cols-1 lg:grid-cols-6 gap-2">
-               <div class="col-span-1 lg:col-span-4 p-2 order-1 lg:order-2">
+               <div class="col-span-1 lg:col-span-4 p-2 order-2 lg:order-1">
                    {{-- start search and filter --}}
                    <div x-data="{ filter: false }"
                        class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 relative my-3 mx-2 sm:mx-4 px-2">
@@ -374,7 +374,7 @@
                    </div>
                    {{-- end product --}}
                </div>
-               <div class="col-span-1 lg:col-span-2 order-2 lg:order-1 border-l lg:border-l border-gray-300 min-h-screen p-2">
+               <div class="col-span-1 lg:col-span-2 order-1 lg:order-2 border-l lg:border-l border-gray-300 min-h-screen p-2">
                    {{-- add to cart  --}}
                    <div>
                        <p class="font-semibold text-lg">{{ $activeInvoice['invoice_id'] ?? 'New Invoice' }}</p>
