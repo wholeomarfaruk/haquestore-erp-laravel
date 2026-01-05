@@ -38,7 +38,7 @@
         </svg>
     </button>
 
-    <div class="h-screen  bg-gray-900 transition-all duration-300 space-y-2 sticky sm:relative flex justify-around  flex-col"
+    <div class="h-screen  bg-gray-900 transition-all duration-300 space-y-2 fixed sm:sticky flex justify-around  flex-col"
         x-bind:class="{
             'w-64': $store.sidebar.full,
             'w-64 sm:w-20': !$store.sidebar.full,
@@ -380,7 +380,7 @@
             </div> --}}
         </div>
     </div>
-    <div class="flex-1 h-screen  w-full p-6 bg-gray-100 " comment="Page Content">
+    <div class="flex-1  w-full p-6 bg-gray-100 " comment="Page Content">
 
         {{ $slot }}
     </div>
