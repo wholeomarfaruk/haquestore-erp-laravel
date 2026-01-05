@@ -101,6 +101,7 @@
         .total-table td {
             border: 1px solid #ddd;
             padding: 8px;
+            font-size: 12px;
         }
 
         .total-table tr td:first-child {
@@ -200,6 +201,14 @@
 
             </td>
             <td>Tk {{ number_format($invoice->previous_due, 2) }}</td>
+        </tr>
+        <tr style="background:#f5f5f5">
+            <td>
+                Payable Amount
+
+
+            </td>
+            <td>Tk {{ number_format(($invoice->previous_due+$invoice->grand_total), 2) }}</td>
         </tr>
 
         <tr>
