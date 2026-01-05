@@ -1,0 +1,13 @@
+<div>
+     <!-- Account Management -->
+                            <div class="block px-4 py-2 text-xs text-gray-400">
+                                {{ __('Manage Account') }}
+                            </div>
+
+    {{-- Update Profile --}}
+    <livewire:profile.update-profile-information-form />
+
+    {{-- Change Password --}}
+    <livewire:profile.update-password-form />
+    
+</div>

@@ -13,6 +13,7 @@ use App\Livewire\RoleList;
 use App\Livewire\SalesPoint;
 use App\Livewire\StockList;
 use App\Livewire\UserList;
+use App\Livewire\UserProfile;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -67,4 +68,5 @@ Route::middleware(['auth', 'verified'])->prefix('company')->name('company.')->gr
         Route::get('/invoice/download/{id}', [ControllersInvoice::class, 'download'])->name('invoice.download');
         Route::get('/invoice/view/{id}', [ControllersInvoice::class, 'view'])->name('invoice.view');
 
+        Route::get('/user/profile', UserProfile::class)->name('company.user.profile');
 });

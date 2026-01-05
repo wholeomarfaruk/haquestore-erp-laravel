@@ -254,6 +254,24 @@
                         Role & Permissions</h1>
 
                 </a>
+                <!-- Role and permissions -->
+                <a href="{{ route('company.user.profile') }}" x-data="tooltip" x-on:mouseover="show = true"
+                    x-on:mouseleave="show = false"
+                    class="relative flex items-center hover:text-gray-200 hover:bg-gray-800 space-x-2 rounded-md p-2 cursor-pointer justify-start text-gray-400
+                    {{ Route::currentRouteName() == 'company.user.profile' ? 'text-gray-200 bg-gray-800' : '' }}
+                    ">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 1 0-2.636 6.364M16.5 12V8.25" />
+</svg>
+
+
+
+                    <h1 x-cloak
+                        x-bind:class="!$store.sidebar.full && show ? visibleClass : '' || !$store.sidebar.full && !show ?
+                            'sm:hidden' : ''">
+                        Profile</h1>
+
+                </a>
                 <!-- Ui elements -->
                 <div class="mt-4 mb-1">
                     <h2 class="text-gray-500 text-md font-semibold" :class="{ 'hidden': !$store.sidebar.full }"
@@ -275,8 +293,8 @@
                                 .sidebar.active != 'uielements'
                         }">
                         <div class="relative flex space-x-2 items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 size-6" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z" />
                             </svg>
