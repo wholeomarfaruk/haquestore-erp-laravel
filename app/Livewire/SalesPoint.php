@@ -611,11 +611,29 @@ class SalesPoint extends Component
             $customer = Customer::find($this->activeInvoice['customer_id']);
             $invoice = $customer->invoices()->latest()->first();
 
+            if ($invoice) {
+                $this->activeInvoice['previous_invoice_id'] = $invoice?->invoice_id;
+                $previous_due = abs($invoice->due_amount);
+            } else {
+                $this->activeInvoice['previous_invoice_id'] = null;
+                $previous_due = 0;
+            }
 
-            $this->activeInvoice['previous_invoice_id'] = $invoice?->invoice_id;
-            $previous_due = abs($invoice->due_amount);
 
-        } elseif ($this->activeInvoice['previous_invoice_id']) {
+        } elseif ($this->activeInvoice['previous_invoice_id'] && $this->activeInvoice['status'] == Status::DRAFT->value) {
+            $customer = Customer::find($this->activeInvoice['customer_id']);
+            $invoice = $customer->invoices()->latest()->first();
+
+            if ($invoice) {
+                $this->activeInvoice['previous_invoice_id'] = $invoice?->invoice_id;
+                $previous_due = abs($invoice->due_amount);
+            } else {
+                $this->activeInvoice['previous_invoice_id'] = null;
+                $previous_due = 0;
+            }
+            
+        } elseif ($this->activeInvoice['previous_invoice_id'] ) {
+
             // $onlyid = intval(explode('-', $this->activeInvoice['previous_invoice_id'])[1]);
             $invoice = Invoice::where('invoice_id', '=', $this->activeInvoice['previous_invoice_id'])->first();
 

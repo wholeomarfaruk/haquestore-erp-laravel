@@ -149,7 +149,7 @@
                                                        <p class="text-gray-500">Quantity</p>
 
                                                        <p class="font-medium">
-                                                           {{ $product?->stock." ".$product?->unit_name }} </p>
+                                                           {{ $product?->stock . ' ' . $product?->unit_name }} </p>
                                                    </div>
                                                </div>
 
@@ -160,10 +160,12 @@
 
                                                    <div class="mt-1.5 sm:mt-0">
                                                        <p class="text-gray-500">Per Unit</p>
-                                                       <p class="font-medium">{{ $product->value_per_unit . ' ' . $product->unit_name }}</p>
+                                                       <p class="font-medium">
+                                                           {{ $product->value_per_unit . ' ' . $product->unit_name }}
+                                                       </p>
                                                    </div>
                                                </div>
-                                                <div class="sm:inline-flex sm:shrink-0 sm:items-center sm:gap-2">
+                                               <div class="sm:inline-flex sm:shrink-0 sm:items-center sm:gap-2">
 
 
                                                    <div class="mt-1.5 sm:mt-0">
@@ -192,7 +194,22 @@
 
 
                                            </span>
-                                           <span wire:click="deleteProduct({{ $product->id }})" alt="Delete"
+                                           <span x-data
+                                               @click="
+                                                Swal.fire({
+                                                    title: 'Are you sure?',
+                                                    text: 'This record will be permanently deleted!',
+                                                    icon: 'warning',
+                                                    showCancelButton: true,
+                                                    confirmButtonColor: '#d33',
+                                                    confirmButtonText: 'Yes, delete customer!'
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        $wire.deleteProduct({{ $product->id }})
+                                                    }
+                                                })
+                                            "
+                                               alt="Delete"
                                                class="cursor-pointer rounded-md shadow-lg bg-red-100 px-1 py-1 text-red-700 dark:bg-red-700 dark:text-red-100">
                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none"
                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -401,7 +418,7 @@
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div> --}}
-                                  <div class="grid grid-cols-1 gap-1">
+                           <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="phone">Kg Per Unit <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
                                <input wire:model="newKgPerUnit"
@@ -411,7 +428,7 @@
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
-                            <div class="grid grid-cols-1 gap-1">
+                           <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="stock_status">Stock
                                    Status <span class="size-6 text-red-500 mr-1.5">*</span> </label>
                                <select wire:model="newPStockStatus" id="stock_status"
@@ -494,7 +511,8 @@
                                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                    @enderror
 
-                                   <input wire:key="new-product-image" wire:model.live="newPImage" type="file" id="NewFile" class="sr-only">
+                                   <input wire:key="new-product-image" wire:model.live="newPImage" type="file"
+                                       id="NewFile" class="sr-only">
                                </label>
                            </div>
                        </div>
@@ -546,7 +564,7 @@
                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                            @enderror
                        </div>
-                        <div class="grid grid-cols-3 gap-1">
+                       <div class="grid grid-cols-3 gap-1">
                            {{-- <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="purchase_price">Purchase
                                    Price</label>
@@ -589,17 +607,17 @@
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div> --}}
-                                  <div class="grid grid-cols-1 gap-1">
+                           <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="phone">Kg Per Unit <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
                                <input wire:model="editKgPerUnit"
                                    class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                                   id="phone" type="text"  placeholder="Kg per 1 unit. 1x50kg" />
+                                   id="phone" type="text" placeholder="Kg per 1 unit. 1x50kg" />
                                @error('editKgPerUnit')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
-                            <div class="grid grid-cols-1 gap-1">
+                           <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="stock_status">Stock
                                    Status <span class="size-6 text-red-500 mr-1.5">*</span> </label>
                                <select wire:model="editProductStockStatus" id="stock_status"
@@ -701,8 +719,8 @@
                                    @error('editProductImage')
                                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                    @enderror
-                                   <input wire:key="edit-product-image" wire:model.live="editProductImage" type="file" id="EditFile"
-                                       class="sr-only">
+                                   <input wire:key="edit-product-image" wire:model.live="editProductImage"
+                                       type="file" id="EditFile" class="sr-only">
                                </label>
                            </div>
                        </div>
