@@ -592,11 +592,11 @@
 
 
                                                </div> --}}
-                                               <input type="text" class="text-end focus-within:outline-0" min="0"
-                                                wire:model.live.debounce.1000ms="discountAmount"
+                                               <input type="text" class="text-end focus-within:outline-0"
+                                                   min="0" wire:model.live.debounce.1000ms="discountAmount"
                                                    wire:model.blur="discountAmount">
                                                @error('discountAmount')
-                                               <br>
+                                                   <br>
                                                    <span class="text-sm text-left text-red-600 w-full">
                                                        {{ $message }}
                                                    </span>
@@ -629,17 +629,24 @@
                                            </td>
                                        </tr>
 
+                                       <tr class="*:text-gray-900 *:first:font-medium *:first:w-fit *:first:min-w-fit">
 
+                                           <th class="px-3 py-2 text-start whitespace-nowrap ">Payable Amount
+
+                                           </th>
+                                           <td class="px-3 py-2 text-end whitespace-nowrap w-full">
+                                               Tk {{ number_format(($activeInvoice['grand_total']+$activeInvoice['previous_due']), 2) }} </td>
+                                       </tr>
                                        <tr class="*:text-gray-900 *:first:font-medium">
                                            <th class="px-3 py-2 text-start whitespace-nowrap">Deposit</th>
                                            <td class="px-3 py-2 text-end whitespace-nowrap w-full">
                                                {{-- Tk {{ number_format($activeInvoice['paid_amount'], 2) }} </td> --}}
 
-                                               <input type="text" class="text-end focus-within:outline-0" min="0"
-                                                wire:model.live.debounce.1000ms="paidAmount"
+                                               <input type="text" class="text-end focus-within:outline-0"
+                                                   min="0" wire:model.live.debounce.1000ms="paidAmount"
                                                    wire:model.blur="paidAmount">
-                                                    @error('paidAmount')
-                                               <br>
+                                               @error('paidAmount')
+                                                   <br>
                                                    <span class="text-sm text-left text-red-600 w-full">
                                                        {{ $message }}
                                                    </span>
