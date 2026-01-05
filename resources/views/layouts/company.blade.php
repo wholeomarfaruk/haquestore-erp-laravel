@@ -18,7 +18,7 @@
     @stack('styles')
 </head>
 
-<body x-data class="h-screen mx-auto antialiased flex justify-between">
+<body x-data class=" mx-auto antialiased flex justify-between">
 
 
     <!-- Mobile Menu Toggle -->
@@ -380,7 +380,7 @@
             </div> --}}
         </div>
     </div>
-    <div class="flex-1  w-full p-6 bg-gray-100 " comment="Page Content">
+    <div class="min-h-screen flex-1  w-full p-6 bg-gray-100 " comment="Page Content">
 
         {{ $slot }}
     </div>
