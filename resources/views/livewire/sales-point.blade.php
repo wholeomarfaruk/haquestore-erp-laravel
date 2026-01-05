@@ -407,7 +407,7 @@
                                class="flex gap-2 my-2 rounded-lg border border-gray-200 p-2 cursor-pointer  disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
                                <div>
                                    <img class="w-12 h-12 rounded-full border border-gray-200"
-                                       src="{{ asset('storage/products/5945e0d0-6125-48d6-bbe4-62c2327b29f7.jpg') }}"
+                                       src="{{ $customer->profile_picture }}"
                                        alt="">
                                </div>
                                <div class="flex-1">
@@ -594,7 +594,12 @@
                                                </div> --}}
                                                <input type="text" class="text-end focus-within:outline-0"
                                                    min="0" wire:model.live.debounce.1000ms="discountAmount"
-                                                   wire:model.blur="discountAmount">
+                                                   wire:model.blur="discountAmount"
+ inputmode="decimal"
+    oninput="this.value = this.value
+        .replace(/[^0-9.]/g, '')
+        .replace(/(\..*)\./g, '$1');"
+                                                   >
                                                @error('discountAmount')
                                                    <br>
                                                    <span class="text-sm text-left text-red-600 w-full">
@@ -631,7 +636,7 @@
 
                                        <tr class="*:text-gray-900 *:first:font-medium *:first:w-fit *:first:min-w-fit">
 
-                                           <th class="px-3 py-2 text-start whitespace-nowrap ">Payable Amount
+                                           <th class="px-3 py-2 bg-gray-300! text-start whitespace-nowrap ">Payable Amount
 
                                            </th>
                                            <td class="px-3 py-2 text-end whitespace-nowrap w-full">
@@ -643,8 +648,13 @@
                                                {{-- Tk {{ number_format($activeInvoice['paid_amount'], 2) }} </td> --}}
 
                                                <input type="text" class="text-end focus-within:outline-0"
-                                                   min="0" wire:model.live.debounce.1000ms="paidAmount"
-                                                   wire:model.blur="paidAmount">
+                                                   min="0" wire:model.live.debounce.1500ms="paidAmount"
+                                                   wire:model.blur="paidAmount"
+                                                    inputmode="decimal"
+    oninput="this.value = this.value
+        .replace(/[^0-9.]/g, '')
+        .replace(/(\..*)\./g, '$1');"
+                                                   >
                                                @error('paidAmount')
                                                    <br>
                                                    <span class="text-sm text-left text-red-600 w-full">
@@ -772,10 +782,10 @@
                            @foreach ($customers as $customeritem)
                                <li>
                                    <div @if ($customeritem->status == \App\Enums\Customer\Status::ACTIVE->value) wire:click="addCustomerInvoice({{ $customeritem->id }})" @endif
-                                       class="flex gap-2 my-2 rounded-lg border border-gray-200 p-2 bg-gray-300">
+                                       class="flex gap-2 my-2 rounded-lg border border-gray-200 p-2 cursor-pointer">
                                        <div>
                                            <img class="w-12 h-12 rounded-full border border-gray-200"
-                                               src="{{ asset('storage/products/5945e0d0-6125-48d6-bbe4-62c2327b29f7.jpg') }}"
+                                               src="{{ $customeritem->profile_picture }}"
                                                alt="">
                                        </div>
                                        <div class="flex-1">

@@ -101,7 +101,7 @@
         .total-table td {
             border: 1px solid #ddd;
             padding: 8px;
-            font-size: 12px;
+            font-size: 10px;
         }
 
         .total-table tr td:first-child {

@@ -174,18 +174,18 @@ class SalesPoint extends Component
         if ($this->activeInvoice['due_amount'] == 0) { //paid in full
             $this->radio = 'full_paid';
             //Upate status
-            $this->activeInvoice['status'] = Status::DUE->value;
+            $this->activeInvoice['status'] = Status::COMPLETED->value;
             $this->activeInvoice['payment_status'] = PaymentStatus::UNPAID->value;
 
         } elseif ($this->activeInvoice['due_amount'] > 0 && $this->activeInvoice['due_amount'] < ($this->activeInvoice['grand_total'] + $this->activeInvoice['previous_due'])) {
             //Partial
             $this->radio = 'partial_paid';
-            $this->activeInvoice['status'] = Status::DUE->value;
+            $this->activeInvoice['status'] = Status::COMPLETED->value;
             $this->activeInvoice['payment_status'] = PaymentStatus::DUE->value;
         } elseif (($this->activeInvoice['grand_total'] + $this->activeInvoice['previous_due']) == $this->activeInvoice['due_amount']) {
             //Unpaid
             $this->radio = 'full_due';
-            $this->activeInvoice['status'] = Status::DUE->value;
+            $this->activeInvoice['status'] = Status::COMPLETED->value;
             $this->activeInvoice['payment_status'] = PaymentStatus::UNPAID->value;
         }
         // dd($this->activeInvoice);
@@ -229,6 +229,10 @@ class SalesPoint extends Component
                 'previous_due' => $invoice['previous_due'] ?? 0.00,
                 'previous_invoice_id' => $invoice['previous_invoice_id']
             ]);
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'Invoice updated successfully.'
+            ]);
 
         } else {
 
@@ -247,7 +251,10 @@ class SalesPoint extends Component
                 'previous_due' => $invoice['previous_due'] ?? 0.00,
                 'previous_invoice_id' => $invoice['previous_invoice_id']
             ]);
-
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'Invoice created successfully.'
+            ]);
         }
 
 
@@ -601,6 +608,7 @@ class SalesPoint extends Component
         if (!$this->activeInvoice) {
             return;
         }
+            //  dd($this->activeInvoice);
 
         $total = collect($this->activeInvoice['items'])->sum('total');
         $previous_due = 0;
@@ -610,8 +618,11 @@ class SalesPoint extends Component
         if (!isset($this->activeInvoice['previous_invoice_id']) && $this->activeInvoice['previous_invoice_id'] == null && $this->activeInvoice['customer_id']) {
             $customer = Customer::find($this->activeInvoice['customer_id']);
             $invoice = $customer->invoices()->latest()->first();
+            $lastInvoiceId = $customer->invoices()->latest('id')->first()?->id;
+            $count = $customer->invoices()?->count() ?? 0;
 
-            if ($invoice) {
+
+            if ($invoice && $count >= 1 && $this->activeInvoice['id'] > $lastInvoiceId) {
                 $this->activeInvoice['previous_invoice_id'] = $invoice?->invoice_id;
                 $previous_due = abs($invoice->due_amount);
             } else {
@@ -623,7 +634,6 @@ class SalesPoint extends Component
         } elseif ($this->activeInvoice['previous_invoice_id'] && $this->activeInvoice['status'] == Status::DRAFT->value) {
             $customer = Customer::find($this->activeInvoice['customer_id']);
             $invoice = $customer->invoices()->latest()->first();
-
             if ($invoice) {
                 $this->activeInvoice['previous_invoice_id'] = $invoice?->invoice_id;
                 $previous_due = abs($invoice->due_amount);
@@ -631,8 +641,8 @@ class SalesPoint extends Component
                 $this->activeInvoice['previous_invoice_id'] = null;
                 $previous_due = 0;
             }
-            
-        } elseif ($this->activeInvoice['previous_invoice_id'] ) {
+
+        } elseif ($this->activeInvoice['previous_invoice_id']) {
 
             // $onlyid = intval(explode('-', $this->activeInvoice['previous_invoice_id'])[1]);
             $invoice = Invoice::where('invoice_id', '=', $this->activeInvoice['previous_invoice_id'])->first();

@@ -148,7 +148,7 @@
                                    <td class="px-3 py-2 whitespace-nowrap flex justify-start gap-2 items-center">
                                        <div class=" sm:shrink-0">
                                            <img alt=""
-                                               src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&amp;fit=crop&amp;q=80&amp;w=1160"
+                                               src="{{ $customerItem->profile_picture }}"
                                                class="size-12 rounded-full object-cover sm:size-[52px]">
                                        </div>
                                        <div>
