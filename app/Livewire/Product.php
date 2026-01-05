@@ -42,8 +42,7 @@ class Product extends Component
             'newPName' => 'required|min:3',
 
             'newPSalePrice' => 'required',
-            'newPQuantity' => 'required|integer|min:1',
-            'newPunit' => 'required',
+
             'newKgPerUnit' => 'required|integer|min:1',
         ]);
         if($this->newPImage){
@@ -66,11 +65,10 @@ class Product extends Component
             //     $product->discount_price = $this->newPDiscountPrice;
             // }
 
-            $product->unit_value = $this->newPQuantity;
+
             $product->value_per_unit = $this->newKgPerUnit;
             $product->unit_name = $this->newPunit;
             $product->stock_status = $this->newPStockStatus;
-            $product->stock=floatval($product->unit_value) * floatval($product->value_per_unit);
 
             if ($this->newPDescription) {
 
@@ -135,8 +133,6 @@ class Product extends Component
             $this->validate([
                 'editProductName' => 'required|min:3',
                 'editProductSalePrice' => 'required',
-                'editProductQuantity' => 'required',
-                'editProductUnit' => 'required',
                 'editKgPerUnit' => 'required',
             ]);
 
@@ -156,7 +152,7 @@ class Product extends Component
             $product->price = $this->editProductSalePrice;
             $product->discount_price = $this->editProductDiscountPrice;
 
-            $product->unit_name = $this->editProductUnit;
+            // $product->unit_name = $this->editProductUnit;
             $product->stock_status = $this->editProductStockStatus;
             $product->description = $this->editProductDescription;
             $product->value_per_unit = $this->editKgPerUnit;
@@ -174,7 +170,6 @@ class Product extends Component
                 $product->image = "products/$filename";
 
             }
-
 
             $product->save();
         } catch (\Throwable $th) {

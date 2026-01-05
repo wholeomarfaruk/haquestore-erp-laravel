@@ -123,7 +123,7 @@
                            @foreach ($products as $product)
                                <div>
                                    <div class="block relative rounded-lg p-4 shadow-lg border border-gray-200 ">
-                                       <img alt="" src="{{ asset('storage/' . $product->image) }}"
+                                       <img alt="" src="{{ asset($product->product_image) }}"
                                            class="h-36 w-full rounded-md object-cover">
 
                                        <div class="">
@@ -391,7 +391,7 @@
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div> --}}
-                           <div class="grid grid-cols-1 gap-1">
+                           {{-- <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="phone">Unit qty <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
                                <input wire:model="newPQuantity" disabled
@@ -400,7 +400,7 @@
                                @error('newPQuantity')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
-                           </div>
+                           </div> --}}
                                   <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="phone">Kg Per Unit <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
@@ -411,10 +411,25 @@
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
+                            <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="stock_status">Stock
+                                   Status <span class="size-6 text-red-500 mr-1.5">*</span> </label>
+                               <select wire:model="newPStockStatus" id="stock_status"
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2 sm:text-sm">
+                                   <option value="">Select Stock Status</option>
+                                   <option value="in_stock">In Stock</option>
+                                   <option value="stock_out">Stock Out</option>
+                                   <option value="low_stock">Low Stock</option>
+                               </select>
+                               @error('newPStockStatus')
+                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                               @enderror
+                           </div>
+
 
 
                        </div>
-                       <div class="grid grid-cols-2 gap-1">
+                       {{-- <div class="grid grid-cols-2 gap-1">
 
                            <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="phone">Measeure By<span
@@ -431,22 +446,8 @@
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
-                           <div class="grid grid-cols-1 gap-1">
-                               <label class="block text-sm font-medium text-gray-900" for="stock_status">Stock
-                                   Status <span class="size-6 text-red-500 mr-1.5">*</span> </label>
-                               <select wire:model="newPStockStatus" id="stock_status"
-                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2 sm:text-sm">
-                                   <option value="">Select Stock Status</option>
-                                   <option value="in_stock">In Stock</option>
-                                   <option value="stock_out">Stock Out</option>
-                                   <option value="low_stock">Low Stock</option>
-                               </select>
-                               @error('newPStockStatus')
-                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                               @enderror
-                           </div>
 
-                       </div>
+                       </div> --}}
 
 
                        <div>
@@ -578,7 +579,7 @@
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div> --}}
-                           <div class="grid grid-cols-1 gap-1">
+                           {{-- <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="phone">Unit qty <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
                                <input wire:model="editProductQuantity" disabled
@@ -587,7 +588,7 @@
                                @error('editPQuantity')
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
-                           </div>
+                           </div> --}}
                                   <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="phone">Kg Per Unit <span
                                        class="size-6 text-red-500 mr-1.5">*</span> </label>
@@ -598,10 +599,24 @@
                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                @enderror
                            </div>
+                            <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="stock_status">Stock
+                                   Status <span class="size-6 text-red-500 mr-1.5">*</span> </label>
+                               <select wire:model="editProductStockStatus" id="stock_status"
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2 sm:text-sm">
+                                   <option value="">Select Stock Status</option>
+                                   <option value="in_stock">In Stock</option>
+                                   <option value="stock_out">Stock Out</option>
+                                   <option value="low_stock">Low Stock</option>
+                               </select>
+                               @error('editPStockStatus')
+                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                               @enderror
+                           </div>
 
 
                        </div>
-                       <div class="grid grid-cols-2 gap-1">
+                       {{-- <div class="grid grid-cols-2 gap-1">
 
                            <div class="grid grid-cols-1 gap-1">
                                <label class="block text-sm font-medium text-gray-900" for="phone">Measeure By<span
@@ -633,7 +648,7 @@
                                @enderror
                            </div>
 
-                       </div>
+                       </div> --}}
 
 
                        <div>
