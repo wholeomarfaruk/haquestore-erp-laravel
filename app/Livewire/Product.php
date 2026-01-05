@@ -99,7 +99,7 @@ class Product extends Component
         if (!$product) {
             return abort(404);
         }
-        if (file_exists('storage/' . $product->image)) {
+        if ($product->image && file_exists('storage/' . $product->image)) {
             unlink('storage/' . $product->image);
         }
         $product->delete();
