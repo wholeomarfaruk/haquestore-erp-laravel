@@ -374,7 +374,8 @@
                    </div>
                    {{-- end product --}}
                </div>
-               <div class="col-span-1 lg:col-span-2 order-1 lg:order-2 border-l lg:border-l border-gray-300 min-h-screen p-2">
+               <div
+                   class="col-span-1 lg:col-span-2 order-1 lg:order-2 border-l lg:border-l border-gray-300 min-h-screen p-2">
                    {{-- add to cart  --}}
                    <div>
                        <p class="font-semibold text-lg">{{ $activeInvoice['invoice_id'] ?? 'New Invoice' }}</p>
@@ -563,8 +564,8 @@
                                                </span>
                                            </th>
                                            <td class="px-3 py-2 text-end whitespace-nowrap relative w-full">
-                                               Tk {{ number_format($activeInvoice['discount'], 2) }}
-                                               <div x-show="discountOpen" x-transition x-cloak @click.stop
+                                               {{-- Tk {{ number_format($activeInvoice['discount'], 2) }} --}}
+                                               {{-- <div x-show="discountOpen" x-transition x-cloak @click.stop
                                                    class="absolute px-2 py-1 end-0 text-sm top-[10px] z-auto w-60 overflow-hidden rounded border border-gray-300 bg-white shadow-sm flex items-center flex-wrap gap-2">
                                                    <input type="number" step="0.01" min="0"
                                                        wire:model.live.debounce.500ms="discountAmount"
@@ -590,8 +591,16 @@
                                                    @enderror
 
 
-                                               </div>
-
+                                               </div> --}}
+                                               <input type="text" class="text-end focus-within:outline-0" min="0"
+                                                wire:model.live.debounce.1000ms="discountAmount"
+                                                   wire:model.blur="discountAmount">
+                                               @error('discountAmount')
+                                               <br>
+                                                   <span class="text-sm text-left text-red-600 w-full">
+                                                       {{ $message }}
+                                                   </span>
+                                               @enderror
                                            </td>
                                        </tr>
 
@@ -624,7 +633,17 @@
                                        <tr class="*:text-gray-900 *:first:font-medium">
                                            <th class="px-3 py-2 text-start whitespace-nowrap">Deposit</th>
                                            <td class="px-3 py-2 text-end whitespace-nowrap w-full">
-                                               Tk {{ number_format($activeInvoice['paid_amount'], 2) }} </td>
+                                               {{-- Tk {{ number_format($activeInvoice['paid_amount'], 2) }} </td> --}}
+
+                                               <input type="text" class="text-end focus-within:outline-0" min="0"
+                                                wire:model.live.debounce.1000ms="paidAmount"
+                                                   wire:model.blur="paidAmount">
+                                                    @error('paidAmount')
+                                               <br>
+                                                   <span class="text-sm text-left text-red-600 w-full">
+                                                       {{ $message }}
+                                                   </span>
+                                               @enderror
                                        </tr>
 
                                        <tr class="*:text-gray-900 *:first:font-medium">
@@ -641,7 +660,7 @@
                                <hr class="my-4">
                                <div class="flex items-center justify-between gap-2">
 
-                                   <button type="button" wire:click="confirmModalOpenAction"
+                                   <button type="button" wire:click="paymentAction"
                                        class="flex-1 cursor-pointer bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Confirm
                                        Payment</button>
                                    <div class="relative inline-flex" x-data="{ MenuOpen: false }" x-cloak

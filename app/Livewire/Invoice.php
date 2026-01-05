@@ -21,7 +21,7 @@ class Invoice extends Component
 
     protected string $paginationTheme = 'tailwind';
 
-  
+
 
 
     // 🔴 VERY IMPORTANT
@@ -54,5 +54,36 @@ class Invoice extends Component
     {
         $this->invoice = ModelsInvoice::find($id);
         $this->viewInvoiceModal = true;
+    }
+    public function deleteInvoice($id)
+    {
+        $invoice = ModelsInvoice::find($id);
+        if(!$invoice){
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'Invoice not found.'
+            ]);
+            return false;
+        }
+        if($invoice->customer_id ==null && $invoice?->customer == null){
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'Customer not found.'
+            ]);
+            return false;
+        }
+        $lastInvoice = $invoice->customer->invoices()->latest('id')->first();
+        if($lastInvoice->id != $invoice->id){
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'You can delete only last invoice of the customer.'
+            ]);
+            return false;
+        }
+        $invoice->delete();
+        $this->dispatch('toast', [
+            'type' => 'success',
+            'message' => 'Invoice deleted successfully.'
+        ]);
     }
 }
