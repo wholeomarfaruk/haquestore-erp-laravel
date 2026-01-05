@@ -157,7 +157,7 @@ class Product extends Component
             $product->description = $this->editProductDescription;
             $product->value_per_unit = $this->editKgPerUnit;
             if ($this->editProductImage) {
-                if (is_file('storage/' . $product->image)) {
+                if ($product->image && is_file('storage/' . $product->image )) {
 
                     unlink('storage/' . $product->image);
                 }
