@@ -99,7 +99,8 @@ class Product extends Component
         if (!$product) {
             return abort(404);
         }
-        if ($product->image && file_exists('storage/' . $product->image)) {
+        $path = public_path('storage/'.$product->image);
+        if ($product->image && file_exists($path)) {
             unlink('storage/' . $product->image);
         }
         $product->delete();
@@ -157,9 +158,10 @@ class Product extends Component
             $product->description = $this->editProductDescription;
             $product->value_per_unit = $this->editKgPerUnit;
             if ($this->editProductImage) {
-                if ($product->image && is_file('storage/' . $product->image )) {
+                 $oldpath = public_path('storage/'.$product->image);
+                if ($product->image && is_file($oldpath)) {
 
-                    unlink('storage/' . $product->image);
+                    unlink($oldpath);
                 }
                 $path = public_path('storage/products');
                 if (!file_exists($path)) {
