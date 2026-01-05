@@ -38,7 +38,7 @@
         </svg>
     </button>
 
-    <div class="h-screen  bg-gray-900 transition-all duration-300 space-y-2 fixed sm:sticky flex justify-around  flex-col"
+    <div class="h-screen z-10  bg-gray-900 transition-all duration-300 space-y-2 fixed sm:sticky flex justify-around  flex-col"
         x-bind:class="{
             'w-64': $store.sidebar.full,
             'w-64 sm:w-20': !$store.sidebar.full,
