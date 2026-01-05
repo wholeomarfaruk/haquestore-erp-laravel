@@ -23,13 +23,13 @@ class Customer extends Model
     public function getProfilePictureAttribute()
     {
         if(!$this->image){
-            return url('storage/asset/avatar.png');
+            return url('asset/avatar.png');
         }
         $image=$this->image;
         if(file_exists('storage/'.$image)){
             return url('storage/'.$image);
         }else{
-            return url('storage/asset/avatar.png');
+            return url('asset/avatar.png');
         }
     }
     public function invoices()
