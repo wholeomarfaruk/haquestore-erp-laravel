@@ -172,7 +172,7 @@
             <tr>
                 <td>{{ $item->product_name }}</td>
                 <td>{{ $item->unit_qty.' '.$item->unit_name }}</td>
-                <td>Tk {{ number_format($item->price_after_adjustment, 2) }}</td>
+                <td>Tk {{ number_format($item->regular_price, 2) }}</td>
                 <td>Tk {{ number_format($item->total, 2) }}</td>
             </tr>
         @endforeach
