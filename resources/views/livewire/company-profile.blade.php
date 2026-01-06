@@ -32,7 +32,7 @@
            {{-- ======================== Content Start From Here ======================== --}}
            <div class="mt-4 p-4 max-w-xl mx-auto">
 
-               <form class="space-y-4" wire:submit.prevent="registerCustomer">
+               <form class="space-y-4" wire:submit.prevent="update">
                    <div class="grid grid-cols-1 gap-1">
                        <label class="block text-sm font-medium text-gray-900" for="name">Company Name</label>
                        <input wire:model="CompanyName"
