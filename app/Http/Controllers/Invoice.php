@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Invoice as ModelsInvoice;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -12,14 +13,15 @@ class Invoice extends Controller
     {
         $invoice = ModelsInvoice::findOrFail($id);
         $name = $invoice->invoice_id . '.pdf';
-
-        $pdf = PDF::loadView('templates.invoice', compact('invoice'));
+        $company = Company::first();
+        $pdf = PDF::loadView('templates.invoice', compact('invoice', 'company'));
 
         return $pdf->download($name);
     }
     public function view($id)
     {
         $invoice = ModelsInvoice::findOrFail($id);
-        return view('templates.invoice-view', compact('invoice'));
+        $company = Company::first();
+        return view('templates.invoice-view', compact('invoice', 'company'));
     }
 }

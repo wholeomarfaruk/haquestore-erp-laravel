@@ -108,14 +108,13 @@
     <table class="header-table">
         <tr>
             <td>
-                <img src="{{ public_path('images/logo.png') }}" class="logo" alt="Logo">
+                <img style="max-height: 60px; width: auto;" src="{{ public_path('storage/'.$company->logo) }}" class="logo" alt="Logo">
             </td>
             <td class="company-details">
-                <h2>Haque Store</h2>
-                <p>123 Business Street</p>
-                <p>Dhaka, Bangladesh</p>
-                <p>Phone: +8801XXXXXXXXX</p>
-                <p>Email: info@yourcompany.com</p>
+                <h2>{{ $company->name }}</h2>
+                <p>{{ $company->address }}</p>
+                <p> {{ $company->phone ? 'Phone: ' . $company->phone : '' }}</p>
+                <p>{{ $company->email ? 'Email: ' . $company->email : '' }}</p>
             </td>
         </tr>
     </table>
