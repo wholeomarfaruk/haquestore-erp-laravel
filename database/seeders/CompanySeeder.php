@@ -22,6 +22,6 @@ class CompanySeeder extends Seeder
             'secondary_phone' => '',
             'address' => 'Dhaka, Bangladesh',
             'description' => '',
-        ])
+        ]);
     }
 }
