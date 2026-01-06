@@ -108,7 +108,7 @@
     <table class="header-table">
         <tr>
             <td>
-                <img style="max-height: 60px; width: auto;" src="{{ public_path('storage/'.$company->logo) }}" class="logo" alt="Logo">
+                <img style="height: 60px; width: auto;" src="{{ public_path('storage/'.$company->logo) }}" class="logo" alt="Logo">
             </td>
             <td class="company-details">
                 <h2>{{ $company->name }}</h2>
