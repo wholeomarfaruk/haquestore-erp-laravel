@@ -52,13 +52,13 @@ class StockList extends Component
                 return abort(404);
             }
 
-            $this->validate([
+            // $this->validate([
                 // 'editProductName' => 'required|min:3',
-                'editProductSalePrice' => 'required',
-                'editProductQuantity' => 'required',
-                'editProductUnit' => 'required',
-                'editKgPerUnit' => 'required',
-            ]);
+                // 'editProductSalePrice' => 'required',
+                // 'editProductQuantity' => 'required',
+                // 'editProductUnit' => 'required',
+                // 'editKgPerUnit' => 'required',
+            // ]);
 
 
 
@@ -69,7 +69,7 @@ class StockList extends Component
             // $product->purchase_price = $this->editProductPurchasePrice;
             // $product->price = $this->editProductSalePrice;
             // $product->unit_name = $this->editProductUnit;
-            // $product->stock_status = $this->editProductStockStatus;
+            $product->stock_status = $this->editProductStockStatus;
             // $product->description = $this->editProductDescription;
             // $product->value_per_unit = $this->editKgPerUnit;
             if (($this->updateUnit > 0 || $this->updateKg >0 || $this->updateGram>0) && $this->stock_input == 'in') {
