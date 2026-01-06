@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Company;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 
 class CompanyProfile extends Component
@@ -17,6 +18,7 @@ class CompanyProfile extends Component
     public $CompanyWebsite;
     public $CompanyLogo;
     public $CompanyDescription;
+    use WithFileUploads;
     public function render()
     {
         $company = Company::first();
