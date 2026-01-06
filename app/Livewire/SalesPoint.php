@@ -406,7 +406,7 @@ class SalesPoint extends Component
         $this->activeInvoice = [
             'id' => 'temporary_id',
             'user_id' => auth()->user()->id,
-            'invoice_id' => 'new-invoice',
+            'invoice_id' => 'New-Invoice',
             'customer_id' => null,
             'customer' => [],
             'items' => [],   // all products

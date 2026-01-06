@@ -94,7 +94,7 @@
                        @enderror
                    </div>
                         <div class="flex flex-row gap-1 mt-2" wire:key="new-product-image-container">
-                           @if ($CompanyLogo && $CompanyLogo instanceof \Livewire\TemporaryUploadedFile)
+                           @if ($CompanyLogo && $CompanyLogo?->temporaryUrl())
                                <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
                                        <img src="{{ $CompanyLogo?->temporaryUrl() }}" alt="Company Logo"
@@ -104,7 +104,7 @@
                                @elseif ($CompanyLogoPath)
                                <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
-                                       <img src="{{ asset('storage/' . $CompanyLogo) }}" alt="Company Logo"
+                                       <img src="{{ $CompanyLogoPath }}" alt="Company Logo"
                                            class="w-full h-auto rounded-lg shadow-sm">
                                    </div>
                                </div>
