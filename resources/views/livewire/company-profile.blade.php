@@ -94,14 +94,14 @@
                        @enderror
                    </div>
                         <div class="flex flex-row gap-1 mt-2" wire:key="new-product-image-container">
-                           @if (isset($CompanyLogo) && method_exists($CompanyLogo, 'temporaryUrl'))
+                           @if (isset($CompanyLogo) && $CompanyLogo instanceof \Livewire\TemporaryUploadedFile)
                                <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
                                        <img src="{{ $CompanyLogo?->temporaryUrl() }}" alt="Company Logo"
                                            class="w-full h-auto rounded-lg shadow-sm">
                                    </div>
                                </div>
-                               @elseif (isset($CompanyLogo) && !method_exists($CompanyLogo, 'temporaryUrl'))
+                               @elseif ($CompanyLogo)
                                <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
                                        <img src="{{ asset('storage/' . $CompanyLogo) }}" alt="Company Logo"
