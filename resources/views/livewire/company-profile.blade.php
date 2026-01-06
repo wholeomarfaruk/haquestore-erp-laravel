@@ -30,11 +30,11 @@
 
        <div class="flex-1 w-full bg-white rounded-lg min-h-[80vh]">
            {{-- ======================== Content Start From Here ======================== --}}
-           <div class="mt-4 p-4 max-w-xl">
+           <div class="mt-4 p-4 max-w-xl mx-auto">
 
                <form class="space-y-4" wire:submit.prevent="registerCustomer">
                    <div class="grid grid-cols-1 gap-1">
-                       <label class="block text-sm font-medium text-gray-900" for="name">Name</label>
+                       <label class="block text-sm font-medium text-gray-900" for="name">Company Name</label>
                        <input wire:model="CompanyName"
                            class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
                            id="name" type="text" placeholder="Enter Name" />
