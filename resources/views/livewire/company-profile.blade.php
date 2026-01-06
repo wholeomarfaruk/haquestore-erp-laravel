@@ -94,14 +94,14 @@
                        @enderror
                    </div>
                         <div class="flex flex-row gap-1 mt-2" wire:key="new-product-image-container">
-                           @if ($ComanyLogo && $ComanyLogo?->temporaryUrl())
+                           @if (isset($ComanyLogo) && isset($ComanyLogo?->temporaryUrl()))
                                <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
                                        <img src="{{ $ComanyLogo?->temporaryUrl() }}" alt="Company Logo"
                                            class="w-full h-auto rounded-lg shadow-sm">
                                    </div>
                                </div>
-                               @elseif ($ComanyLogo && !$ComanyLogo?->temporaryUrl())
+                               @elseif ($ComanyLogo && !isset($ComanyLogo?->temporaryUrl()))
                                <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
                                        <img src="{{ asset('storage/' . $ComanyLogo) }}" alt="Company Logo"
