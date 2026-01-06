@@ -94,17 +94,17 @@
                        @enderror
                    </div>
                         <div class="flex flex-row gap-1 mt-2" wire:key="new-product-image-container">
-                           @if (isset($ComanyLogo) && method_exists($ComanyLogo, 'temporaryUrl'))
+                           @if (isset($CompanyLogo) && $CompanyLogo->temporaryUrl())
                                <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
-                                       <img src="{{ $ComanyLogo?->temporaryUrl() }}" alt="Company Logo"
+                                       <img src="{{ $CompanyLogo?->temporaryUrl() }}" alt="Company Logo"
                                            class="w-full h-auto rounded-lg shadow-sm">
                                    </div>
                                </div>
-                               @elseif (isset($ComanyLogo) && !method_exists($ComanyLogo, 'temporaryUrl'))
+                               @elseif (isset($CompanyLogo) && !$CompanyLogo->temporaryUrl())
                                <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
-                                       <img src="{{ asset('storage/' . $ComanyLogo) }}" alt="Company Logo"
+                                       <img src="{{ asset('storage/' . $CompanyLogo) }}" alt="Company Logo"
                                            class="w-full h-auto rounded-lg shadow-sm">
                                    </div>
                                </div>
@@ -126,11 +126,11 @@
                                        class="mt-2 inline-block rounded border border-gray-200 bg-gray-50 px-3 py-1.5 text-center text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-100">
                                        Browse file
                                    </span>
-                                   @error('ComanyLogo')
+                                   @error('CompanyLogo')
                                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                    @enderror
 
-                                   <input wire:key="new-product-image" wire:model.live="ComanyLogo" type="file"
+                                   <input wire:key="new-product-image" wire:model.live="CompanyLogo" type="file"
                                        id="NewFile" class="sr-only">
                                </label>
                            </div>
