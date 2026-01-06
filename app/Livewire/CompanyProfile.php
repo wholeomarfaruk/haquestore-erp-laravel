@@ -22,6 +22,12 @@ class CompanyProfile extends Component
     use WithFileUploads;
     public function render()
     {
+        if ($this->CompanyLogo) {
+            $this->validate([
+                'CompanyLogo' => 'image|mimes:jpeg,png,jpg|max:2048',
+            ]);
+        }
+
         $company = Company::first();
 
         $this->CompanyName = $company->name;
