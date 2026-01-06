@@ -775,7 +775,44 @@ class SalesPoint extends Component
         }
         return true;
     }
+public function deleteInvoice($id)
+    {
+        $invoice = Invoice::find($id);
+        if(!$invoice){
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'Invoice not found.'
+            ]);
+            return false;
+        }
+        if($invoice->customer_id ==null && $invoice?->customer == null){
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'Customer not found.'
+            ]);
+            return false;
+        }
+        $lastInvoice = $invoice->customer->invoices()->latest('id')->first();
+        if($lastInvoice->id != $invoice->id){
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'You can delete only last invoice of the customer.'
+            ]);
+            return false;
+        }
+        if($invoice->items()->count() > 0){
+           $this->stockUpdate($invoice->id, 'restore');
+        }
+        $invoice->delete();
+        $this->dispatch('toast', [
+            'type' => 'success',
+            'message' => 'Invoice deleted successfully.'
+        ]);
+        $this->activeInvoiceId = null;
+        
+        $this->makeInvoice();
 
+    }
     public function render()
     {
         $this->products = Product::orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END') // stock >0 first
