@@ -393,7 +393,7 @@
             </div>
 
             <div class="text-gray-400 text-sm mt-4" x-bind:class="$store.sidebar.full ? 'text-left' : 'text-center'">
-                &copy; 2026 &nbsp; Developed by <a target="_blank" href="https://bento.me/alimuzahid">HexCode IT</a>
+                &copy; 2026 &nbsp; Developed by <a class="text-blue-700" target="_blank" href="https://bento.me/alimuzahid">HexCode IT</a>
             </div>
         </div>
     </div>
