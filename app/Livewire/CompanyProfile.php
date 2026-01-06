@@ -46,9 +46,9 @@ class CompanyProfile extends Component
         $company->website = $this->CompanyWebsite;
 
         $company->description = $this->CompanyDescription;
-        if ($this->CompanyLogo) {
-            $oldpath = public_path('storage/' . $company->logo);
-            if ($company->logo && is_file($oldpath)) {
+        if ($this->CompanyLogoPath) {
+            $oldpath = public_path('storage/' . $company->CompanyLogoPath);
+            if ($company->CompanyLogoPath && is_file($oldpath)) {
 
                 unlink($oldpath);
             }
