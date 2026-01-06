@@ -18,6 +18,7 @@ class CompanyProfile extends Component
     public $CompanyWebsite;
     public $CompanyLogo;
     public $CompanyDescription;
+    public $CompanyLogoPath;
     use WithFileUploads;
     public function render()
     {
@@ -29,7 +30,8 @@ class CompanyProfile extends Component
         $this->CompanySecondaryPhone = $company->secondary_phone;
         $this->CompanyEmail = $company->email;
         $this->CompanyWebsite = $company->website;
-        $this->CompanyLogo = $company->logo;
+
+        $this->CompanyLogoPath = asset('storage/' . $company->logo);
         $this->CompanyDescription = $company->description;
         return view('livewire.company-profile')->layout('layouts.company');
     }
