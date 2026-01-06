@@ -132,8 +132,8 @@
             <td class="company-details">
                 <h2>{{ $company->name }}</h2>
                 <p>{{ $company->address }}</p>
-                <p> {{ $company->phone ? 'Phone: ' . $company->phone : '' }}</p>
-                <p>{{ $company->email ? 'Email: ' . $company->email : '' }}</p>
+                <p>{{ $company->secondary_phone ? $company->secondary_phone.', ' : '' }} {{ $company->phone  }}</p>
+                <p>{{ $company->email }}</p>
             </td>
         </tr>
     </table>
