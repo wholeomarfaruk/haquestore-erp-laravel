@@ -142,7 +142,7 @@
                                                class="my-0.5 size-5 rounded border-gray-300 shadow-sm" id="Option1">
                                        </div>
                                        <div class=" sm:shrink-0">
-                                           <img alt="" src="{{ asset('storage/' . $product->image) }}"
+                                           <img alt="" src="{{ $product->product_image }}"
                                                class="size-12 rounded-lg object-cover sm:size-[52px]">
 
                                        </div>
@@ -199,7 +199,7 @@
                                    <td class="px-3 py-2 whitespace-nowrap">
                                        <span
                                            class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">
-                                           <p class="text-sm whitespace-nowrap">{{ $product->unit_value }} Unit 
+                                           <p class="text-sm whitespace-nowrap">{{ $product->unit_value }} Unit
                                                ({{ $product->stock . ' ' . $product->unit_name }})</p>
 
                                        </span>
