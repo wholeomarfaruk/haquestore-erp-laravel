@@ -563,6 +563,13 @@ class SalesPoint extends Component
 
         $quantityToAdd = $this->qtyInput[$productId] ?? 1;
 
+        if($this->activeInvoice['status'] == Status::COMPLETED->value){
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'Invoice already completed.'
+            ]);
+            return false;
+        }
         $items = $this->activeInvoice['items'];
 
         if (isset($items[$productId])) {

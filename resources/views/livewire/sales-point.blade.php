@@ -464,6 +464,7 @@
 
 
                                                <div class="flex justify-between items-center gap-2">
+                                                @if ($activeInvoice && $activeInvoice['status'] == \App\Enums\Invoice\Status::COMPLETED->value)  @else
                                                    <div>
                                                        <button class="cursor-pointer">
                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -524,6 +525,7 @@
 
                                                        </div>
                                                    </div>
+                                                    @endif
                                                </div>
                                            </div>
                                        </div>

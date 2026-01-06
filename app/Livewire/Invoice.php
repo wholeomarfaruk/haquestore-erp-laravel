@@ -2,7 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Enums\Product\StockStatus;
 use App\Models\Invoice as ModelsInvoice;
+use App\Models\Product;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -80,10 +82,60 @@ class Invoice extends Component
             ]);
             return false;
         }
+        if($invoice->items()->count() > 0){
+           $this->stockUpdate($invoice->id, 'restore');
+        }
         $invoice->delete();
         $this->dispatch('toast', [
             'type' => 'success',
             'message' => 'Invoice deleted successfully.'
         ]);
+    }
+     public function stockUpdate($invoiceId, string $action = 'subtract')
+    {   //invoice number
+        $invoice_number = $invoiceId;
+        //check passed invoice
+        if (!$invoice_number) {
+            return false;
+        }
+
+        //check invoice
+        $invoice = ModelsInvoice::find($invoice_number);
+        if (!$invoice) {
+            return false;
+        }
+
+        if ($action == 'subtract') {
+            if ($invoice->items->count() > 0) {
+                foreach ($invoice->items as $item) {
+                    $product = Product::find($item->product_id);
+                    $product->stock -= $item->unit_qty;
+                    if($product->stock <= 0){
+                        $product->stock_status = StockStatus::STOCK_OUT->value;
+                    }
+                    $product->save();
+                    $usedUnits = (float) ($product->stock / $product->value_per_unit);
+                    if ($usedUnits < $product->unit_value) {
+                        $product->unit_value = $usedUnits;
+                        $product->save();
+                    }
+                }
+            }
+        } elseif ($action == 'restore') {
+            if ($invoice->items->count() > 0) {
+                foreach ($invoice->items as $item) {
+                    $product = Product::find($item->product_id);
+                    $product->stock += $item->unit_qty;
+                    $product->stock_status = StockStatus::IN_STOCK->value;
+                    $product->save();
+                    $usedUnits = (float) ($product->stock / $product->value_per_unit);
+                    if ($usedUnits > $product->unit_value) {
+                        $product->unit_value = $usedUnits;
+                        $product->save();
+                    }
+                }
+            }
+        }
+
     }
 }
