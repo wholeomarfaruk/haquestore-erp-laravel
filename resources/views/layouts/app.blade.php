@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Haque Store') }}</title>
+        <title>Haque Store</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -36,6 +36,9 @@
             <main>
                 {{ $slot }}
             </main>
+            <div class="text-gray-400 text-sm mt-auto" x-bind:class="$store.sidebar.full ? 'text-left' : 'text-center'">
+                &copy; 2026 &nbsp; Developed by <a target="_blank" href="https://bento.me/alimuzahid">HexCode IT</a>
+            </div>
         </div>
 
         @stack('modals')

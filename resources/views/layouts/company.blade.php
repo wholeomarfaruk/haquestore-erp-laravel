@@ -5,12 +5,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title
-        x-text="$store.pageName?.name
-    ? `${$store.pageName.name} - ERP System - HexCode IT`
-    : 'ERP System - HexCode IT'">
-        Haque Store
-    </title>
+    <title>Haque Store</title>
 
 
     @vite(['resources/css/app.css', 'resources/scss/app.scss', 'resources/js/app.js'])
@@ -257,14 +252,16 @@
 
                 </a>
                 <!-- Role and permissions -->
-                <a href="{{ route('company.company.profile') }}" x-data="tooltip" x-on:mouseover="show = true"
-                    x-on:mouseleave="show = false"
+                <a href="{{ route('company.company.profile') }}" x-data="tooltip"
+                    x-on:mouseover="show = true" x-on:mouseleave="show = false"
                     class="relative flex items-center hover:text-gray-200 hover:bg-gray-800 space-x-2 rounded-md p-2 cursor-pointer justify-start text-gray-400
                     {{ Route::currentRouteName() == 'company.company.profile' ? 'text-gray-200 bg-gray-800' : '' }}
                     ">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
-</svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="h-6 w-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
+                    </svg>
 
 
                     <h1 x-cloak
@@ -293,13 +290,13 @@
 
                 </a>
                 <!-- Ui elements -->
-                <div class="mt-4 mb-1">
+                {{-- <div class="mt-4 mb-1">
                     <h2 class="text-gray-500 text-md font-semibold" :class="{ 'hidden': !$store.sidebar.full }"
                         x-transition>Ui Elements</h2>
-                </div>
+                </div> --}}
 
                 <!-- UI Elements -->
-                <div x-data="dropdown" class="relative">
+                {{-- <div x-data="dropdown" class="relative">
                     <!-- Dropdown head -->
                     <div @click="toggle('uielements')" x-data="tooltip" x-on:mouseover="show = true"
                         x-on:mouseleave="show = false"
@@ -359,7 +356,7 @@
                         </div>
                         <h1 class="hover:text-gray-200 cursor-pointer">Item 4</h1>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
         </div>
@@ -395,9 +392,9 @@
                 </form>
             </div>
 
-            {{-- <div class="text-gray-400 text-sm mt-4" x-bind:class="$store.sidebar.full ? 'text-left' : 'text-center'">
-                &copy; 2024 HexCode IT
-            </div> --}}
+            <div class="text-gray-400 text-sm mt-4" x-bind:class="$store.sidebar.full ? 'text-left' : 'text-center'">
+                &copy; 2026 &nbsp; Developed by <a target="_blank" href="https://bento.me/alimuzahid">HexCode IT</a>
+            </div>
         </div>
     </div>
     <div class="min-h-screen flex-1  w-full p-6 bg-gray-100 " comment="Page Content">
