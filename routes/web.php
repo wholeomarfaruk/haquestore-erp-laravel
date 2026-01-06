@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Invoice as ControllersInvoice;
 use App\Livewire\BlankPage;
+use App\Livewire\CompanyProfile;
 use App\Livewire\Customer;
 use App\Livewire\Dashboard;
 use App\Livewire\Invoice;
@@ -69,4 +70,7 @@ Route::middleware(['auth', 'verified'])->prefix('company')->name('company.')->gr
         Route::get('/invoice/view/{id}', [ControllersInvoice::class, 'view'])->name('invoice.view');
 
         Route::get('/user/profile', UserProfile::class)->name('user.profile');
+
+        //company
+        Route::get('/company/profile', CompanyProfile::class)->name('company.profile');
 });

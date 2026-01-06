@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call(RoleAndPermissionSeeder::class);
+        $this->call(CompanySeeder::class);
+
         $user=User::factory()->create([
             'name' => 'Super Admin',
             'email' => 'superadmin@haquestore.com',
