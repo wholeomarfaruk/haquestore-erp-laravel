@@ -30,7 +30,7 @@
 
        <div class="flex-1 w-full bg-white rounded-lg min-h-[80vh]">
            {{-- ======================== Content Start From Here ======================== --}}
-           <div class="mt-4">
+           <div class="mt-4 p-4 max-w-xl">
 
                <form class="space-y-4" wire:submit.prevent="registerCustomer">
                    <div class="grid grid-cols-1 gap-1">
