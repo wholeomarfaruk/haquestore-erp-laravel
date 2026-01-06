@@ -397,10 +397,7 @@ class SalesPoint extends Component
         //for new invoice
         $this->customer = $invoice->customer;
     }
-    public function updateInvoice($invoice)
-    {
 
-    }
     public function makeInvoice()
     {
         $this->activeInvoice = [
@@ -445,6 +442,9 @@ class SalesPoint extends Component
                 foreach ($invoice->items as $item) {
                     $product = Product::find($item->product_id);
                     $product->stock -= $item->unit_qty;
+                    if($product->stock <= 0){
+                        $product->stock_status = StockStatus::STOCK_OUT->value;
+                    }
                     $product->save();
                     $usedUnits = (float) ($product->stock / $product->value_per_unit);
                     if ($usedUnits < $product->unit_value) {
@@ -458,6 +458,7 @@ class SalesPoint extends Component
                 foreach ($invoice->items as $item) {
                     $product = Product::find($item->product_id);
                     $product->stock += $item->unit_qty;
+                    $product->stock_status = StockStatus::IN_STOCK->value;
                     $product->save();
                     $usedUnits = (float) ($product->stock / $product->value_per_unit);
                     if ($usedUnits > $product->unit_value) {
