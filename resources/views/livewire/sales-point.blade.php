@@ -650,12 +650,12 @@
                                                {{ number_format($activeInvoice['grand_total'] + $activeInvoice['previous_due'], 2) }}
                                            </td>
                                        </tr>
-                                       <tr class="*:text-gray-900 *:first:font-medium">
+                                       <tr class="*:text-gray-900 *:first:font-medium cursor-pointer" wire:click="payment">
                                            <th class="px-3 py-2 text-start whitespace-nowrap">Deposit</th>
                                            <td class="px-3 py-2 text-end whitespace-nowrap w-full">
-                                               {{-- Tk {{ number_format($activeInvoice['paid_amount'], 2) }} </td> --}}
+                                               Tk {{ number_format($activeInvoice['paid_amount'], 2) }}
 
-                                               <input type="text" class="text-end focus-within:outline-0"
+                                               {{-- <input type="text" class="text-end focus-within:outline-0"
                                                    min="0" wire:model.live.debounce.1500ms="paidAmount"
                                                    wire:model.blur="paidAmount" inputmode="decimal"
                                                    oninput="this.value = this.value
@@ -666,7 +666,8 @@
                                                    <span class="text-sm text-left text-red-600 w-full">
                                                        {{ $message }}
                                                    </span>
-                                               @enderror
+                                               @enderror --}}
+                                           </td>
                                        </tr>
 
                                        <tr class="*:text-gray-900 *:first:font-medium">
@@ -1078,7 +1079,7 @@
                            </div>
 
                        </div>
-                   @elseif ($activeInvoice['due_amount'] == 0)
+                   @elseif ($activeInvoice['due_amount'] < 0)
                        <div>
                            <div role="alert" class="rounded-md border border-red-500 bg-red-50 p-4 shadow-sm">
                                <div class="flex items-start gap-4">
@@ -1094,13 +1095,12 @@
 
 
 
-                                       <strong class="block leading-tight font-medium text-red-800"> No Due
+                                       <strong class="block leading-tight font-medium text-red-800">Nagative Due not Allowed
                                        </strong>
 
 
                                        <p class="mt-0.5 text-sm text-red-700">
-                                           There is currently no payment due for this invoice. Please review your
-                                           invoice for any outstanding payments.
+                                          please verify deposits and due amount. due amount must be equal or greater than 0
                                        </p>
 
                                    </div>
@@ -1203,6 +1203,106 @@
                        </form>
                    @endif
 
+               </div>
+           </div>
+       </div>
+       <div x-cloak x-data="{ paymentModal: @entangle('paymentModal') }" x-show="paymentModal" x-transition
+           class="fixed inset-0 z-50 grid place-content-center bg-black/50 p-4" role="dialog" aria-modal="true"
+           aria-labelledby="modalTitle">
+           <div @click.outside="paymentModal=false"
+               class="w-full md:w-lg rounded-lg bg-white p-6 shadow-lg overflow-auto scrollbar scrollbar-thin scrollbar-transparent scrollbar-track-gray-100 scrollbar-thumb-gray-300 scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
+               <div class="flex items-start justify-between">
+                   <h2 id="modalTitle" class="text-xl font-bold text-gray-900 sm:text-2xl">Payment</h2>
+
+                   <button wire:click="paymentModal=false" type="button"
+                       class="cursor-pointer -me-4 -mt-4 rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600 focus:outline-none"
+                       aria-label="Close">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24"
+                           stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                               d="M6 18L18 6M6 6l12 12"></path>
+                       </svg>
+                   </button>
+               </div>
+
+               <div class="mt-4">
+                   <div class="py-3 px-2 border border-gray-100 rounded-lg">
+                    @if (isset($activeInvoice['json_data']['transections']) && count($activeInvoice['json_data']['transections']) > 0)
+
+
+                       @foreach ($activeInvoice['json_data']['transections'] as $transection)
+                           <div class="grid grid-cols-3 gap-2  py-2 px-2 rounded-lg shadow-sm">
+                               <input type="date"
+                                   wire:model.live="activeInvoice.json_data.transections.{{ $transection['id'] }}.date"
+                                   value="{{ $transection['date'] }}"
+                                   class="border border-gray-300 rounded-lg p-2 focus-within:outline-none">
+                               <input type="text" placeholder="0.00" min="0"
+                                   value="{{ $transection['amount'] }}"
+                                   class="border border-gray-300 rounded-lg p-2 focus-within:outline-none "
+                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                   wire:model.lazy="activeInvoice.json_data.transections.{{ $transection['id'] }}.amount">
+                               <span class="flex justify-end gap-2 ">
+                                   <button
+                                       class="py-1 px-3 cursor-pointer border border-transparent hover:border-gray-300 rounded-lg"
+                                       wire:click="removeTransection({{ $transection['id'] }})">
+                                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                           stroke-width="1.5" stroke="currentColor" class="size-8 text-red-400">
+                                           <path stroke-linecap="round" stroke-linejoin="round"
+                                               d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                       </svg>
+
+                                   </button>
+                                   <button
+                                       class="py-1 px-3 cursor-pointer border border-transparent hover:border-gray-300 rounded-lg"
+                                       wire:click="addTransection">
+                                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                           stroke-width="1.5" stroke="currentColor" class="size-8 text-green-400">
+                                           <path stroke-linecap="round" stroke-linejoin="round"
+                                               d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                       </svg>
+
+                                   </button>
+                               </span>
+
+                           </div>
+                       @endforeach
+                       @else
+                        <div class="grid grid-cols-3 gap-2  py-2 px-2 rounded-lg shadow-sm">
+
+                               <span class="flex justify-center items-center gap-2 col-span-3">
+                                Add New transection
+
+                                   <button
+                                       class="py-1 px-3 cursor-pointer border border-transparent hover:border-gray-300 rounded-lg "
+                                       wire:click="addTransection">
+                                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                           stroke-width="1.5" stroke="currentColor" class="size-8 text-green-400">
+                                           <path stroke-linecap="round" stroke-linejoin="round"
+                                               d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                       </svg>
+
+                                   </button>
+                               </span>
+
+                           </div>
+
+                        @endif
+                   </div>
+                   <div class="flex justify-between mt-4 border border-gray-300 rounded-lg">
+                       <div class="w-1/3 border-r border-gray-300 py-2 px-2 ">
+                           <stronge>Payable:</stronge> Tk
+                           {{ number_format($activeInvoice['grand_total'] + $activeInvoice['previous_due'], 2) }}
+                       </div>
+
+                       <div class="w-1/3 py-2 px-2 border-r border-gray-300  text-left">
+                           <stronge>Paid:</stronge> Tk
+                           {{ number_format($activeInvoice['paid_amount']) }}
+                       </div>
+                       <div class="w-1/3 py-2 px-2  text-left">
+                           <stronge>Due:</stronge> Tk
+                           {{ number_format($activeInvoice['due_amount']) }}
+                       </div>
+                   </div>
                </div>
            </div>
        </div>

@@ -47,7 +47,7 @@ class SalesPoint extends Component
     public float $discountAmount = 0.00; // $discountAmount
     public $discountOpen = false;
     public $checkBalance = false;
-
+    public $paymentModal = false;
 
     public function mount()
     {
@@ -136,7 +136,10 @@ class SalesPoint extends Component
                 $this->isStockOut = false;
             }
         }
-
+    if($this->activeInvoice['due_amount']<0){
+          $this->confirmModalOpen = true;
+            return;
+        }
         $this->checkBalance = false;
         $this->confirmModalOpen = true;
         $this->settledinvoiceId = null;
@@ -227,7 +230,8 @@ class SalesPoint extends Component
                 'paid_amount' => $invoice['paid_amount'] ?? 0.00,
                 'invoice_id' => $invoice['invoice_id'],
                 'previous_due' => $invoice['previous_due'] ?? 0.00,
-                'previous_invoice_id' => $invoice['previous_invoice_id']
+                'previous_invoice_id' => $invoice['previous_invoice_id'],
+                'json_data' => json_encode($invoice['json_data']),
             ]);
             $this->dispatch('toast', [
                 'type' => 'success',
@@ -249,7 +253,8 @@ class SalesPoint extends Component
                 'paid_amount' => $invoice['paid_amount'] ?? 0.00,
                 'invoice_id' => $invoice_id,
                 'previous_due' => $invoice['previous_due'] ?? 0.00,
-                'previous_invoice_id' => $invoice['previous_invoice_id']
+                'previous_invoice_id' => $invoice['previous_invoice_id'],
+                'json_data' => json_encode($invoice['json_data']),
             ]);
             $this->dispatch('toast', [
                 'type' => 'success',
@@ -390,8 +395,10 @@ class SalesPoint extends Component
             'status' => $invoice->status,
             'delivery_status' => $invoice->delivery_status,
             'previous_invoice_id' => $invoice->previous_invoice_id,
+            'json_data' =>json_decode($invoice->json_data, true),
 
         ];
+        // dd($this->activeInvoice);
         $this->discountAmount = $invoice->discount;
         $this->paidAmount = $invoice->paid_amount;
         //for new invoice
@@ -417,6 +424,16 @@ class SalesPoint extends Component
             'status' => 'draft',
             'delivery_status' => 'pending',
             'previous_invoice_id' => null,
+            'json_data' => [
+                'transections' => [
+                    1 => [
+                        'id' => 1,
+                        'date' => date('Y-m-d'),
+                        'amount' => 0,
+                        'payment_method' => 'cash',
+                    ]
+                ],
+            ], //payment transections data json array date, amount, payment_method
         ];
         //for new invoice
 
@@ -425,6 +442,34 @@ class SalesPoint extends Component
         $this->discountAmount = 0.00;
         $this->paidAmount = 0.00;
     }
+    public function addTransection()
+    {
+        $id = array_key_last($this->activeInvoice['json_data']['transections']) + 1;
+        if (isset($this->activeInvoice['json_data']['transections'][$id])) {
+            $id++;
+        }
+        $this->activeInvoice['json_data']['transections'][$id] = [
+            'id' => $id,
+            'date' => date('Y-m-d'),
+            'amount' => 0,
+            'payment_method' => 'cash',
+        ];
+        $this->calculateTotals();
+    }
+    public function removeTransection($id)
+    {
+        // dd($id);
+        unset($this->activeInvoice['json_data']['transections'][$id]);
+        $this->calculateTotals();
+
+    }
+    public function updated($property, $value)
+    {
+        if (str_contains($property, 'activeInvoice.json_data.transections')) {
+            $this->calculateTotals();
+        }
+    }
+
     public function stockUpdate($invoiceId, string $action = 'subtract')
     {   //invoice number
         $invoice_number = $invoiceId;
@@ -442,7 +487,7 @@ class SalesPoint extends Component
                 foreach ($invoice->items as $item) {
                     $product = Product::find($item->product_id);
                     $product->stock -= $item->unit_qty;
-                    if($product->stock <= 0){
+                    if ($product->stock <= 0) {
                         $product->stock_status = StockStatus::STOCK_OUT->value;
                     }
                     $product->save();
@@ -471,7 +516,6 @@ class SalesPoint extends Component
 
     }
 
-
     public function updatedSearchCustomer($value)
     {
         if ($this->searchCustomer) {
@@ -497,6 +541,7 @@ class SalesPoint extends Component
 
 
         }
+
         $this->checkBalance = false;
         $this->confirmModalOpen = true;
         $this->settledinvoiceId = null;
@@ -563,7 +608,7 @@ class SalesPoint extends Component
 
         $quantityToAdd = $this->qtyInput[$productId] ?? 1;
 
-        if($this->activeInvoice['status'] == Status::COMPLETED->value){
+        if ($this->activeInvoice['status'] == Status::COMPLETED->value) {
             $this->dispatch('toast', [
                 'type' => 'error',
                 'message' => 'Invoice already completed.'
@@ -611,16 +656,25 @@ class SalesPoint extends Component
 
     }
 
+    public function payment()
+    {
+        $this->paymentModal = true;
+
+    }
+
     public function calculateTotals()
     {
         if (!$this->activeInvoice) {
             return;
         }
-            //  dd($this->activeInvoice);
+        //  dd($this->activeInvoice);
 
         $total = collect($this->activeInvoice['items'])->sum('total');
         $previous_due = 0;
+        $paid = 0;
+        $paid = collect($this->activeInvoice['json_data']['transections'])->sum('amount');
 
+        $this->paidAmount = $paid;
         $this->activeInvoice['discount'] = $this->discountAmount ?? 0;
         $this->activeInvoice['paid_amount'] = $this->paidAmount ?? 0;
         if (!isset($this->activeInvoice['previous_invoice_id']) && $this->activeInvoice['previous_invoice_id'] == null && $this->activeInvoice['customer_id']) {
@@ -775,17 +829,17 @@ class SalesPoint extends Component
         }
         return true;
     }
-public function deleteInvoice($id)
+    public function deleteInvoice($id)
     {
         $invoice = Invoice::find($id);
-        if(!$invoice){
+        if (!$invoice) {
             $this->dispatch('toast', [
                 'type' => 'error',
                 'message' => 'Invoice not found.'
             ]);
             return false;
         }
-        if($invoice->customer_id ==null && $invoice?->customer == null){
+        if ($invoice->customer_id == null && $invoice?->customer == null) {
             $this->dispatch('toast', [
                 'type' => 'error',
                 'message' => 'Customer not found.'
@@ -793,15 +847,15 @@ public function deleteInvoice($id)
             return false;
         }
         $lastInvoice = $invoice->customer->invoices()->latest('id')->first();
-        if($lastInvoice->id != $invoice->id){
+        if ($lastInvoice->id != $invoice->id) {
             $this->dispatch('toast', [
                 'type' => 'error',
                 'message' => 'You can delete only last invoice of the customer.'
             ]);
             return false;
         }
-        if($invoice->items()->count() > 0){
-           $this->stockUpdate($invoice->id, 'restore');
+        if ($invoice->items()->count() > 0) {
+            $this->stockUpdate($invoice->id, 'restore');
         }
         $invoice->delete();
         $this->dispatch('toast', [
@@ -809,7 +863,7 @@ public function deleteInvoice($id)
             'message' => 'Invoice deleted successfully.'
         ]);
         $this->activeInvoiceId = null;
-        
+
         $this->makeInvoice();
 
     }

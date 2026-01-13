@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Invoice {{ $invoice->invoice_id }}</title>
@@ -11,20 +12,23 @@
             margin: 0;
             padding: 0;
         }
+
         * {
             margin: 0;
             padding: 0;
         }
+
         body {
             font-family: DejaVu Sans, sans-serif;
             font-size: 13px;
             color: #333;
-            padding:5px;
+            padding: 5px;
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
 
         }
+
         @media print {
             html {
                 /* set the print size to A4 */
@@ -98,7 +102,8 @@
             float: right;
         }
 
-        .total-table td {
+        .total-table td,
+        .total-table th {
             border: 1px solid #ddd;
             padding: 8px;
             font-size: 10px;
@@ -114,6 +119,7 @@
             font-size: 11px;
             color: #777;
         }
+
         .text-xs {
             font-size: 10px;
         }
@@ -121,113 +127,150 @@
 </head>
 
 <body>
-<div class="container">
+    <div class="container">
 
-    <!-- Header -->
-    <table class="header-table">
-        <tr>
-           <td>
-                <img style="height: 60px; width: auto;" src="{{ asset('storage/'.$company->logo) }}" class="logo" alt="Logo">
-            </td>
-            <td class="company-details">
-                <h2>{{ $company->name }}</h2>
-                <p>{{ $company->address }}</p>
-                <p>{{ $company->secondary_phone ? $company->secondary_phone.', ' : '' }} {{ $company->phone  }}</p>
-                <p>{{ $company->email }}</p>
-            </td>
-        </tr>
-    </table>
-
-    <!-- Invoice Title -->
-    <div class="invoice-title">INVOICE</div>
-
-    <!-- Invoice & Customer Info -->
-    <table class="info-table">
-        <tr>
-            <td width="50%">
-                <strong>Invoice No:</strong> {{ $invoice->invoice_id }} <br>
-                <strong>Date:</strong> {{ $invoice->updated_at->format('d M Y h:i A') }}
-            </td>
-            <td width="50%">
-                <strong>Customer Name:</strong> {{ $invoice?->customer?->name }} <br>
-                <strong>Phone:</strong> {{ $invoice?->customer?->phone }} <br>
-                <strong>Address:</strong> {{ $invoice?->customer?->address }}
-            </td>
-        </tr>
-    </table>
-
-    <!-- Items -->
-    <h3 style="margin-top: 20px;">Invoice Items</h3>
-    <table class="items-table">
-        <thead>
-        <tr>
-            <th width="40%">Item</th>
-            <th width="15%">Qty</th>
-            <th width="20%">Price</th>
-            <th width="25%">Total</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach ($invoice->items as $item)
+        <!-- Header -->
+        <table class="header-table">
             <tr>
-                <td>{{ $item->product_name }}</td>
-                <td>{{ $item->unit_qty.' '.$item->unit_name }}</td>
-                <td>Tk {{ number_format($item->regular_price, 2) }}</td>
-                <td>Tk {{ number_format($item->total, 2) }}</td>
+                <td>
+                    <img style="height: 60px; width: auto;" src="{{ asset('storage/' . $company->logo) }}" class="logo"
+                        alt="Logo">
+                </td>
+                <td class="company-details">
+                    <h2>{{ $company->name }}</h2>
+                    <p>{{ $company->address }}</p>
+                    <p>{{ $company->secondary_phone ? $company->secondary_phone . ', ' : '' }} {{ $company->phone }}</p>
+                    <p>{{ $company->email }}</p>
+                </td>
             </tr>
-        @endforeach
-        </tbody>
-    </table>
+        </table>
 
-    <!-- Totals -->
-    <table class="total-table">
-        <tr>
-            <td>Total Amount</td>
-            <td>Tk {{ number_format($invoice->total, 2) }}</td>
-        </tr>
-        <tr>
-            <td>Discount</td>
-            <td>Tk {{ number_format($invoice->discount, 2) }}</td>
-        </tr>
-        <tr style="background:#f5f5f5">
-            <td>Grand Total</td>
-            <td>Tk {{ number_format($invoice->grand_total, 2) }}</td>
-        </tr>
-        <tr>
-            <td>
-                Previous Due
-                <p class="text-xs">{{ $invoice?->previous_invoice_id }}</p>
+        <!-- Invoice Title -->
+        <div class="invoice-title">INVOICE</div>
 
-            </td>
-            <td>Tk {{ number_format($invoice->previous_due, 2) }}</td>
-        </tr>
-        <tr style="background:#f5f5f5">
-            <td>
-                Payable Amount
+        <!-- Invoice & Customer Info -->
+        <table class="info-table">
+            <tr>
+                <td width="50%">
+                    <strong>Invoice No:</strong> {{ $invoice->invoice_id }} <br>
+                    <strong>Date:</strong> {{ $invoice->updated_at->format('d M Y h:i A') }}
+                </td>
+                <td width="50%">
+                    <strong>Customer Name:</strong> {{ $invoice?->customer?->name }} <br>
+                    <strong>Phone:</strong> {{ $invoice?->customer?->phone }} <br>
+                    <strong>Address:</strong> {{ $invoice?->customer?->address }}
+                </td>
+            </tr>
+        </table>
+
+        <!-- Items -->
+        <h3 style="margin-top: 20px;">Invoice Items</h3>
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th width="40%">Item</th>
+                    <th width="15%">Qty</th>
+                    <th width="20%">Price</th>
+                    <th width="25%">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($invoice->items as $item)
+                    <tr>
+                        <td>{{ $item->product_name }}</td>
+                        <td>{{ $item->unit_qty . ' ' . $item->unit_name }}</td>
+                        <td>Tk {{ number_format($item->regular_price, 2) }}</td>
+                        <td>Tk {{ number_format($item->total, 2) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <table class="total-table">
+            <tr>
+                <td>Total Amount</td>
+                <td>Tk {{ number_format($invoice->total, 2) }}</td>
+            </tr>
+            <tr>
+                <td>Discount</td>
+                <td>Tk {{ number_format($invoice->discount, 2) }}</td>
+            </tr>
+            <tr style="background:#f5f5f5">
+                <td>Grand Total</td>
+                <td>Tk {{ number_format($invoice->grand_total, 2) }}</td>
+            </tr>
+            <tr>
+                <td>
+                    Previous Due
+                    <p class="text-xs">{{ $invoice?->previous_invoice_id }}</p>
+
+                </td>
+                <td>Tk {{ number_format($invoice->previous_due, 2) }}</td>
+            </tr>
+            <tr style="background:#f5f5f5">
+                <td>
+                    Payable Amount
 
 
-            </td>
-            <td>Tk {{ number_format(($invoice->previous_due+$invoice->grand_total), 2) }}</td>
-        </tr>
+                </td>
+                <td>Tk {{ number_format($invoice->previous_due + $invoice->grand_total, 2) }}</td>
+            </tr>
 
-        <tr>
-            <td>Deposit Amount</td>
-            <td>Tk {{ number_format($invoice->paid_amount, 2) }}</td>
-        </tr>
-        <tr>
-            <td>Due Amount</td>
-            <td>Tk {{ number_format($invoice->due_amount, 2) }}</td>
-        </tr>
-    </table>
+            <tr>
+                <td>Deposit Amount</td>
+                <td>Tk {{ number_format($invoice->paid_amount, 2) }}</td>
+            </tr>
+            <tr>
+                <td>Due Amount</td>
+                <td>Tk {{ number_format($invoice->due_amount, 2) }}</td>
+            </tr>
+        </table>
+        <!-- Totals -->
+        <table class="total-table" style="margin-right: 10px;">
+            <tr style="background:#f5f5f5">
+                <th colspan="2">Transections</th>
 
-    <div style="clear: both;"></div>
+            </tr>
 
-    <!-- Footer -->
-    <div class="footer">
-        Thank you for your business! <br>
-        This is a computer-generated invoice.
+            <tr style="background:#f5f5f5">
+                <th>Trxn Date</th>
+                <th>Deposit Amount</th>
+            </tr>
+            @if ($invoice->json_data)
+                @php
+                    $data = json_decode($invoice->json_data, true);
+
+                @endphp
+                @if (isset($data['transections']) && count($data['transections']) > 0)
+                    @foreach ($data['transections'] as $item)
+                        <tr>
+                            <td style="text-align: center;">{{ $item['date'] }}</td>
+                            <td style="text-align: center;">Tk {{ number_format($item['amount'], 2) }}</td>
+                        </tr>
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="2">No Deposit trxn found</td>
+
+                    </tr>
+
+                @endif
+
+            @endif
+
+
+
+        </table>
+
+
+        <div style="clear: both;"></div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Thank you for your business! <br>
+            This is a computer-generated invoice.
+        </div>
+
     </div>
-
-</div>
 </body>
+
 </html>
