@@ -224,7 +224,7 @@
                 <td>Tk {{ number_format($invoice->due_amount, 2) }}</td>
             </tr>
         </table>
-        <!-- Totals -->
+        <!-- transection -->
         <table class="total-table" style="margin-right: 10px;">
             <tr style="background:#f5f5f5">
                 <th colspan="2">Transections</th>

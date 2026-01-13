@@ -79,7 +79,8 @@
             float: right;
         }
 
-        .total-table td {
+        .total-table td,
+        .total-table th {
             border: 1px solid #ddd;
             padding: 8px;
             font-size: 10px;
@@ -199,7 +200,42 @@
             <td>Tk {{ number_format($invoice->due_amount, 2) }}</td>
         </tr>
     </table>
+      <!-- transection -->
+        <table class="total-table" style="margin-right: 10px;">
+            <tr style="background:#f5f5f5">
+                <th colspan="2">Transections</th>
 
+            </tr>
+
+            <tr style="background:#f5f5f5">
+                <th>Trxn Date</th>
+                <th>Deposit Amount</th>
+            </tr>
+            @if ($invoice->json_data)
+                @php
+                    $data = json_decode($invoice->json_data, true);
+
+                @endphp
+                @if (isset($data['transections']) && count($data['transections']) > 0)
+                    @foreach ($data['transections'] as $item)
+                        <tr>
+                            <td style="text-align: center;">{{ $item['date'] }}</td>
+                            <td style="text-align: center;">Tk {{ number_format($item['amount'], 2) }}</td>
+                        </tr>
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="2">No Deposit trxn found</td>
+
+                    </tr>
+
+                @endif
+
+            @endif
+
+
+
+        </table>
     <div style="clear: both;"></div>
 
     <!-- Footer -->
