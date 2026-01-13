@@ -12,6 +12,7 @@ use App\Livewire\RoleCreate;
 use App\Livewire\RoleEdit;
 use App\Livewire\RoleList;
 use App\Livewire\SalesPoint;
+use App\Livewire\SalesSummary;
 use App\Livewire\StockList;
 use App\Livewire\UserList;
 use App\Livewire\UserProfile;
@@ -73,4 +74,7 @@ Route::middleware(['auth', 'verified'])->prefix('company')->name('company.')->gr
 
         //company
         Route::get('/company/profile', CompanyProfile::class)->name('company.profile');
+
+        //reports
+        Route::get('/reports/salessummary',SalesSummary::class)->name('reports.salessummary');
 });
