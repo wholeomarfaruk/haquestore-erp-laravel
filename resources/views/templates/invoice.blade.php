@@ -160,7 +160,6 @@
         @endforeach
         </tbody>
     </table>
-
     <!-- Totals -->
     <table class="total-table">
         <tr>
