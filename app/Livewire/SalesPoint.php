@@ -48,7 +48,8 @@ class SalesPoint extends Component
     public $discountOpen = false;
     public $checkBalance = false;
     public $paymentModal = false;
-
+    public $editModal = false;
+    public $editItem;
     public function mount()
     {
         // $this->makeInvoice();
@@ -271,7 +272,8 @@ class SalesPoint extends Component
                     'product_name' => $item['name'],
                     'unit_name' => $item['unit_name'],
                     'unit_qty' => $item['quantity'],
-                    'regular_price' => $item['price'],
+                    'regular_price' => $item['regular_price'],
+                    'price_after_adjustment' => $item['price'],
                     'total' => $item['total'],
                 ]);
 
@@ -286,7 +288,8 @@ class SalesPoint extends Component
                     'product_name' => $item['name'],
                     'unit_name' => $item['unit_name'],
                     'unit_qty' => $item['quantity'],
-                    'regular_price' => $item['price'],
+                    'regular_price' => $item['regular_price'],
+                    'price_after_adjustment' => $item['price'],
                     'total' => $item['total'],
                 ];
             }
@@ -370,7 +373,8 @@ class SalesPoint extends Component
         foreach ($invoice->items as $item) {
             $items[$item->product_id]['id'] = $item->product_id;
             $items[$item->product_id]['name'] = $item->product_name;
-            $items[$item->product_id]['price'] = $item->regular_price;
+            $items[$item->product_id]['price'] = $item->price_after_adjustment;
+            $items[$item->product_id]['regular_price'] = $item->regular_price;
             $items[$item->product_id]['unit_name'] = $item->unit_name;
             $items[$item->product_id]['quantity'] = $item->unit_qty;
             $items[$item->product_id]['total'] = $item->total;
@@ -625,6 +629,7 @@ class SalesPoint extends Component
                 'id' => $productId,
                 'name' => $product->name,
                 'price' => $product->price,
+                'regular_price' => $product->price,
                 'quantity' => $quantityToAdd,
                 'total' => $product->price * $quantityToAdd,
                 'image' => $product->product_image,
@@ -636,6 +641,26 @@ class SalesPoint extends Component
 
 
 
+    }
+    public function openEditModal($productId) {
+        $this->editModal = true;
+        $Items= collect($this->activeInvoice['items']);
+        $currentItem = $Items->firstWhere('id', $productId);
+        $this->editItem = $currentItem;
+    }
+    public function submitEditCartItem() {
+
+         if (isset($this->activeInvoice['items'][$this->editItem['id']])) {
+            $item = $this->activeInvoice['items'][$this->editItem['id']];
+
+            if ($item) {
+                $this->activeInvoice['items'][$this->editItem['id']]['price'] = $this->editItem['price'];
+                $this->syncCartQuantity($this->editItem['id']);
+            }
+        }
+        // dd($this->activeInvoice['items']);
+        $this->calculateTotals();
+        $this->editModal = false;
     }
     public function newInvoice()
     {
