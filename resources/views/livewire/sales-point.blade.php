@@ -651,13 +651,36 @@
                                                {{ number_format($activeInvoice['grand_total'] + $activeInvoice['previous_due'], 2) }}
                                            </td>
                                        </tr>
+                                       @if ($activeInvoice && $activeInvoice['status'] == \App\Enums\Invoice\Status::COMPLETED->value)
+
+
                                        <tr class="*:text-gray-900 *:first:font-medium cursor-pointer"
                                            wire:click="payment">
-                                           <th class="px-3 py-2 text-start whitespace-nowrap">Deposit</th>
+                                           <th class="px-3 py-2 text-start whitespace-nowrap flex">Deposit
+                                             <span class="ml-1">
+                                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                       viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                       class="size-4">
+                                                       <path stroke-linecap="round" stroke-linejoin="round"
+                                                           d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                                   </svg>
+                                               </span>
+                                           </th>
                                            <td class="px-3 py-2 text-end whitespace-nowrap w-full">
                                                Tk {{ number_format($activeInvoice['paid_amount'], 2) }}
 
-                                               {{-- <input type="text" class="text-end focus-within:outline-0"
+                                           </td>
+                                       </tr>
+                                       @else
+                                       <tr class="*:text-gray-900 *:first:font-medium "
+                                           >
+                                           <th class="px-3 py-2 text-start whitespace-nowrap">Deposit
+
+                                           </th>
+                                           <td class="px-3 py-2 text-end whitespace-nowrap w-full">
+                                               {{-- Tk {{ number_format($activeInvoice['paid_amount'], 2) }} --}}
+
+                                               <input type="text" class="text-end focus-within:outline-0"
                                                    min="0" wire:model.live.debounce.1500ms="paidAmount"
                                                    wire:model.blur="paidAmount" inputmode="decimal"
                                                    oninput="this.value = this.value
@@ -668,10 +691,10 @@
                                                    <span class="text-sm text-left text-red-600 w-full">
                                                        {{ $message }}
                                                    </span>
-                                               @enderror --}}
+                                               @enderror
                                            </td>
                                        </tr>
-
+                                       @endif
                                        <tr class="*:text-gray-900 *:first:font-medium">
                                            <th class="px-3 py-2 text-start whitespace-nowrap">Due</th>
                                            <td class="px-3 py-2 text-end whitespace-nowra w-fullp">
@@ -1081,7 +1104,7 @@
                            </div>
 
                        </div>
-                   @elseif ($activeInvoice['due_amount'] < 0)
+                   @elseif (number_format($activeInvoice['due_amount'],2) < 0)
                        <div>
                            <div role="alert" class="rounded-md border border-red-500 bg-red-50 p-4 shadow-sm">
                                <div class="flex items-start gap-4">
@@ -1218,6 +1241,7 @@
                <div class="flex items-start justify-between">
                    <h2 id="modalTitle" class="text-xl font-bold text-gray-900 sm:text-2xl">Payment</h2>
 
+
                    <button wire:click="paymentModal=false" type="button"
                        class="cursor-pointer -me-4 -mt-4 rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600 focus:outline-none"
                        aria-label="Close">
@@ -1259,55 +1283,47 @@
                                        <button
                                            class="py-1 px-3 cursor-pointer border border-transparent hover:border-gray-300 rounded-lg"
                                            wire:click="addTransection">
-                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                               stroke-width="1.5" stroke="currentColor"
-                                               class="size-8 text-green-400">
-                                               <path stroke-linecap="round" stroke-linejoin="round"
-                                                   d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                           </svg>
+                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8 text-green-400">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+</svg>
+
 
                                        </button>
                                    </span>
 
                                </div>
                            @endforeach
-                       @else
-                           <div class="grid grid-cols-3 gap-2  py-2 px-2 rounded-lg shadow-sm">
+
+
+                       @endif
+                        <div class="grid grid-cols-3 gap-2  py-2 px-2 rounded-lg">
 
                                <span class="flex justify-center items-center gap-2 col-span-3">
-                                   Add New transection
+
 
                                    <button
-                                       class="py-1 px-3 cursor-pointer border border-transparent hover:border-gray-300 rounded-lg "
+                                       class="flex items-center justify-center w-full gap-2 py-1 px-3 cursor-pointer border border-transparent hover:border-gray-300 rounded-lg "
                                        wire:click="addTransection">
                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                            stroke-width="1.5" stroke="currentColor" class="size-8 text-green-400">
                                            <path stroke-linecap="round" stroke-linejoin="round"
                                                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                        </svg>
-
+ Add New transection
                                    </button>
                                </span>
 
                            </div>
 
-                       @endif
                    </div>
-                   <div class="flex justify-between mt-4 border border-gray-300 rounded-lg">
-                       <div class="w-1/3 border-r border-gray-300 py-2 px-2 ">
-                           <stronge>Payable:</stronge> Tk
-                           {{ number_format($activeInvoice['grand_total'] + $activeInvoice['previous_due'], 2) }}
-                       </div>
 
-                       <div class="w-1/3 py-2 px-2 border-r border-gray-300  text-left">
-                           <stronge>Paid:</stronge> Tk
-                           {{ number_format($activeInvoice['paid_amount']) }}
-                       </div>
-                       <div class="w-1/3 py-2 px-2  text-left">
-                           <stronge>Due:</stronge> Tk
-                           {{ number_format($activeInvoice['due_amount']) }}
-                       </div>
-                   </div>
+               </div>
+               <div class="flex justify-center py-2 border-t border-gray-300">
+                 <button wire:click="paymentModal=false" type="button"
+                       class="flex-1 cursor-pointer bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                       aria-label="Close">
+                       Done
+                   </button>
                </div>
            </div>
        </div>
@@ -1317,7 +1333,7 @@
            <div @click.outside="editModal=false"
                class="w-full md:w-lg rounded-lg bg-white p-6 shadow-lg overflow-auto scrollbar scrollbar-thin scrollbar-transparent scrollbar-track-gray-100 scrollbar-thumb-gray-300 scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
                <div class="flex items-start justify-between">
-                   <h2 id="modalTitle" class="text-xl font-bold text-gray-900 sm:text-2xl">Payment</h2>
+                   <h2 id="modalTitle" class="text-xl font-bold text-gray-900 sm:text-2xl">Edit Product Price</h2>
 
                    <button wire:click="editModal=false" type="button"
                        class="cursor-pointer -me-4 -mt-4 rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600 focus:outline-none"

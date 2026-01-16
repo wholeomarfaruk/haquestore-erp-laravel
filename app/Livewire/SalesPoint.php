@@ -104,7 +104,7 @@ class SalesPoint extends Component
     protected function rules()
     {
         return [
-            'paidAmount' => 'required|numeric|min:0|max:' . floatval($this->activeInvoice['grand_total'] + $this->activeInvoice['previous_due']),
+            'paidAmount' => 'required|numeric|min:0',
         ];
     }
 
@@ -121,14 +121,18 @@ class SalesPoint extends Component
 
 
             $this->addError('paidAmount', 'Paid amount cannot be greater than invoice amount');
-            return;
+            // return;
+            // $this->paidAmount = $duePayment;
         }
-        $this->activeInvoice['paid_amount'] = $this->paidAmount ?? 0;
+
+        $this->activeInvoice['json_data']['transections'][1]['amount'] = $this->paidAmount;
+        // $this->activeInvoice['paid_amount'] = $this->paidAmount ?? 0;
         $this->calculateTotals();
 
     }
     public function paymentAction()
     {
+    $this->settledinvoiceId = null;
         foreach ($this->activeInvoice['items'] as $item) {
             if (!$this->isStockAvailable($item['id'])) {
                 $this->isStockOut = true;
@@ -143,7 +147,7 @@ class SalesPoint extends Component
         }
         $this->checkBalance = false;
         $this->confirmModalOpen = true;
-        $this->settledinvoiceId = null;
+
 
         if ($this->activeInvoice['customer_id'] == null) {
 
