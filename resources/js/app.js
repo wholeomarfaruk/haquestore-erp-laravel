@@ -11,3 +11,7 @@ import '@splidejs/splide/css'; // Default theme
 // import '@splidejs/splide/css/skyblue'; // Optional: alternative themes
 
 window.Splide = Splide;
+import flatpickr from "flatpickr";
+window.flatpickr = flatpickr;
+import Chart from 'chart.js/auto'
+window.Chart = Chart

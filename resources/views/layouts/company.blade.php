@@ -264,10 +264,7 @@
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
                         class="text-gray-400 space-y-3">
                         <a href="{{ route('company.reports.salessummary') }}" class="hover:text-gray-200 cursor-pointer">Sales Summary</a>
-                        <h1 class="hover:text-gray-200 cursor-pointer">Daily Sales Report</h1>
-                        <h1 class="hover:text-gray-200 cursor-pointer">Product Sales Report</h1>
-                        <h1 class="hover:text-gray-200 cursor-pointer">Payments Report</h1>
-                        <h1 class="hover:text-gray-200 cursor-pointer">Customer Report</h1>
+                        
 
                     </div>
                 </div>

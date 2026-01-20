@@ -198,7 +198,7 @@
 
                                    <td class="px-3 py-2 whitespace-nowrap">
                                        <span
-                                           class="inline-flex items-center justify-center rounded-full bg-red-100 px-2.5 py-0.5 text-red-700 dark:bg-red-700 dark:text-red-100">
+                                           class="inline-flex items-center justify-center rounded-full bg-gray-100 px-2.5 py-0.5 text-black font-bold">
                                            <p class="text-sm whitespace-nowrap">{{ $product->unit_value }} Unit
                                                ({{ $product->stock . ' ' . $product->unit_name }})</p>
 
