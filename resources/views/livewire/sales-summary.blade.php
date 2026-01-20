@@ -145,7 +145,7 @@
                    </div>
 
                </div>
-               <div class="grid grid-cols-1 lg:grid-cols-2 mx-2 gap-2 py-2">
+               <div class="grid grid-cols-1 lg:grid-cols-1 mx-2 gap-2 py-2">
 
 
                    <div class="mt-6 rounded-xl border bg-white border-gray-200 p-4 h-[250px]">
@@ -153,16 +153,9 @@
                            Sales Trend
                        </h3>
 
-                       <canvas id="chart_canvas" x-ref="canvas" height="200" style="height: 200px;"></canvas>
+                       <canvas id="chart_canvas" x-ref="canvas" width="500" height="250"></canvas>
                    </div>
-                   <div class="mt-6 rounded-xl border bg-white border-gray-200 p-4 h-[250px]">
-                       <h3 class="mb-3 text-sm font-semibold text-gray-700">
-                           Sales Trend
-                       </h3>
 
-                       <canvas id="pie_chart" class="w-auto" height="200" style="height: 200px !important;"></canvas>
-
-                   </div>
                </div>
 
            </div>
@@ -385,8 +378,8 @@
                        }]
                    },
                    options: {
-                       responsive: true,
-                         maintainAspectRatio: false, // 🔥 THIS FIXES IT
+                       responsive: false,
+                         maintainAspectRatio: true, // 🔥 THIS FIXES IT
                    }
                });
 
@@ -413,7 +406,7 @@
                });
            });
        </script>
-       <script>
+       {{-- <script>
            document.addEventListener('DOMContentLoaded', () => {
 
                const ctx = document.getElementById('pie_chart').getContext('2d');
@@ -433,7 +426,7 @@
                    },
                    options: {
                        responsive: true,
-                         
+
                        plugins: {
                            legend: {
                                position: 'bottom'
@@ -455,7 +448,7 @@
                    });
                });
            });
-       </script>
+       </script> --}}
 
 
    </div>

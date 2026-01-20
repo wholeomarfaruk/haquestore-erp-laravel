@@ -25,7 +25,7 @@ class SalesSummary extends Component
     public $selectedCustomer;
     public function mount()
     {
-  $this->startDate = now()->toDateString();
+        $this->startDate = now()->toDateString();
         $this->endDate = now()->toDateString();
 
         $this->customers = Customer::latest()->get();
@@ -42,14 +42,14 @@ class SalesSummary extends Component
             $this->endDate = trim($ex[1]);
 
 
-        }elseif($this->dateRange && !str_contains($this->dateRange, 'to')){
+        } elseif ($this->dateRange && !str_contains($this->dateRange, 'to')) {
 
             $this->startDate = $this->dateRange;
             $this->endDate = $this->dateRange;
         }
 
 
-       $invoiceQuery = Invoice::where('status', Status::COMPLETED->value)
+        $invoiceQuery = Invoice::where('status', Status::COMPLETED->value)
             ->whereBetween('updated_at', [
                 $this->startDate . ' 00:00:00',
                 $this->endDate . ' 23:59:59'
@@ -66,20 +66,22 @@ class SalesSummary extends Component
 
         // Total Due (latest invoice per customer)
         $this->totalDue = Customer::whereHas('invoices', function ($q) {
-                $q->where('status', Status::COMPLETED->value)
-                  ->whereBetween('updated_at', [
-                      $this->startDate . ' 00:00:00',
-                      $this->endDate . ' 23:59:59'
-                  ]);
-            })
+            $q->where('status', Status::COMPLETED->value)
+                ->whereBetween('updated_at', [
+                    $this->startDate . ' 00:00:00',
+                    $this->endDate . ' 23:59:59'
+                ]);
+        })
             ->when($this->selectedCustomer, function ($q) {
                 $q->where('id', $this->selectedCustomer);
             })
-            ->with(['invoices' => function ($q) {
-                $q->latest()->limit(1);
-            }])
+            ->with([
+                'invoices' => function ($q) {
+                    $q->latest()->limit(1);
+                }
+            ])
             ->get()
-            ->sum(fn ($customer) => optional($customer->invoices->first())->due_amount ?? 0);
+            ->sum(fn($customer) => optional($customer->invoices->first())->due_amount ?? 0);
 
         $customers = Customer::whereHas('invoices', function ($query) {
             $query->where('status', '=', Status::COMPLETED->value);
@@ -88,8 +90,8 @@ class SalesSummary extends Component
                         $query->latest()->limit(1);
                     }
                 ])->get();
- $this->getChartDataProperty();
- $this->dispatch('pieChartRefreshed', $this->getPieChartData());
+        $this->getChartDataProperty();
+
 
 
         // dd($this->chartData);
@@ -111,25 +113,25 @@ class SalesSummary extends Component
         ];
         $this->chartData = $chartData;
         // $this->dispatch('chartRefreshed');
-        $this->dispatch('chartRefreshed',[
+        $this->dispatch('chartRefreshed', [
             'type' => 'success',
             'message' => 'Chart Refreshed',
-             'labels' => $chartData['date'],
-    'data'   => $chartData['amount'],
+            'labels' => $chartData['date'],
+            'data' => $chartData['amount'],
         ]);
         // dd(response()->json($chartData));
         return $chartData;
     }
 
-public function getPieChartData()
-{
-    return [
-        'sale'     => (float) $this->totalSales,
-        'discount' => (float) $this->totalDiscount,
-        'due'      => (float) $this->totalDue,
-    ];
+    public function getPieChartData()
+    {
+        return [
+            'sale' => (float) $this->totalSales,
+            'discount' => (float) $this->totalDiscount,
+            'due' => (float) $this->totalDue,
+        ];
 
-}
+    }
 
     public function updatedSearchCustomer($value)
     {
