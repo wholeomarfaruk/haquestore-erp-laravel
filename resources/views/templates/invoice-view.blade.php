@@ -243,13 +243,13 @@
                 <td>Tk {{ number_format($invoice->discount, 2) }}</td>
             </tr>
             <tr style="background:#f5f5f5">
-                <td>Grand Total</td>
+                <td >Grand Total</td>
                 <td>Tk {{ number_format($invoice->grand_total, 2) }}</td>
             </tr>
             <tr>
                 <td>
                     Previous Due
-                    <p class="text-xs">{{ $invoice?->previous_invoice_id }}</p>
+                    <p style="font-size: 8px; line-height: 1px;">{{ $invoice?->previous_invoice_id }}</p>
 
                 </td>
                 <td>Tk {{ number_format($invoice->previous_due, 2) }}</td>
