@@ -33,7 +33,7 @@
            <div class="space-y-2 pt-2">
                {{-- filter --}}
                <div
-                   class="filter-bar flex items-center justify-start gap-3  mx-2 px-2 py-2 border border-gray-200 rounded-lg">
+                   class="filter-bar flex flex-col items-center justify-start gap-3 lg:flex-row  mx-2 px-2 py-2 border border-gray-200 rounded-lg">
                    <span class="text-gray-400 flex gap-2">
                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                            stroke="currentColor" class="size-6">
@@ -42,11 +42,14 @@
                        </svg>
 
                        Filter</span>
-                   <div class="daterange flex items-center gap-1 px-2 py-1 rounded-lg border border-gray-100 ">
-                       <div x-data="salesDateFilter()" x-init="init()" class="flex flex-wrap items-center gap-3">
+                   <div
+                       class="daterange flex items-center gap-1 px-2 py-1 rounded-lg border border-gray-100 w-full lg:w-auto">
+                       <div x-data="salesDateFilter()" x-init="init()"
+                           class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
                            <!-- Preset Select -->
-                           <select x-model="preset" @change="applyPreset()"
-                               class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 ">
+                           <select x-model="preset" @change="applyPreset()" <select x-model="preset"
+                               @change="applyPreset()"
+                               class="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 w-full lg:w-auto">
                                <option value="today">Today</option>
                                <option value="last7">Last 7 Days</option>
                                <option value="last30">Last 30 Days</option>
@@ -58,17 +61,17 @@
 
                            <!-- Date Range Picker -->
                            <input wire:model.lazy="dateRange" x-ref="range" type="text" readonly
-                               class="w-64 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
+                               class=" rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 w-full lg:w-64"
                                placeholder="Select date range" :disabled="preset !== 'custom'" />
                        </div>
 
 
                    </div>
-                   <div class="customer">
+                   <div class="customer w-full lg:w-auto">
                        {{-- customer info --}}
                        @if ($customer)
                            <div wire:click="selectCustomerModal=true"
-                               class="flex gap-2 my-2 rounded-lg border border-gray-200 p-2 cursor-pointer  disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
+                               class="flex items-center gap-2 my-2 rounded-lg border border-gray-200 p-2 cursor-pointer  disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed">
                                <div>
                                    <img class="w-12 h-12 rounded-full border border-gray-200"
                                        src="{{ $customer->profile_picture }}" alt="">
@@ -76,6 +79,14 @@
                                <div class="flex-1">
                                    <p class="font-semibold">{{ $customer->name }}</p>
                                    <p class="text-sm text-gray-500">{{ $customer->phone }}</p>
+                               </div>
+                               <div wire:click.stop="removeCustomer()"
+                                   class="cursor-pointer border border-gray-200 rounded-sm p-2">
+                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                       stroke-width="1.5" stroke="currentColor" class="size-4 text-red-600">
+                                       <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                   </svg>
+
                                </div>
 
                            </div>
@@ -97,15 +108,18 @@
                    </div>
                </div>
                {{-- stats --}}
-               <div class="flex gap-2 my-2 mx-2">
-                   <div class="stats flex-1 rounded-lg border border-gray-200 p-2">
+               <div class="flex flex-col lg:flex-row gap-2 my-2 mx-2 ">
+                   <div class="stats flex-1  rounded-lg border border-gray-200 p-2">
                        <div class="flex items-center gap-2">
-                           <div class="icon">
+                           <div class="icon p-3 bg-green-300! rounded-full text-green-600 shadow-sm shadow-green-400">
                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                   stroke-width="1.5" stroke="currentColor" class="size-6">
+                                   stroke-width="1.5" stroke="currentColor" class="size-6 ">
                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                       d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                       d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+                                   <path stroke-linecap="round" stroke-linejoin="round"
+                                       d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
                                </svg>
+
                            </div>
                            <div class="flex-1">
                                <p class="font-semibold">Total Sales</p>
@@ -115,12 +129,15 @@
                    </div>
                    <div class="stats flex-1 rounded-lg border border-gray-200 p-2">
                        <div class="flex items-center gap-2">
-                           <div class="icon">
+                           <div class="icon p-3 bg-gray-200! rounded-full text-gray-600 shadow-sm shadow-gray-400">
                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                   stroke-width="1.5" stroke="currentColor" class="size-6">
+                                   stroke-width="1.5" stroke="currentColor" class="size-6 ">
                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                       d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                       d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+                                   <path stroke-linecap="round" stroke-linejoin="round"
+                                       d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
                                </svg>
+
                            </div>
                            <div class="flex-1">
                                <p class="font-semibold">Total Discount</p>
@@ -130,12 +147,15 @@
                    </div>
                    <div class="stats flex-1 rounded-lg border border-gray-200 p-2">
                        <div class="flex items-center gap-2">
-                           <div class="icon">
+                           <div class="icon p-3 bg-red-300! rounded-full text-red-600 shadow-sm shadow-red-400">
                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                   stroke-width="1.5" stroke="currentColor" class="size-6">
+                                   stroke-width="1.5" stroke="currentColor" class="size-6 ">
                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                       d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                       d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+                                   <path stroke-linecap="round" stroke-linejoin="round"
+                                       d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
                                </svg>
+
                            </div>
                            <div class="flex-1">
                                <p class="font-semibold">Total Due</p>
@@ -143,19 +163,28 @@
                            </div>
                        </div>
                    </div>
-
                </div>
-               <div class="grid grid-cols-1 lg:grid-cols-1 mx-2 gap-2 py-2">
+               <div class="grid grid-cols-1 md:grid-cols-2 mx-2 gap-2 py-2">
 
 
-                   <div class="mt-6 rounded-xl border bg-white border-gray-200 p-4 h-[250px]">
+                   <div class="mt-6 rounded-xl border bg-white border-gray-200 p-4 w-full">
                        <h3 class="mb-3 text-sm font-semibold text-gray-700">
                            Sales Trend
                        </h3>
 
-                       <canvas id="chart_canvas" x-ref="canvas" width="500" height="250"></canvas>
+                       <div wire:ignore class="relative h-[250px] w-full overflow-hidden">
+                           <canvas id="chart_canvas"></canvas>
+                       </div>
                    </div>
+                   <div class="mt-6 rounded-xl border bg-white border-gray-200 p-4 w-full">
+                       <h3 class="mb-3 text-sm font-semibold text-gray-700">
+                           Sales Trend
+                       </h3>
 
+                       <div wire:ignore class="relative h-[250px] w-full overflow-hidden">
+                           <canvas id="pie_chart_canvas"></canvas>
+                       </div>
+                   </div>
                </div>
 
            </div>
@@ -378,8 +407,53 @@
                        }]
                    },
                    options: {
-                       responsive: false,
-                         maintainAspectRatio: true, // 🔥 THIS FIXES IT
+                       //    responsive: true, // ✅ MUST be true
+                       //    maintainAspectRatio: false, // ✅ MUST be false
+                       scales: {
+                           y: {
+                               beginAtZero: true
+                           }
+                       }
+                   }
+               });
+
+
+
+
+
+
+               //Pie chart_canvas
+               const pieCtx = document.getElementById('pie_chart_canvas');
+
+               let salesPieChart = new Chart(pieCtx, {
+                   type: 'pie',
+                   data: {
+                       labels: ['Sale', 'Discount', 'Due'],
+                       datasets: [{
+                           data: [{{ $totalSales }}, {{ $totalDiscount }},
+                               {{ $totalDue }}
+                           ], // ✅ numbers, NOT strings
+                           borderWidth: 2,
+                           backgroundColor: [
+                               '#22c55e', // green
+                               '#f59e0b', // yellow
+                               '#ef4444' // red
+                           ],
+                           hoverOffset: 6
+                       }]
+                   },
+                   options: {
+                       responsive: true, // ✅ MUST
+                       maintainAspectRatio: false, // ✅ MUST
+                       plugins: {
+                           legend: {
+                               display: true,
+                               position: 'bottom'
+                           },
+                           tooltip: {
+                               enabled: true
+                           }
+                       }
                    }
                });
 
@@ -391,64 +465,27 @@
                        salesChart.data.datasets[0].data = payload[0].data;
 
                        salesChart.update();
-                       console.log(payload);
 
-                       Swal.fire({
-                           toast: true,
-                           position: 'top-end',
-                           icon: payload[0].type,
-                           title: payload[0].message,
-                           showConfirmButton: false,
-                           timer: 3000,
-                           timerProgressBar: true
-                       })
+
+
                    });
+                   Livewire.on('pieChartRefreshed', (payload) => {
+
+                       const dataObj = Array.isArray(payload) ? payload[0] : payload;
+
+                       const labels = Object.keys(dataObj); // ["sale", "discount", "due"]
+                       const values = Object.values(dataObj); // [1500.5, 100, 400.25]
+
+                       // 2. Update your Chart (Example for Chart.js)
+                       salesPieChart.data.labels = labels;
+                       salesPieChart.data.datasets[0].data = values;
+                       salesPieChart.update();
+
+                   });
+
                });
            });
        </script>
-       {{-- <script>
-           document.addEventListener('DOMContentLoaded', () => {
-
-               const ctx = document.getElementById('pie_chart').getContext('2d');
-
-               let pieChart = new Chart(ctx, {
-                   type: 'pie',
-                   data: {
-                       labels: ['Sale', 'Discount', 'Due'],
-                       datasets: [{
-                           data: [
-                               {{ $totalSales }},
-                               {{ $totalDiscount }},
-                               {{ $totalDue }},
-                           ],
-                           borderWidth: 1
-                       }]
-                   },
-                   options: {
-                       responsive: true,
-
-                       plugins: {
-                           legend: {
-                               position: 'bottom'
-                           }
-                       }
-                   }
-               });
-
-               document.addEventListener('livewire:init', () => {
-                   Livewire.on('pieChartRefreshed', (data) => {
-                       console.log(data);
-                       pieChart.data.datasets[0].data = [
-                           data[0].sale,
-                           data[0].discount,
-                           data[0].due
-                       ];
-
-                       pieChart.update();
-                   });
-               });
-           });
-       </script> --}}
 
 
    </div>

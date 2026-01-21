@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
+use SebastianBergmann\Environment\Console;
 
 use function Livewire\str;
 
@@ -49,6 +50,7 @@ class SalesSummary extends Component
         }
 
 
+
         $invoiceQuery = Invoice::where('status', Status::COMPLETED->value)
             ->whereBetween('updated_at', [
                 $this->startDate . ' 00:00:00',
@@ -57,6 +59,8 @@ class SalesSummary extends Component
             ->when($this->selectedCustomer, function ($q) {
                 $q->where('customer_id', $this->selectedCustomer);
             });
+
+
 
         // Total Sales
         $this->totalSales = (clone $invoiceQuery)->sum('grand_total');
@@ -92,7 +96,7 @@ class SalesSummary extends Component
                 ])->get();
         $this->getChartDataProperty();
 
-
+        $this->dispatch('pieChartRefreshed', $this->pieChart());
 
         // dd($this->chartData);
         return view('livewire.sales-summary')->layout('layouts.company');
@@ -102,8 +106,11 @@ class SalesSummary extends Component
         // dd($this->startDate, $this->endDate);
 
         $chart = Invoice::where('status', '=', Status::COMPLETED->value)
+            ->when($this->selectedCustomer, function ($q) {
+                $q->where('customer_id', $this->selectedCustomer);
+            })
             ->whereBetween('updated_at', [$this->startDate, $this->endDate])
-            ->selectRaw('DATE_FORMAT(updated_at, "%Y-%m-%d") as date, SUM(total) as total')
+            ->selectRaw('DATE_FORMAT(updated_at, "%Y-%m-%d") as date, SUM(grand_total) as total')
             ->groupBy('date')
             ->get();
 
@@ -123,7 +130,7 @@ class SalesSummary extends Component
         return $chartData;
     }
 
-    public function getPieChartData()
+    public function pieChart()
     {
         return [
             'sale' => (float) $this->totalSales,
@@ -153,7 +160,13 @@ class SalesSummary extends Component
         $customer = Customer::find($id);
         if ($customer) {
             $this->customer = $customer;
+            $this->selectedCustomer=$customer->id;
         }
+
         $this->selectCustomerModal = false;
+    }
+    public function removeCustomer(){
+        $this->customer=null;
+        $this->selectedCustomer=null;
     }
 }
