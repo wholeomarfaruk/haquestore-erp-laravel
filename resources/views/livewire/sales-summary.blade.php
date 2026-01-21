@@ -392,6 +392,7 @@
                    }
                }
            }
+           
            document.addEventListener('DOMContentLoaded', () => {
 
                const ctx = document.getElementById('chart_canvas').getContext('2d');
@@ -485,6 +486,8 @@
 
                });
            });
+
+
        </script>
 
 

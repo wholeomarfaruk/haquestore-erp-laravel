@@ -90,7 +90,7 @@
                         x-transition> General</h2>
                 </div>
                 <!-- Home -->
-                {{-- <a href="{{ route('company.dashboard') }}" x-data="tooltip" x-on:mouseover="show = true"
+                <a href="{{ route('company.dashboard') }}" x-data="tooltip" x-on:mouseover="show = true"
                     x-on:mouseleave="show = false"
                     class="relative flex items-center hover:text-gray-200 hover:bg-gray-800 space-x-2 rounded-md p-2 cursor-pointer justify-start text-gray-400
                     {{ Route::currentRouteName() == 'company.dashboard' ? 'text-gray-200 bg-gray-800' : '' }}
@@ -105,7 +105,7 @@
                         x-bind:class="!$store.sidebar.full && show ? visibleClass : '' || !$store.sidebar.full && !show ?
                             'sm:hidden' : ''">
                         Dashboard</h1>
-                </a> --}}
+                </a>
                 <!-- User -->
                 <a href="{{ route('company.user.list') }}" x-data="tooltip" x-on:mouseover="show = true"
                     x-on:mouseleave="show = false"
@@ -264,7 +264,7 @@
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
                         class="text-gray-400 space-y-3">
                         <a href="{{ route('company.reports.salessummary') }}" class="hover:text-gray-200 cursor-pointer">Sales Summary</a>
-                        
+
 
                     </div>
                 </div>
