@@ -160,14 +160,15 @@
                                    <h3 class="text-2xl font-semibold leading-none tracking-tight">Recent Invoices</h3>
                                    <p class="text-sm text-muted-foreground">Last updates from your shop</p>
                                </div><a href="{{ route('company.invoice.list') }}"
-                                   class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"><svg
-                                       xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                       viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                       stroke-linecap="round" stroke-linejoin="round"
-                                       class="lucide lucide-plus h-4 w-4 mr-2">
-                                       <path d="M5 12h14"></path>
-                                       <path d="M12 5v14"></path>
-                                   </svg>View All</a>
+                                   class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium border border-gray-300 hover:border-indigo-600 hover:text-indigo-600 h-9 rounded-md px-3">
+                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                       stroke-width="2" stroke="currentColor" class="h-4 w-4 mr-2">
+                                       <path stroke-linecap="round" stroke-linejoin="round"
+                                           d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                                   </svg>
+
+
+                                   View All</a>
                            </div>
                            <div class="space-y-4">
                                @if ($recentInvoices->count() > 0)
@@ -215,7 +216,8 @@
                                                            </path>
                                                        </svg>
 
-                                                       <p class="text-sm whitespace-nowrap capitalize">{{ $item->payment_status }}</p>
+                                                       <p class="text-sm whitespace-nowrap capitalize">
+                                                           {{ $item->payment_status }}</p>
                                                    </span>
                                                </div>
                                            @endif
