@@ -99,6 +99,53 @@
         .text-xs {
             font-size: 10px;
         }
+         .items-table tr td:first-child,
+        .items-table tr th:first-child {
+            width: 40%;
+        }
+
+        .items-table tr td:nth-child(2),
+        .items-table tr th:nth-child(2) {
+            width: 20%;
+        }
+
+        .items-table tr td:nth-child(3),
+        .items-table tr th:nth-child(3) {
+            width: 20%;
+        }
+
+        .items-table tr td:last-child,
+        .items-table tr th:last-child {
+            width: 20%;
+        }
+
+        .summary {
+            width: 40%;
+        }
+
+        .summary tr td:first-child,
+        .summary tr th:first-child {
+            width: 50%;
+        }
+
+        .summary tr td:last-child,
+        .summary tr th:last-child {
+            width: 50%;
+        }
+
+        .trxn {
+            width: 60%;
+        }
+
+        .trxn tr td:first-child,
+        .trxn tr th:first-child {
+            width: 67%;
+        }
+
+        .trxn tr td:last-child,
+        .trxn tr th:last-child {
+            width: 33%;
+        }
     </style>
 </head>
 
@@ -161,7 +208,7 @@
         </tbody>
     </table>
     <!-- Totals -->
-    <table class="total-table">
+    <table class="total-table summary">
         <tr>
             <td>Total Amount</td>
             <td>Tk {{ number_format($invoice->total, 2) }}</td>
@@ -200,7 +247,7 @@
         </tr>
     </table>
       <!-- transection -->
-        <table class="total-table" style="margin-right: 10px;">
+        <table class="total-table trxn" >
             <tr style="background:#f5f5f5">
                 <th colspan="2">Transections</th>
 
