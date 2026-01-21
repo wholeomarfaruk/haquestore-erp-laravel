@@ -19,7 +19,7 @@ use App\Livewire\UserProfile;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect()->route('company.pos');
+    return redirect()->route('company.dashboard');
 });
 
 Route::get('/blank', BlankPage::class)->name('pages.blank');
