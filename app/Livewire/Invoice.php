@@ -17,6 +17,8 @@ class Invoice extends Component
     public $editInvoice;
     public $viewInvoiceModal = false;
     public $editInvoiceModal = false;
+    public $filterDue=false;
+
 
     use WithPagination;
        // OPTIONAL: keep pagination when filtering/searching
@@ -35,21 +37,24 @@ class Invoice extends Component
 
     public function render()
     {
-        $invoices=collect();
-        if (!empty($this->search)) {
-            // dd($this->search);
-            $invoices = ModelsInvoice::where('invoice_id', 'LIKE', '%' . $this->search . '%')
-                ->orWhereHas('customer', function ($query) {
-                    $query->where('name', 'LIKE', '%' . $this->search . '%')
-                        ->orWhere('phone', 'LIKE', '%' . $this->search . '%');
-                })
-                ->orderByDesc('updated_at')
-                ->paginate(20);
-        } else {
+        $search = $this->search;
+        $invoices = ModelsInvoice::query()
+            ->when($this->filterDue, function ($query) {
+                return $query->where('due_amount', '>', 0);
+            })
+            ->when($this->search, function ($query) use ($search) {
+                return $query->where(function ($subQuery) use ($search) {
+                    $subQuery->where('invoice_id', 'LIKE', '%' . $search . '%')
+                        ->orWhereHas('customer', function ($subSubQuery) use ($search) {
+                            $subSubQuery->where('name', 'LIKE', '%' . $search . '%')
+                                ->orWhere('phone', 'LIKE', '%' . $search . '%');
+                        });
+                });
+            })
+            ->orderByDesc('updated_at')
+            ->paginate(20);
 
-            $invoices = ModelsInvoice::orderByDesc('updated_at')->paginate(20);
 
-        }
         return view('livewire.invoice', compact('invoices'))->layout('layouts.company');
     }
     public function viewInvoice($id)
@@ -137,5 +142,9 @@ class Invoice extends Component
             }
         }
 
+    }
+     public function resetFilter()
+    {
+        $this->reset(['filterDue']);
     }
 }

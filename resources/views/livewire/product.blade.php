@@ -55,7 +55,7 @@
                </div>
                <div>
                    <div class="flex gap-4 sm:gap-6 justify-end items-end mt-2">
-                       <details class="group relative">
+                       {{-- <details class="group relative">
                            <summary
                                class="flex items-center gap-2 border-b border-gray-300 pb-1 text-gray-700 transition-colors hover:border-gray-400 cursor-pointer hover:text-gray-900 [&amp;::-webkit-details-marker]:hidden ">
                                <span class="text-sm font-medium"> Filter </span>
@@ -107,7 +107,7 @@
                                    </div>
                                </fieldset>
                            </div>
-                       </details>
+                       </details> --}}
                        <div class="group">
                            <button wire:click="addProductModal=true" type="button"
                                class="flex items-center gap-2  pb-1 text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 cursor-pointer rounded border border-gray-300 px-4 py-2">
@@ -123,10 +123,10 @@
                            @foreach ($products as $product)
                                <div>
                                    <div class="block relative rounded-lg p-4 shadow-lg border border-gray-200 ">
-                                       <img alt="" src="{{ asset($product->product_image) }}"
-                                           class="h-36 w-full rounded-md object-cover">
+                                       {{-- <img alt="" src="{{ asset($product->product_image) }}"
+                                           class="h-36 w-full rounded-md object-cover"> --}}
 
-                                       <div class="">
+                                       <div class="mt-6">
                                            <dl>
                                                <div>
                                                    <dt class="sr-only">ID: </dt>

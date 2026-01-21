@@ -199,10 +199,10 @@
                                        <div title="{{ $product->name }}" comment="Product Card">
                                            <div
                                                class="block relative rounded-lg p-4 shadow-lg border border-gray-200 ">
-                                               <img alt="" src="{{ $product->product_image }}"
-                                                   class="h-30 sm:h-26 w-full object-cover {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->stock <= 0 ? 'sepia' : '' }}">
+                                               {{-- <img alt="" src="{{ $product->product_image }}"
+                                                   class="h-30 sm:h-26 w-full object-cover {{ $product->stock_status == \App\Enums\Product\StockStatus::STOCK_OUT->value || $product->stock <= 0 ? 'sepia' : '' }}"> --}}
 
-                                               <div class="">
+                                               <div class="mt-6">
                                                    <dl>
                                                        <span>
                                                            <dt class="sr-only">Qty: </dt>

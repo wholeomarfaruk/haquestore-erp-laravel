@@ -70,12 +70,12 @@
                            </summary>
 
                            <div
-                               class="z-auto w-64 divide-y divide-gray-300 rounded border border-gray-300 bg-white shadow-sm group-open:absolute group-open:end-0 group-open:top-8">
+                               class="z-auto w-64 divide-y px-2 py-2 divide-gray-300 rounded border border-gray-300 bg-white shadow-sm group-open:absolute group-open:end-0 group-open:top-8 ">
                                <div class="flex items-center justify-between px-3 py-2">
-                                   <span class="text-sm text-gray-700"> 0 Selected </span>
+                                   <span class="text-sm text-gray-700">Filter </span>
 
-                                   <button type="button"
-                                       class="text-sm text-gray-700 underline transition-colors hover:text-gray-900">
+                                   <button wire:click="resetFilter" type="button"
+                                       class="text-sm text-gray-700 underline transition-colors hover:text-gray-900 cursor-pointer">
                                        Reset
                                    </button>
                                </div>
@@ -84,26 +84,27 @@
                                    <legend class="sr-only">Checkboxes</legend>
 
                                    <div class="flex flex-col items-start gap-3">
-                                       <label for="Option1" class="inline-flex items-center gap-3">
-                                           <input type="checkbox" class="size-5 rounded border-gray-300 shadow-sm"
+                                      <label for="Option1" class="inline-flex items-center gap-3">
+                                           <input wire:model.live="filterStockAvailable" type="checkbox" class="size-5 rounded border-gray-300 shadow-sm"
                                                id="Option1">
 
-                                           <span class="text-sm font-medium text-gray-700"> Option 1 </span>
+                                           <span class="text-sm font-medium text-gray-700">Stock Available</span>
                                        </label>
-
                                        <label for="Option2" class="inline-flex items-center gap-3">
-                                           <input type="checkbox" class="size-5 rounded border-gray-300 shadow-sm"
+                                           <input wire:model.live="filterLowStock" type="checkbox" class="size-5 rounded border-gray-300 shadow-sm"
                                                id="Option2">
 
-                                           <span class="text-sm font-medium text-gray-700"> Option 2 </span>
+                                           <span class="text-sm font-medium text-gray-700">low Stock</span>
                                        </label>
-
                                        <label for="Option3" class="inline-flex items-center gap-3">
-                                           <input type="checkbox" class="size-5 rounded border-gray-300 shadow-sm"
+                                           <input wire:model.live="filterStockOut" type="checkbox" class="size-5 rounded border-gray-300 shadow-sm"
                                                id="Option3">
 
-                                           <span class="text-sm font-medium text-gray-700"> Option 3 </span>
+                                           <span class="text-sm font-medium text-gray-700">Stock Out</span>
                                        </label>
+
+
+
                                    </div>
                                </fieldset>
                            </div>

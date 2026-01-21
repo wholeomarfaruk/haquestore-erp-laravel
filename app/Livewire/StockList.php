@@ -16,8 +16,12 @@ class StockList extends Component
     public int $updateUnit=0;
     public int $updateKg=0;
     public int $updateGram=0;
+    public $filterLowStock = false;
+    public $filterStockOut = false;
+    public $filterStockAvailable = false;
 
     public $stock_input='in';
+
 
     public function editProduct($id)
     {
@@ -116,16 +120,27 @@ class StockList extends Component
     }
     public function render()
     {
-        if (!empty($this->search)) {
-            // dd($this->search);
-            $this->products = Product::where('name', 'LIKE', '%' . $this->search . '%')
-                ->orderByDesc('id')
-                ->get();
-        } else {
+        $products = Product::query()
+        ->when($this->filterLowStock, function ($query) {
+            return $query->where('stock', '<=', 10);
+        })
+        ->when($this->search, function ($query) {
+            return $query->where('name', 'LIKE', '%' . $this->search . '%');
+        })
+        ->when($this->filterStockOut, function ($query) {
+            return $query->where('stock', '<=', 0);
+        })
+        ->when($this->filterStockAvailable, function ($query) {
+            return $query->where('stock', '>', 0);
+        })
+        ->orderBy('id', 'desc')
+        ->get();
 
-            $this->products = Product::orderByDesc('id')->get();
-
-        }
+        $this->products = $products;
         return view('livewire.stock-list')->layout('layouts.company');
+    }
+    public function resetFilter()
+    {
+        $this->reset(['filterLowStock', 'filterStockOut', 'filterStockAvailable']);
     }
 }
