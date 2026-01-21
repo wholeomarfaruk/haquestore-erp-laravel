@@ -90,7 +90,7 @@
 
                                            <span class="text-sm font-medium text-gray-700">Due Invoices</span>
                                        </label>
-                                      
+
 
 
                                    </div>
@@ -207,7 +207,7 @@
                                        {{-- {{ $invoiceItem->status ?? 'No Status' }} --}}
                                    </td>
                                    <td class="px-3 py-2 whitespace-nowrap">
-                                       {{ $invoiceItem->paid_amount }}
+                                       {{ $invoiceItem->grand_total }}
                                    </td>
                                    <td class="px-3 py-2 whitespace-nowrap">
                                        <span

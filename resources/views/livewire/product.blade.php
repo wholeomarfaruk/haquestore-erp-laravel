@@ -123,10 +123,10 @@
                            @foreach ($products as $product)
                                <div>
                                    <div class="block relative rounded-lg p-4 shadow-lg border border-gray-200 ">
-                                       {{-- <img alt="" src="{{ asset($product->product_image) }}"
-                                           class="h-36 w-full rounded-md object-cover"> --}}
+                                       <img alt="" src="{{ asset($product->product_image) }}"
+                                           class="h-36 w-full rounded-md object-cover">
 
-                                       <div class="mt-6">
+                                       <div class="">
                                            <dl>
                                                <div>
                                                    <dt class="sr-only">ID: </dt>

@@ -111,7 +111,7 @@
                <div class="flex flex-col lg:flex-row gap-2 my-2 mx-2 ">
                    <div class="stats flex-1  rounded-lg border border-gray-200 p-2">
                        <div class="flex items-center gap-2">
-                           <div class="icon p-3 bg-green-300! rounded-full text-green-600 shadow-sm shadow-green-400">
+                           <div class="icon p-3 bg-green-100! rounded-full text-green-600 shadow-sm shadow-green-400">
                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                    stroke-width="1.5" stroke="currentColor" class="size-6 ">
                                    <path stroke-linecap="round" stroke-linejoin="round"
@@ -129,7 +129,7 @@
                    </div>
                    <div class="stats flex-1 rounded-lg border border-gray-200 p-2">
                        <div class="flex items-center gap-2">
-                           <div class="icon p-3 bg-gray-200! rounded-full text-gray-600 shadow-sm shadow-gray-400">
+                           <div class="icon p-3 bg-gray-100! rounded-full text-gray-600 shadow-sm shadow-gray-400">
                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                    stroke-width="1.5" stroke="currentColor" class="size-6 ">
                                    <path stroke-linecap="round" stroke-linejoin="round"
@@ -147,7 +147,7 @@
                    </div>
                    <div class="stats flex-1 rounded-lg border border-gray-200 p-2">
                        <div class="flex items-center gap-2">
-                           <div class="icon p-3 bg-red-300! rounded-full text-red-600 shadow-sm shadow-red-400">
+                           <div class="icon p-3 bg-red-100! rounded-full text-red-600 shadow-sm shadow-red-400">
                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                    stroke-width="1.5" stroke="currentColor" class="size-6 ">
                                    <path stroke-linecap="round" stroke-linejoin="round"
@@ -392,7 +392,7 @@
                    }
                }
            }
-           
+
            document.addEventListener('DOMContentLoaded', () => {
 
                const ctx = document.getElementById('chart_canvas').getContext('2d');
