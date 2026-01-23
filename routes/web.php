@@ -5,9 +5,11 @@ use App\Livewire\BlankPage;
 use App\Livewire\CompanyProfile;
 use App\Livewire\Customer;
 use App\Livewire\Dashboard;
+use App\Livewire\IndividualProductReport;
 use App\Livewire\Invoice;
 use App\Livewire\POS;
 use App\Livewire\Product;
+use App\Livewire\ProductSalesReport;
 use App\Livewire\RoleCreate;
 use App\Livewire\RoleEdit;
 use App\Livewire\RoleList;
@@ -77,4 +79,6 @@ Route::middleware(['auth', 'verified'])->prefix('company')->name('company.')->gr
 
         //reports
         Route::get('/reports/salessummary',SalesSummary::class)->name('reports.salessummary');
+        Route::get('/reports/product-sales-report',ProductSalesReport::class)->name('reports.productsalesreport');
+        Route::get('/reports/individual-product-report', IndividualProductReport::class)->name('reports.individualproductreport');
 });

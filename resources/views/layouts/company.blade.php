@@ -224,7 +224,7 @@
                         Transections</h1>
                 </a> --}}
                  <!-- Reports -->
-                {{-- <div x-data="dropdown" class="relative">
+                <div x-data="dropdown" class="relative">
                     <!-- Dropdown head -->
                     <div @click="toggle('Reports')" x-data="tooltip" x-on:mouseover="show = true"
                         x-on:mouseleave="show = false"
@@ -263,12 +263,13 @@
                     <div x-cloak x-show="open" @click.outside="open=false"
                         x-bind:class="$store.sidebar.full ? expandedClass : shrinkedClass"
                         class="text-gray-400 space-y-3">
-                        <a href="{{ route('company.reports.salessummary') }}" class="hover:text-gray-200 cursor-pointer">Sales Summary</a>
+                        <a href="{{ route('company.reports.salessummary') }}" class="hover:text-gray-200 cursor-pointer">Sales Summary</a><br>
+                        <a href="{{ route('company.reports.productsalesreport') }}" class="hover:text-gray-200 cursor-pointer">Product Sales Report</a>
 
 
                     </div>
-                </div> --}}
-                 <a href="{{ route('company.reports.salessummary') }}" x-data="tooltip" x-on:mouseover="show = true"
+                </div>
+                 {{-- <a href="{{ route('company.reports.salessummary') }}" x-data="tooltip" x-on:mouseover="show = true"
                     x-on:mouseleave="show = false"
                     class="relative flex items-center hover:text-gray-200 hover:bg-gray-800 space-x-2 rounded-md p-2 cursor-pointer justify-start text-gray-400
                     {{ Route::currentRouteName() == 'company.reports.salessummary' ? 'text-gray-200 bg-gray-800' : '' }}
@@ -287,7 +288,7 @@
                         x-bind:class="!$store.sidebar.full && show ? visibleClass : '' || !$store.sidebar.full && !show ?
                             'sm:hidden' : ''">
                         Reports</h1>
-                </a>
+                </a> --}}
 
 
                 <!-- Settings -->

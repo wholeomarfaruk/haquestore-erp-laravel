@@ -20,4 +20,8 @@ class Product extends Model
             return url('asset/no-image.jpg');
         }
     }
+    public function InvoiceItems()
+    {
+        return $this->hasMany(InvoiceItem::class);
+    }
 }

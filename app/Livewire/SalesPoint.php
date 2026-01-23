@@ -217,7 +217,7 @@ class SalesPoint extends Component
         //create invoice
         $lastInvoice = Invoice::latest()->first();
         $lastinvoiceId = $lastInvoice ? $lastInvoice->invoice_id : null;
-        $invoiceId = intval(explode('-', $lastinvoiceId)[1]) + 1;
+        $invoiceId = $lastinvoiceId<=0 ? 1 : intval(explode('-', $lastinvoiceId)[1]) + 1;
         $invoice_id = 'INV-' . str_pad($invoiceId, 6, '0', STR_PAD_LEFT);
 
         $oldInvoice = Invoice::find($invoice['id']);

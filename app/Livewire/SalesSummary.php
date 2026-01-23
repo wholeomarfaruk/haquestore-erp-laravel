@@ -24,6 +24,7 @@ class SalesSummary extends Component
     public $customerSearch = '';
     public $customers, $customer;
     public $selectedCustomer;
+    
     public function mount()
     {
         $this->startDate = now()->toDateString();
