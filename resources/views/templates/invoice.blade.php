@@ -286,8 +286,7 @@
 
     <!-- Footer -->
     <div class="footer">
-        Thank you for your business! <br>
-        This is a computer-generated invoice.
+        {{ $company->note }}
     </div>
 
 </div>
