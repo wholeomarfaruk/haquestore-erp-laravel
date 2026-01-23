@@ -20,7 +20,7 @@ class Invoice extends Component
     public $editInvoiceModal = false;
     public $filterDue=false;
     public $filterPaid=false;
-    public $filterUpaid=false;
+    public $filterUnpaid=false;
 
 
     use WithPagination;
@@ -48,7 +48,7 @@ class Invoice extends Component
             ->when($this->filterPaid, function ($query) {
                 return $query->where('due_amount', '=', 0)->where('payment_status', '=', PaymentStatus::PAID->value);
             })
-            ->when($this->filterUpaid, function ($query) {
+            ->when($this->filterUnpaid, function ($query) {
                 return $query->where('payment_status', '=', PaymentStatus::UNPAID->value);
             })
             ->when($this->search, function ($query) use ($search) {
