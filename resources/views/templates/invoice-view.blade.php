@@ -314,7 +314,7 @@
 
         <!-- Footer -->
         <div class="footer">
-            {{ $company->note }}
+            {{ $company->description }}
         </div>
 
     </div>
