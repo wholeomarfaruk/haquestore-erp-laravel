@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\Invoice\PaymentStatus;
 use App\Enums\Product\StockStatus;
 use App\Models\Invoice as ModelsInvoice;
 use App\Models\Product;
@@ -18,6 +19,8 @@ class Invoice extends Component
     public $viewInvoiceModal = false;
     public $editInvoiceModal = false;
     public $filterDue=false;
+    public $filterPaid=false;
+    public $filterUpaid=false;
 
 
     use WithPagination;
@@ -42,6 +45,12 @@ class Invoice extends Component
             ->when($this->filterDue, function ($query) {
                 return $query->where('due_amount', '>', 0);
             })
+            ->when($this->filterPaid, function ($query) {
+                return $query->where('due_amount', '=', 0);
+            })
+            ->when($this->filterUpaid, function ($query) {
+                return $query->where('payment_status', '=', PaymentStatus::UNPAID->value);
+            })
             ->when($this->search, function ($query) use ($search) {
                 return $query->where(function ($subQuery) use ($search) {
                     $subQuery->where('invoice_id', 'LIKE', '%' . $search . '%')
@@ -53,8 +62,6 @@ class Invoice extends Component
             })
             ->orderByDesc('updated_at')
             ->paginate(20);
-
-
         return view('livewire.invoice', compact('invoices'))->layout('layouts.company');
     }
     public function viewInvoice($id)

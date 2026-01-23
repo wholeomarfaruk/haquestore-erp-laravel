@@ -85,10 +85,22 @@
 
                                    <div class="flex flex-col items-start gap-3">
                                       <label for="Option1" class="inline-flex items-center gap-3">
-                                           <input wire:model.live="filterDue" type="checkbox" class="size-5 rounded border-gray-300 shadow-sm"
+                                           <input wire:model.live="filterPaid" type="checkbox" class="size-5 rounded border-gray-300 shadow-sm"
                                                id="Option1">
 
+                                           <span class="text-sm font-medium text-gray-700">Paid Invoices</span>
+                                       </label>
+                                      <label for="Option2" class="inline-flex items-center gap-3">
+                                           <input wire:model.live="filterDue" type="checkbox" class="size-5 rounded border-gray-300 shadow-sm"
+                                               id="Option2">
+
                                            <span class="text-sm font-medium text-gray-700">Due Invoices</span>
+                                       </label>
+                                      <label for="Option3" class="inline-flex items-center gap-3">
+                                           <input wire:model.live="filterUnpaid" type="checkbox" class="size-5 rounded border-gray-300 shadow-sm"
+                                               id="Option3">
+
+                                           <span class="text-sm font-medium text-gray-700">Unpaid Invoices</span>
                                        </label>
 
 
