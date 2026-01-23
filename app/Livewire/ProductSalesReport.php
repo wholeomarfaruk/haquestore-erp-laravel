@@ -74,7 +74,7 @@ class ProductSalesReport extends Component
             ->when($this->startDate && $this->endDate, function ($query) {
                 $query->whereBetween('invoice_items.created_at', [$this->startDate . ' 00:00:00', $this->endDate . ' 23:59:59']);
             })
-            ->groupBy('products.id', 'products.name')
+            ->groupBy('products.id', 'products.name', 'products.value_per_unit')
             ->orderBy($this->sortby, 'desc')
             ->paginate(5);
 
