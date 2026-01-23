@@ -71,7 +71,7 @@ class SalesPoint extends Component
                 $this->qtyInput[$item['id']] = $item['quantity'] ?? 1;
             }
         }
-        $this->customers = Customer::orderBy('id', 'DESC')->get();
+        $this->customers = Customer::orderBy('id', 'asc')->get();
         if ($this->activeInvoiceId) {
             $this->synceInvoice($this->activeInvoiceId);
         }
