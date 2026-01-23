@@ -46,7 +46,7 @@ class Invoice extends Component
                 return $query->where('due_amount', '>', 0);
             })
             ->when($this->filterPaid, function ($query) {
-                return $query->where('due_amount', '=', 0);
+                return $query->where('due_amount', '=', 0)->where('payment_status', '=', PaymentStatus::PAID->value);
             })
             ->when($this->filterUpaid, function ($query) {
                 return $query->where('payment_status', '=', PaymentStatus::UNPAID->value);
