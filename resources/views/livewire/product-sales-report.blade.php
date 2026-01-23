@@ -219,7 +219,7 @@
                                    </td>
 
                                    <td class="px-3 py-2 whitespace-nowrap">
-                                       {{ $product->total_quantity }} kg
+                                       {{ number_format(($product->total_quantity/$product->value_per_unit),3) }} Unit ({{ $product->total_quantity }} kg)
 
                                    </td>
 

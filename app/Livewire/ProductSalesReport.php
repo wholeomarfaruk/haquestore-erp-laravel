@@ -60,7 +60,7 @@ class ProductSalesReport extends Component
     public function loadProducts()
     {
         $products = Product::query()
-            ->select('products.id', 'products.name')
+            ->select('products.id', 'products.name','products.value_per_unit')
             ->selectRaw('SUM(invoice_items.unit_qty) as total_quantity')
             ->selectRaw('SUM(invoice_items.total) as total_amount')
             ->join('invoice_items', 'products.id', '=', 'invoice_items.product_id')
