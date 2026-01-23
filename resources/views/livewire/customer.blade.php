@@ -64,7 +64,7 @@
                </div>
                <div>
                    <div class="flex gap-4 sm:gap-6 justify-end items-end mt-2">
-                       <details class="group relative">
+                       {{-- <details class="group relative">
                            <summary
                                class="flex items-center gap-2 border-b border-gray-300 pb-1 text-gray-700 transition-colors hover:border-gray-400 cursor-pointer hover:text-gray-900 [&amp;::-webkit-details-marker]:hidden ">
                                <span class="text-sm font-medium"> Filter </span>
@@ -116,7 +116,7 @@
                                    </div>
                                </fieldset>
                            </div>
-                       </details>
+                       </details> --}}
                        <div class="group">
                            <button wire:click="registerModal=true" type="button"
                                class="flex items-center gap-2  pb-1 text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 cursor-pointer rounded border border-gray-300 px-4 py-2">
