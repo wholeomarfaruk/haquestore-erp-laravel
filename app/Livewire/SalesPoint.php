@@ -71,7 +71,7 @@ class SalesPoint extends Component
                 $this->qtyInput[$item['id']] = $item['quantity'] ?? 1;
             }
         }
-        $this->customers = Customer::orderBy('id', 'asc')->get();
+        $this->customers = Customer::orderBy('id', 'DESC')->get();
         if ($this->activeInvoiceId) {
             $this->synceInvoice($this->activeInvoiceId);
         }
@@ -899,7 +899,7 @@ class SalesPoint extends Component
     public function render()
     {
         $this->products = Product::orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END') // stock >0 first
-            ->orderByDesc('created_at') // then newest first
+            ->orderBy('created_at','ASC') // then newest first
             ->get();
 
 
@@ -910,7 +910,7 @@ class SalesPoint extends Component
                 ->orWhere('id', 'like', "%$search%")
                 ->orWhere('price', 'like', "%$search%")
                 ->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END') // stock >0 first
-                ->orderByDesc('created_at') // then newest first
+                ->orderBy('created_at','ASC') // then newest first
                 ->get();
         }
         return view('livewire.sales-point')->layout('layouts.company');

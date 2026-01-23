@@ -481,7 +481,7 @@
 
 
 
-                       <div class="flex flex-row gap-1 mt-2" wire:key="new-product-image-container">
+                       {{-- <div class="flex flex-row gap-1 mt-2" wire:key="new-product-image-container">
                            @if ($newPImage && $newPImage?->temporaryUrl())
                                <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
@@ -515,7 +515,7 @@
                                        id="NewFile" class="sr-only">
                                </label>
                            </div>
-                       </div>
+                       </div> --}}
 
 
 
@@ -683,7 +683,7 @@
 
 
 
-                       <div class="flex flex-row gap-1" wire:key="edit-product-image-container">
+                       {{-- <div class="flex flex-row gap-1" wire:key="edit-product-image-container">
                            @if ($editProductImage && method_exists($editProductImage, 'temporaryUrl'))
                                <div class="grid grid-cols-1 gap-1 flex-1">
                                    <div class="w-full">
@@ -723,7 +723,7 @@
                                        type="file" id="EditFile" class="sr-only">
                                </label>
                            </div>
-                       </div>
+                       </div> --}}
 
 
 
