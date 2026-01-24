@@ -65,8 +65,8 @@
                                </div>
                            </label>
                        </div>
-                       <div x-show="filter" x-cloak @click.outside="filter = false"
-                           class="absolute top-full left-0 right-0 z-40 mt-2 px-4 py-2 shadow-sm w-full bg-white rounded-lg border border-gray-200">
+                       {{-- <div  x-cloak x-show="filter" @click.outside="filter = false"
+                           class="absolute top-full left-0 right-0 z-40 mt-2 px-4 py-2 shadow-sm w-full bg-white rounded-lg border border-gray-200 hidden">
                            <div class="space-y-4 flex items-center justify-between py-1 mb-1 border-b border-gray-200 ">
                                <div class="flex items-center gap-1">
                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -187,7 +187,7 @@
                                    </div>
                                </details>
                            </div>
-                       </div>
+                       </div> --}}
                    </div>
                    {{-- end search and filter --}}
                    {{-- start product --}}
