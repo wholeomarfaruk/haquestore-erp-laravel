@@ -122,7 +122,7 @@
                        @if ($products->count() > 0)
                            @foreach ($products as $product)
                                <div>
-                                   <div class="block relative rounded-lg p-4 shadow-lg border border-gray-200 ">
+                                   <div class="block relative rounded-lg p-4 shadow-sm border border-gray-200  hover:shadow-lg transition-shadow">
                                        {{-- <img alt="" src="{{ asset($product->product_image) }}"
                                            class="h-36 w-full rounded-md object-cover"> --}}
 

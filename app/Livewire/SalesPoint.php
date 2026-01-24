@@ -827,6 +827,18 @@ class SalesPoint extends Component
         $customer->save();
         $this->customers = Customer::all();
         $this->registerModal = false;
+        $this->reset([
+            'newCustomerName',
+            'newCustomerPhone',
+            'newCustomerSecondPhone',
+            'newCustomerEmail',
+            'newCustomerAddress',
+            'newCustomerNote',
+        ]);
+        $this->dispatch('toast', [
+            'type' => 'success',
+            'message' => 'Customer registered successfully'
+        ]);
     }
     public function addCustomerInvoice($id)
     {

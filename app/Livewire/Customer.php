@@ -126,13 +126,26 @@ class Customer extends Component
             $customer->save();
             $this->customers = ModelsCustomer::all();
             $this->registerModal = false;
-            $this->dispatch('toast', [
-                'type' => 'success',
-                'message' => 'Customer created successfully!'
-            ]);
+        $this->reset([
+            'newCustomerName',
+            'newCustomerPhone',
+            'newCustomerSecondPhone',
+            'newCustomerEmail',
+            'newCustomerAddress',
+            'newCustomerNote',
+        ]);
+        $this->dispatch('toast', [
+            'type' => 'success',
+            'message' => 'Customer created successfully'
+        ]);
         } catch (\Throwable $th) {
             //throw $th;
-        dd($th->getMessage());
+        // dd($th->getMessage());
+
+        $this->dispatch('toast', [
+            'type' => 'error',
+            'message' => 'Something went wrong!'
+        ]);
         }
     }
     public function updateCustomerModal($id)

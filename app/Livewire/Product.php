@@ -156,7 +156,8 @@ class Product extends Component
             // $product->unit_name = $this->editProductUnit;
             $product->stock_status = $this->editProductStockStatus;
             $product->description = $this->editProductDescription;
-            $product->value_per_unit = $this->editKgPerUnit;
+            $product->value_per_unit =  $this->editKgPerUnit;
+            $product->stock=floatval($this->editKgPerUnit)*floatval($this->editProductQuantity);
             if ($this->editProductImage) {
                  $oldpath = public_path('storage/'.$product->image);
                 if ($product->image && is_file($oldpath)) {
