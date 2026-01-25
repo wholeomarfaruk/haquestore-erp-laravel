@@ -106,7 +106,7 @@
         .total-table th {
             border: 1px solid #ddd;
             padding: 8px;
-            font-size: 10px;
+            font-size: 16px;
         }
 
         .total-table tr td:first-child {
@@ -116,7 +116,7 @@
         .footer {
             margin-top: 60px;
             text-align: center;
-            font-size: 11px;
+            font-size: 14px;
             color: #777;
         }
 
