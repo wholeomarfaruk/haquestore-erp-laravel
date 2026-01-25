@@ -71,7 +71,7 @@ class SalesPoint extends Component
                 $this->qtyInput[$item['id']] = $item['quantity'] ?? 1;
             }
         }
-        $this->customers = Customer::orderBy('id', 'DESC')->get();
+        $this->customers = Customer::orderBy('name', 'ASC')->get();
         if ($this->activeInvoiceId) {
             $this->synceInvoice($this->activeInvoiceId);
         }
@@ -183,7 +183,7 @@ class SalesPoint extends Component
             $this->radio = 'full_paid';
             //Upate status
             $this->activeInvoice['status'] = Status::COMPLETED->value;
-            $this->activeInvoice['payment_status'] = PaymentStatus::UNPAID->value;
+            $this->activeInvoice['payment_status'] = PaymentStatus::PAID->value;
 
         } elseif ($this->activeInvoice['due_amount'] > 0 && $this->activeInvoice['due_amount'] < ($this->activeInvoice['grand_total'] + $this->activeInvoice['previous_due'])) {
             //Partial

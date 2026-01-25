@@ -56,10 +56,11 @@ class Customer extends Component
                 ->orWhere('phone', 'LIKE', '%' . $this->search . '%')
                 ->orWhere('second_phone', 'LIKE', '%' . $this->search . '%')
                 ->orWhere('email', 'LIKE', '%' . $this->search . '%')
+                ->orderBy('name', 'ASC')
                 ->get();
         } else {
 
-            $this->customers = ModelsCustomer::all();
+            $this->customers = ModelsCustomer::orderBy('name', 'ASC')->get();
 
         }
         return view('livewire.customer')->layout('layouts.company');
@@ -124,7 +125,7 @@ class Customer extends Component
                 $customer->note = $this->newCustomerNote;
             }
             $customer->save();
-            $this->customers = ModelsCustomer::all();
+            $this->customers = ModelsCustomer::orderBy('name', 'ASC')->get();
             $this->registerModal = false;
         $this->reset([
             'newCustomerName',

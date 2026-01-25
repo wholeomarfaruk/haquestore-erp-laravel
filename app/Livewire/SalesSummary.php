@@ -24,13 +24,13 @@ class SalesSummary extends Component
     public $customerSearch = '';
     public $customers, $customer;
     public $selectedCustomer;
-    
+
     public function mount()
     {
         $this->startDate = now()->toDateString();
         $this->endDate = now()->toDateString();
 
-        $this->customers = Customer::latest()->get();
+        $this->customers = Customer::orderBy('name', 'ASC')->get();
         $this->dateRange = date('Y-m-d');
 
     }

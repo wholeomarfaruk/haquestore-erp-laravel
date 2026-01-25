@@ -10,7 +10,7 @@
 
         body {
             font-family: DejaVu Sans, sans-serif;
-            font-size: 13px;
+            font-size: 16px;
             color: #333;
         }
 
@@ -224,7 +224,7 @@
         <tr>
             <td>
                 Previous Due
-                <p style="font-size: 8px; line-height: 1px;">{{ $invoice?->previous_invoice_id }}</p>
+                <p style="font-size: 10px; line-height: 16px;">{{ $invoice?->previous_invoice_id }}</p>
 
             </td>
             <td>Tk {{ number_format($invoice->previous_due, 2) }}</td>

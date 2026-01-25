@@ -98,7 +98,7 @@
                                        src="{{ asset('asset/avatar.png') }}" alt="customer-avater">
                                </div>
                                <div class="flex-1">
-                                   <p class="font-semibold text-sm">Select Product</p>
+                                   <p class="font-semibold text-sm">Select Customer</p>
                                    <p class="text-[10px] text-gray-500">+88 01xx-xxxxxx</p>
                                </div>
 
@@ -277,7 +277,7 @@
                <div
                    class="w-full md:w-md rounded-lg bg-white p-6 shadow-lg overflow-auto scrollbar scrollbar-thin scrollbar-transparent scrollbar-track-gray-100 scrollbar-thumb-gray-300 scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
                    <div class="flex items-start justify-between">
-                       <h2 id="modalTitle" class="text-xl font-bold text-gray-900 sm:text-2xl">Add Customer</h2>
+                       <h2 id="modalTitle" class="text-xl font-bold text-gray-900 sm:text-2xl">Select Customer</h2>
 
                        <button wire:click="selectCustomerModal=false" type="button"
                            class="cursor-pointer -me-4 -mt-4 rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600 focus:outline-none"
@@ -292,10 +292,10 @@
 
                    <div class="mt-4">
                        <div class="flex justify-end my-2">
-                           <button wire:click="registerModal=true" type="button"
+                           {{-- <button wire:click="registerModal=true" type="button"
                                class="flex items-center gap-2  pb-1 text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900 cursor-pointer rounded border border-gray-300 px-4 py-2">
                                <span class="text-sm font-medium"> Add Customer</span>
-                           </button>
+                           </button> --}}
                        </div>
 
                        <div class="grid grid-cols-1 gap-1">

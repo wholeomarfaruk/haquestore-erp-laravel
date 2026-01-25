@@ -28,7 +28,7 @@ public $filteredProducts;
          $this->startDate = now()->startOfMonth()->toDateString();
         $this->endDate = now()->endOfMonth()->toDateString();
 
-        $this->customers = Customer::latest()->get();
+        $this->customers = Customer::orderBy('name', 'ASC')->get();
         $this->dateRange = date('Y-m-d');
         $this->products = Product::latest()->get();
         $this->totalDiscount=0;
