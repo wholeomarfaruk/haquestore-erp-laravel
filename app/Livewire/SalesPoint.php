@@ -6,6 +6,7 @@ use App\Enums\Invoice\DeliveryStatus;
 use App\Enums\Invoice\PaymentStatus;
 use App\Enums\Invoice\Status;
 use App\Enums\Product\StockStatus;
+use App\Models\Company;
 use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
@@ -16,6 +17,7 @@ use Livewire\Component;
 
 class SalesPoint extends Component
 {
+    public $company;
     public $products;
     public $search = '';
 
@@ -49,7 +51,9 @@ class SalesPoint extends Component
     public $checkBalance = false;
     public $paymentModal = false;
     public $editModal = false;
+    public $previewInvoiceModal = false;
     public $editItem;
+
     public function mount()
     {
         // $this->makeInvoice();
@@ -75,6 +79,7 @@ class SalesPoint extends Component
         if ($this->activeInvoiceId) {
             $this->synceInvoice($this->activeInvoiceId);
         }
+        $this->company = Company::first();
 
     }
     public function updatedRadio($value)
@@ -906,6 +911,18 @@ class SalesPoint extends Component
         $this->activeInvoiceId = null;
 
         $this->makeInvoice();
+
+    }
+    public function previewInvoice(){
+        $this->previewInvoiceModal = true;
+        if(!$this->activeInvoice || count($this->activeInvoice['items']) == 0 || !$this->customer){
+                $this->previewInvoiceModal = false;
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'customer not found or invoice is empty.'
+            ]);
+            return;
+        }
 
     }
     public function render()
