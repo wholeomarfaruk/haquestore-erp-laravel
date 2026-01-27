@@ -1,6 +1,5 @@
 
     <style>
-
        #invoice_container .invoice-container {
             width: 100%;
             padding: 20px;
