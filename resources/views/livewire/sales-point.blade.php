@@ -319,7 +319,7 @@
                                                        class="absolute top-5 right-5 left-5 flex items-center gap-2 justify-between">
                                                        <div>
                                                            <span
-                                                               class="inline-flex items-center justify-center rounded-full bg-gray-200  px-2.5 py-0.5 text-gray-400">
+                                                               class="inline-flex items-center justify-center rounded-full bg-gray-200  px-2.5 py-0.5 text-gray-600">
                                                                <p class="text-sm whitespace-nowrap">
                                                                    #{{ $product->id }}
                                                                </p>
