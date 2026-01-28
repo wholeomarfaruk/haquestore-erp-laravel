@@ -122,17 +122,27 @@
                        @if ($products->count() > 0)
                            @foreach ($products as $product)
                                <div>
-                                   <div class="block relative rounded-lg p-4 shadow-sm border border-gray-200  hover:shadow-lg transition-shadow">
+                                   <div
+                                       class="block relative rounded-lg p-4 shadow-sm border border-gray-200  hover:shadow-lg transition-shadow">
                                        {{-- <img alt="" src="{{ asset($product->product_image) }}"
                                            class="h-36 w-full rounded-md object-cover"> --}}
 
                                        <div class="mt-6">
                                            <dl>
-                                               <div>
-                                                   <dt class="sr-only">ID: </dt>
+                                               <div class="flex">
+                                                   <div class="flex">
+                                                       <dt class="text-sm text-gray-500">SL- </dt>
 
-                                                   <dd class="text-sm text-gray-500"># {{ $product->id }}</dd>
+                                                       <dd class="text-sm text-gray-500">{{ $product->order }}</dd>
+                                                   </div>
+                                                   <span class="text-gray-400 px-2">|</span>
+                                                   <div>
+                                                       <dt class="sr-only">ID: </dt>
+
+                                                       <dd class="text-sm text-gray-500"># {{ $product->id }}</dd>
+                                                   </div>
                                                </div>
+
 
                                                <div>
                                                    <dt class="sr-only">Name:</dt>
@@ -365,15 +375,27 @@
                <div class="mt-4">
 
                    <form action="#" class="space-y-4" wire:submit.prevent="addNewProduct">
-                       <div class="grid grid-cols-1 gap-1">
-                           <label class="block text-sm font-medium text-gray-900" for="name">Name <span
-                                   class="size-6 text-red-500 mr-1.5">*</span></label>
-                           <input wire:model="newPName" name="ProductName"
-                               class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                               id="name" type="text" placeholder="Enter Product Name" />
-                           @error('newPName')
-                               <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                           @enderror
+                       <div class="grid grid-cols-2 gap-1">
+                           <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="name">Name <span
+                                       class="size-6 text-red-500 mr-1.5">*</span></label>
+                               <input wire:model="newPName" name="ProductName"
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
+                                   id="name" type="text" placeholder="Enter Product Name" />
+                               @error('newPName')
+                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                               @enderror
+                           </div>
+                           <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="sale_price">Ordery By
+                               </label>
+                               <input wire:model="orderby" type="number" min="0"
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
+                                   id="sale_price" type="text" placeholder="Product order number" />
+                               @error('orderby')
+                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                               @enderror
+                           </div>
                        </div>
                        <div class="grid grid-cols-3 gap-1">
                            {{-- <div class="grid grid-cols-1 gap-1">
@@ -554,15 +576,28 @@
 
                    <form action="#" class="space-y-4" wire:submit.prevent="updateNewProduct">
                        <input type="hidden" name="product_id" wire:model="editProductId">
-                       <div class="grid grid-cols-1 gap-1">
-                           <label class="block text-sm font-medium text-gray-900" for="name">Name <span
-                                   class="size-6 text-red-500 mr-1.5">*</span></label>
-                           <input wire:model="editProductName" name="ProductName"
-                               class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
-                               id="name" type="text" placeholder="Enter Product Name" />
-                           @error('newPName')
-                               <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                           @enderror
+
+                       <div class="grid grid-cols-2 gap-1">
+                           <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="name">Name <span
+                                       class="size-6 text-red-500 mr-1.5">*</span></label>
+                               <input wire:model="editProductName" name="ProductName"
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
+                                   id="name" type="text" placeholder="Enter Product Name" />
+                               @error('newPName')
+                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                               @enderror
+                           </div>
+                           <div class="grid grid-cols-1 gap-1">
+                               <label class="block text-sm font-medium text-gray-900" for="sale_price">Ordery By
+                               </label>
+                               <input wire:model="orderby" type="number" min="0"
+                                   class="mt-1 w-full rounded-lg border border-gray-300 focus:border-indigo-500 focus:outline-none p-2"
+                                   id="sale_price" type="text" placeholder="Product order number" />
+                               @error('orderby')
+                                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                               @enderror
+                           </div>
                        </div>
                        <div class="grid grid-cols-3 gap-1">
                            {{-- <div class="grid grid-cols-1 gap-1">

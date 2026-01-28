@@ -54,6 +54,7 @@ class SalesPoint extends Component
     public $previewInvoiceModal = false;
     public $editItem;
 
+
     public function mount()
     {
         // $this->makeInvoice();
@@ -137,7 +138,7 @@ class SalesPoint extends Component
     }
     public function paymentAction()
     {
-    $this->settledinvoiceId = null;
+        $this->settledinvoiceId = null;
         foreach ($this->activeInvoice['items'] as $item) {
             if (!$this->isStockAvailable($item['id'])) {
                 $this->isStockOut = true;
@@ -146,8 +147,8 @@ class SalesPoint extends Component
                 $this->isStockOut = false;
             }
         }
-    if($this->activeInvoice['due_amount']<0){
-          $this->confirmModalOpen = true;
+        if ($this->activeInvoice['due_amount'] < 0) {
+            $this->confirmModalOpen = true;
             return;
         }
         $this->checkBalance = false;
@@ -222,7 +223,7 @@ class SalesPoint extends Component
         //create invoice
         $lastInvoice = Invoice::latest()->first();
         $lastinvoiceId = $lastInvoice ? $lastInvoice->invoice_id : null;
-        $invoiceId = $lastinvoiceId<=0 ? 1 : intval(explode('-', $lastinvoiceId)[1]) + 1;
+        $invoiceId = $lastinvoiceId <= 0 ? 1 : intval(explode('-', $lastinvoiceId)[1]) + 1;
         $invoice_id = 'INV-' . str_pad($invoiceId, 6, '0', STR_PAD_LEFT);
 
         $oldInvoice = Invoice::find($invoice['id']);
@@ -408,7 +409,7 @@ class SalesPoint extends Component
             'status' => $invoice->status,
             'delivery_status' => $invoice->delivery_status,
             'previous_invoice_id' => $invoice->previous_invoice_id,
-            'json_data' =>json_decode($invoice->json_data, true),
+            'json_data' => json_decode($invoice->json_data, true),
 
         ];
         // dd($this->activeInvoice);
@@ -651,15 +652,17 @@ class SalesPoint extends Component
 
 
     }
-    public function openEditModal($productId) {
+    public function openEditModal($productId)
+    {
         $this->editModal = true;
-        $Items= collect($this->activeInvoice['items']);
+        $Items = collect($this->activeInvoice['items']);
         $currentItem = $Items->firstWhere('id', $productId);
         $this->editItem = $currentItem;
     }
-    public function submitEditCartItem() {
+    public function submitEditCartItem()
+    {
 
-         if (isset($this->activeInvoice['items'][$this->editItem['id']])) {
+        if (isset($this->activeInvoice['items'][$this->editItem['id']])) {
             $item = $this->activeInvoice['items'][$this->editItem['id']];
 
             if ($item) {
@@ -913,10 +916,11 @@ class SalesPoint extends Component
         $this->makeInvoice();
 
     }
-    public function previewInvoice(){
+    public function previewInvoice()
+    {
         $this->previewInvoiceModal = true;
-        if(!$this->activeInvoice || count($this->activeInvoice['items']) == 0 || !$this->customer){
-                $this->previewInvoiceModal = false;
+        if (!$this->activeInvoice || count($this->activeInvoice['items']) == 0 || !$this->customer) {
+            $this->previewInvoiceModal = false;
             $this->dispatch('toast', [
                 'type' => 'error',
                 'message' => 'customer not found or invoice is empty.'
@@ -928,7 +932,8 @@ class SalesPoint extends Component
     public function render()
     {
         $this->products = Product::orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END') // stock >0 first
-            ->orderBy('name','ASC') // then newest first
+            ->orderByRaw('CASE WHEN `order` IS NULL THEN 1 ELSE 0 END')
+            ->orderBy('order', 'asc')
             ->get();
 
 
@@ -939,10 +944,10 @@ class SalesPoint extends Component
                 ->orWhere('id', 'like', "%$search%")
                 ->orWhere('price', 'like', "%$search%")
                 ->orderByRaw('CASE WHEN stock > 0 THEN 0 ELSE 1 END') // stock >0 first
-                ->orderBy('name','ASC') // then newest first
+                ->orderByRaw('CASE WHEN `order` IS NULL THEN 1 ELSE 0 END')
+                ->orderBy('order', 'asc')
                 ->get();
         }
         return view('livewire.sales-point')->layout('layouts.company');
-
     }
 }

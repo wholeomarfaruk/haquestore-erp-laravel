@@ -15,22 +15,20 @@ class Product extends Component
     public $editProductModal = false;
     public $viewModal = false;
     public $viewProduct;
-    public $newPName, $newPPurchasePrice, $newPSalePrice, $newPDiscountPrice, $newPQuantity,$newKgPerUnit, $newPunit='kg', $newPStockStatus = 'in_stock', $newPDescription;
-    public $editProductName, $editProductPurchasePrice, $editProductSalePrice, $editProductDiscountPrice,$editKgPerUnit, $editProductQuantity, $editProductUnit, $editProductStockStatus, $editProductDescription, $editProductImage, $editProductId, $editViewProductImage;
+    public $newPName, $newPPurchasePrice, $newPSalePrice, $newPDiscountPrice, $newPQuantity, $newKgPerUnit, $newPunit = 'kg', $newPStockStatus = 'in_stock', $newPDescription;
+    public $editProductName, $editProductPurchasePrice, $editProductSalePrice, $editProductDiscountPrice, $editKgPerUnit, $editProductQuantity, $editProductUnit, $editProductStockStatus, $editProductDescription, $editProductImage, $editProductId, $editViewProductImage;
     public $newPImage;
+    public $orderby;
     use WithFileUploads;
     public function render()
     {
-        if (!empty($this->search)) {
-            // dd($this->search);
-            $this->products = ModelsProduct::where('name', 'LIKE', '%' . $this->search . '%')
-                ->orderByDesc('id')
-                ->get();
-        } else {
-
-            $this->products = ModelsProduct::orderByDesc('id')->get();
-
-        }
+$this->products = ModelsProduct::query()
+    ->when($this->search, function ($query) {
+        $query->where('name', 'LIKE', '%' . $this->search . '%');
+    })
+    ->orderByRaw('CASE WHEN `order` IS NULL THEN 1 ELSE 0 END')
+    ->orderBy('order', 'asc')
+    ->get();
         return view('livewire.product')->layout('layouts.company');
     }
     public function addNewProduct()
@@ -45,7 +43,7 @@ class Product extends Component
 
             'newKgPerUnit' => 'required|integer|min:1',
         ]);
-        if($this->newPImage){
+        if ($this->newPImage) {
             $this->validate([
                 'newPImage' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             ]);
@@ -84,6 +82,9 @@ class Product extends Component
                 copy($this->newPImage->getRealPath(), $path . '/' . $filename);
                 $product->image = "products/$filename";
             }
+            if ($this->orderby) {
+                $product->order_by = $this->orderby;
+            }
             $product->save();
         } catch (\Throwable $th) {
             //throw $th;
@@ -99,7 +100,7 @@ class Product extends Component
         if (!$product) {
             return abort(404);
         }
-        $path = public_path('storage/'.$product->image);
+        $path = public_path('storage/' . $product->image);
         if ($product->image && file_exists($path)) {
             unlink('storage/' . $product->image);
         }
@@ -121,12 +122,13 @@ class Product extends Component
         $this->editKgPerUnit = $this->viewProduct->value_per_unit;
         $this->editViewProductImage = $this->viewProduct->image;
         $this->editProductQuantity = $this->viewProduct->unit_value;
+        $this->orderby = $this->viewProduct->order;
         $this->editProductModal = true;
     }
 
     public function updateNewProduct()
     {
-                //  dd($this->editProductImage);
+        //  dd($this->editProductImage);
         try {
             if (!$this->editProductId) {
                 return abort(404);
@@ -156,10 +158,10 @@ class Product extends Component
             // $product->unit_name = $this->editProductUnit;
             $product->stock_status = $this->editProductStockStatus;
             $product->description = $this->editProductDescription;
-            $product->value_per_unit =  $this->editKgPerUnit;
-            $product->stock=floatval($this->editKgPerUnit)*floatval($this->editProductQuantity);
+            $product->value_per_unit = $this->editKgPerUnit;
+            $product->stock = floatval($this->editKgPerUnit) * floatval($this->editProductQuantity);
             if ($this->editProductImage) {
-                 $oldpath = public_path('storage/'.$product->image);
+                $oldpath = public_path('storage/' . $product->image);
                 if ($product->image && is_file($oldpath)) {
 
                     unlink($oldpath);
@@ -173,12 +175,30 @@ class Product extends Component
                 $product->image = "products/$filename";
 
             }
-
+            if ($this->orderby) {
+                $product->order = $this->orderby;
+            } else {
+                $product->order = null;
+            }
             $product->save();
         } catch (\Throwable $th) {
             //throw $th;
             dd($th->getMessage());
         }
+        $this->reset([
+            'editProductId',
+            'editProductName',
+            'editProductPurchasePrice',
+            'editProductSalePrice',
+            'editProductDiscountPrice',
+            'editProductUnit',
+            'editProductStockStatus',
+            'editProductDescription',
+            'editKgPerUnit',
+            'editProductImage',
+            'editProductQuantity',
+            'orderby',
+        ]);
         $this->editProductModal = false;
     }
 }
