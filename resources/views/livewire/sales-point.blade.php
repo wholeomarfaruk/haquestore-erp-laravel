@@ -207,15 +207,15 @@
                                                        <span>
                                                            <dt class="sr-only">Qty: </dt>
 
-                                                           <span class="text-sm text-gray-500" title="Quantity">
+                                                           <span class="text-sm text-black" title="Quantity">
                                                                {{ $product->stock . ' ' . $product->unit_name }}</span>
                                                        </span>
-                                                       <span class="divider size-6 text-gray-500">|</span>
+                                                       <span class="divider size-6 text-black">|</span>
                                                        @if (false && $product->discount_price > 0)
                                                            <span>
                                                                <dt class="sr-only">Price: </dt>
 
-                                                               <del class="text-[10px] text-gray-500"
+                                                               <del class="text-[10px] text-black"
                                                                    title="Regular Price: {{ $product->price . ' Tk' }}">
                                                                    {{ $product->price }}</del>
                                                            </span>
@@ -223,7 +223,7 @@
                                                            <span>
                                                                <dt class="sr-only">Discount Price: </dt>
 
-                                                               <span class="text-sm text-gray-500"
+                                                               <span class="text-sm text-black"
                                                                    title="Discount Price"
                                                                    title="Discount Price: {{ $product->discount_price . ' Tk' }}">
                                                                    {{ $product->discount_price . ' Tk' }}</span>
@@ -232,7 +232,7 @@
                                                            <span>
                                                                <dt class="sr-only">Price: </dt>
 
-                                                               <span class="text-sm text-gray-500"
+                                                               <span class="text-sm text-black"
                                                                    title="Regular Price: {{ $product->price . ' Tk' }}">
 
                                                                    {{ $product->price . ' Tk' }}</span>
@@ -744,12 +744,12 @@
                                                    Edit
                                                </button>
                                            @endcan --}}
-                                            <button wire:click="previewInvoice()" type="button" class="block w-full px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 cursor-pointer">
+                                            <button wire:click="previewInvoice()" type="button" class="block w-full px-3 py-2 text-sm text-left font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 cursor-pointer">
                                                     Preview Invoice
                                                    </button>
                                            @if (!empty($activeInvoice['id']) && $activeInvoice['id'] != 'temporary_id' && $activeInvoice['id'] != null)
                                                <a href="{{ route('company.invoice.download', $activeInvoice['id']) }}"
-                                                   class="block px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900  cursor-pointer"
+                                                   class="block px-3 text-left py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900  cursor-pointer"
                                                    role="menuitem">
                                                    Print
                                                </a>
@@ -770,7 +770,7 @@
                                                                 }
                                                             })
                                                         "
-                                                       class="block w-full px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-50  cursor-pointer">
+                                                       class="block w-full px-3 py-2 text-left text-sm font-medium text-red-700 transition-colors hover:bg-red-50  cursor-pointer">
                                                        Delete
                                                    </button>
                                                @endcan
